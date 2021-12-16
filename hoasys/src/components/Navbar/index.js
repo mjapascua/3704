@@ -9,7 +9,7 @@ const routes = [
 ];
 export const Navbar = () => {
   return (
-    <div className="px-7 pt-4 pb-8 select-none flex justify-between">
+    <div className="px-7 pt-3 pb-6 sticky top-0 z-10 bg-slate-50 shadow-sm select-none flex justify-between">
       <span className="">
         <img src="" alt="LOGO" />
       </span>

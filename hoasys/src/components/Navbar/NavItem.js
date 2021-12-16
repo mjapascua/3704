@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 const defStyle =
-  "navlink text-sm text-left cursor-pointer font-bold py-2 mx-6 w-fit";
+  "navlink text-sm text-left font-head cursor-pointer font-semibold py-2 mx-6 w-fit";
 
 export const NavItem = ({ route }) => {
   return (
