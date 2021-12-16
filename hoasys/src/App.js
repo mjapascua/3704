@@ -5,6 +5,7 @@ import Home from "./pages/Home.js";
 import About from "./pages/About.js";
 import Bulletin from "./pages/Bulletin.js";
 import { Navbar } from "./components/Navbar";
+import { Footer } from "./components/Footer";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="about" element={<About />} />
         <Route path="bulletin" element={<Bulletin />} />
       </Routes>
+      <Footer />
     </div>
   );
 }
