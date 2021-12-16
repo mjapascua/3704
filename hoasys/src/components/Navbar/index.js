@@ -2,19 +2,22 @@ import React from "react";
 import { Button } from "../Buttons/Main";
 import { NavItem } from "./NavItem";
 import deleteIcon from "../../images/delete.svg";
+import { Icon } from "../Icon";
 const routes = [
   { to: "/", label: "home" },
-  { to: "/about", label: "about" },
   { to: "/bulletin", label: "bulletin" },
+  { to: "/about", label: "about" },
+  { to: "/contact", label: "contact" },
 ];
 export const Navbar = () => {
   return (
-    <div className="p-3 flex justify-between">
+    <div className="px-7 py-4 flex justify-between">
       <span className="">
-        <img
-          src=""
-          alt="LOGO"
-          className=" justify-self-start inline-block h-12 w-1/12 border-2"
+        <Icon
+          data={{
+            size: "50",
+            alt: "LOGO",
+          }}
         />
       </span>
       <span>
@@ -41,7 +44,6 @@ export const Navbar = () => {
               size: "20",
               src: deleteIcon,
               alt: "del",
-              position: "right",
             }}
           />
         </span>

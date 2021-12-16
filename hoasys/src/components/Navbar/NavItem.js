@@ -1,14 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+const defStyle =
+  "navlink text-sm text-left cursor-pointer font-bold py-2 mx-6 w-fit";
 
 export const NavItem = ({ route }) => {
   return (
-    <div>
-      <Link to={route.to}>
-        <h1 className=" hover:underline hover:underline-offset-8 text-sm inline-block cursor-pointer font-semibold p-4 w-28">
-          {route.label.toUpperCase()}{" "}
-        </h1>
-      </Link>
-    </div>
+    <NavLink
+      to={route.to}
+      className={({ isActive }) =>
+        isActive ? "active-navlink " + defStyle : " text-gray-500 " + defStyle
+      }
+    >
+      {route.label.toUpperCase()}
+    </NavLink>
   );
 };
