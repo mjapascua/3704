@@ -1,18 +1,12 @@
-import { Link } from "react-router-dom";
-
 function Home() {
-    return (
-      <>
-        <main>
-          <h2>Welcome to the homepage!</h2>
-          <p>This is the first landing page of the System.</p>
-        </main>
-        <nav>
-          <Link to="/about"> About </Link>
-          <Link to="/bulletin"> Bulletin </Link>
-        </nav>
-      </>
-    );
-  }
+  return (
+    <>
+      <main>
+        <img src="" alt="HERO" className=" w-full h-96 border-2" />
+        <p>This is the first landing page of the System.</p>
+      </main>
+    </>
+  );
+}
 
-  export default Home;
+export default Home;

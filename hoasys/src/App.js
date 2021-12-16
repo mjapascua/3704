@@ -1,14 +1,15 @@
 import * as React from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
-import Home from './pages/Home.js';
-import About from './pages/About.js';
-import Bulletin from './pages/Bulletin.js';
+import Home from "./pages/Home.js";
+import About from "./pages/About.js";
+import Bulletin from "./pages/Bulletin.js";
+import { Navbar } from "./components/Navbar";
 
 function App() {
   return (
     <div className="App">
-      <h1>Welcome to React Router!</h1>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="about" element={<About />} />
@@ -19,6 +20,3 @@ function App() {
 }
 
 export default App;
-
-
-
