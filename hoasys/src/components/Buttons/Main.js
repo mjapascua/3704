@@ -6,7 +6,7 @@ export const Button = (props) => {
       onClick={props.onClick}
       className={
         props.classes +
-        " bg-neutral-800 group font-display hover:bg-orange-400 transition-transform inline-flex max-w-xs select-none items-center h-9 justify-center font-semibold cursor-pointer text-sm rounded-sm text-white"
+        " bg-emperor-600 group font-display hover:bg-amber-400 transition-transform inline-flex max-w-xs select-none items-center h-9 justify-center font-semibold cursor-pointer text-sm rounded-sm text-white"
       }
     >
       <span

@@ -2,7 +2,7 @@ import { WidePreview } from "../components/ArticlePreviews/WidePreview";
 const articlePreviews = [
   {
     id: 1,
-    title: "New QR entry!",
+    title: "QR is here!",
     datePublished: new Date().toLocaleString(),
     paragraph:
       "quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima",

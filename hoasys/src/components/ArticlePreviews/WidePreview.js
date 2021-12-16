@@ -4,7 +4,7 @@ import { ReactComponent as EastArrow } from "../../images/east_white_18dp.svg";
 
 export const WidePreview = ({ article }) => {
   return (
-    <div className=" mb-8 mt-5 hover:shadow-sprd flex bg-slate-50 rounded overflow-hidden ">
+    <div className=" mb-8 mt-5 hover:shadow-sprd shadow flex bg-slate-50 rounded overflow-hidden ">
       <img
         className="w-2/5 object-cover"
         src={article.photo?.url}
