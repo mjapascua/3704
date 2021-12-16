@@ -1,6 +1,3 @@
-.App {
-  text-align: center;
-}
 /* NAVBAR */
 .navlink:hover,
 .active-navlink {
@@ -19,4 +16,10 @@
   100% {
     background-size: 80% 3px;
   }
+}
+
+/* ICONS */
+.white-fill {
+  fill: invert(100%) sepia(0%) saturate(4310%) hue-rotate(35deg)
+    brightness(102%) contrast(100%);
 }

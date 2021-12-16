@@ -1,5 +1,4 @@
 import React from "react";
-import { Icon } from "../Icon";
 
 export const Button = (props) => {
   return (
@@ -7,18 +6,18 @@ export const Button = (props) => {
       onClick={props.onClick}
       className={
         props.classes +
-        " bg-neutral-800 hover:bg-neutral-500 hover:text-black inline-flex  relative max-w-xs align-middle items-center h-9 content-center justify-center font-semibold px-5 cursor-pointer text-sm mx-1 rounded-sm text-white"
+        " bg-neutral-800 group hover:bg-teal-500 transition-all inline-flex max-w-xs select-none items-center h-9 justify-center font-medium cursor-pointer text-sm rounded-sm text-white"
       }
     >
       <span
         className={
           (props.label && props.icon) === undefined
-            ? "justify-center"
-            : "w-28 flex justify-between"
+            ? " justify-center px-4 group-hover:text-neutral-800 items-center"
+            : " min-w-full w-40 flex justify-between px-4 group-hover:text-neutral-800 items-center"
         }
       >
         {props.label}
-        {props.icon == null ? null : <Icon data={props.icon} />}
+        {props.icon == null ? null : props.icon}
       </span>
     </span>
   );
