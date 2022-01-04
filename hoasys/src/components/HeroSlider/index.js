@@ -14,7 +14,11 @@ function HeroSlider({ imgArr }) {
         >
           Previous
         </button>
-        <img className="w-full object-cover h-scrn-8" src={imgArr[count]} />
+        <img
+          className="w-full object-cover h-scrn-8"
+          src={imgArr[count]}
+          alt={imgArr[count]}
+        />
         <button
           className="opacity-0 float-right h-full w-1/4 inline-block absolute top-0 right-0"
           onClick={() =>

@@ -1,8 +1,11 @@
 /* NAVBAR */
 .navlink:hover,
 .active-navlink {
-  color: black;
-  background-image: linear-gradient(black, black);
+  color: theme("colors.gray.800");
+  background-image: linear-gradient(
+    theme("colors.gray.600"),
+    theme("colors.gray.600")
+  );
   background-size: 80% 3px;
   background-repeat: no-repeat;
   background-position: bottom left;

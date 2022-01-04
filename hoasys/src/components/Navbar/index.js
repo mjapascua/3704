@@ -9,21 +9,26 @@ const routes = [
 ];
 export const Navbar = () => {
   return (
-    <div className="px-7 pt-3 pb-6 sticky top-0 z-10 bg-slate-50 shadow-sm select-none flex justify-between">
+    <div className="px-7 pt-4 pb-5 sticky top-0 z-10 bg-gray-50 shadow-sm select-none flex justify-between">
       <span className="">
         <img src="" alt="LOGO" />
       </span>
+
       <span>
-        <span className=" w-fit inline-flex mx-7">
+        <span className=" w-fit inline-flex mr-8">
           {routes.map((route) => (
             <NavItem route={route} key={route.label} />
           ))}
         </span>
 
         <span className="inline-flex w-max">
-          <Button onClick={() => {}} label="Join us" classes="mx-1" />
-          <Button onClick={() => {}} label="Login" classes="mx-1" />
-          <Button onClick={() => {}} classes="mx-1" />
+          <Button onClick={() => {}}>Join us</Button>
+          <Button
+            onClick={() => {}}
+            classes="bg-gray-700 ml-1 text-white hover:bg-kape-500 transition-color"
+          >
+            Login
+          </Button>
         </span>
       </span>
     </div>

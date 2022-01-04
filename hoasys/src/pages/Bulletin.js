@@ -1,4 +1,5 @@
 import { WidePreview } from "../components/ArticlePreviews/WidePreview";
+
 const articlePreviews = [
   {
     id: 1,
@@ -38,13 +39,11 @@ const articlePreviews = [
 function Bulletin() {
   return (
     <>
-      <main>
-        <div className="mx-auto w-3/4">
-          {articlePreviews.map((item) => (
-            <WidePreview article={item} key={item.id} />
-          ))}{" "}
-        </div>
-      </main>
+      <div className=" w-3/4 mx-auto">
+        {articlePreviews.map((item) => (
+          <WidePreview article={item} key={item.id} />
+        ))}
+      </div>
     </>
   );
 }

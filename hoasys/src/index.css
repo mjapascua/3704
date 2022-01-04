@@ -17,3 +17,51 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+@layer utilities {
+  .gradient-divided-gray {
+    background: theme("colors.gray.800");
+    background: linear-gradient(
+      280deg,
+      theme("colors.gray.800") 28%,
+      theme("colors.gray.700") 28%,
+      theme("colors.gray.700") 100%
+    );
+  }
+  .gradient-divided-meadow {
+    background: theme("colors.meadow.500");
+    background: linear-gradient(
+      280deg,
+      theme("colors.meadow.500") 28%,
+      theme("colors.meadow.400") 28%,
+      theme("colors.meadow.400") 100%
+    );
+  }
+  .gradient-divided-kape {
+    background: theme("colors.kape.500");
+    background: linear-gradient(
+      280deg,
+      theme("colors.kape.500") 28%,
+      theme("colors.kape.400") 28%,
+      theme("colors.kape.400") 100%
+    );
+  }
+  .gradient-divided-salmon {
+    background: theme("colors.salmon.500");
+    background: linear-gradient(
+      280deg,
+      theme("colors.salmon.500") 28%,
+      theme("colors.salmon.400") 28%,
+      theme("colors.salmon.400") 100%
+    );
+  }
+  .gradient-divided-amber {
+    background: theme("colors.amber.500");
+    background: linear-gradient(
+      280deg,
+      theme("colors.amber.500") 28%,
+      theme("colors.amber.400") 28%,
+      theme("colors.amber.400") 100%
+    );
+  }
+}
