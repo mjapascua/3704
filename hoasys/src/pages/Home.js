@@ -11,7 +11,7 @@ function Home() {
             "https://www.researchgate.net/profile/Elif-Bayramoglu/publication/322918596/figure/fig3/AS:669304651530259@1536586072864/Sample-example-of-xeriscape-URL-3.jpg",
           ]}
         />
-        Check discord
+        Testing
         <span className=" h-28 mb-24 w-52 justify-center mx-auto flex flex-col">
           <span className=" flex items-center">
             <span className="p-2 inline-block bg-meadow-50" />
