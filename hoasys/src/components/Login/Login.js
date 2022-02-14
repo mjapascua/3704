@@ -4,22 +4,29 @@ function Login() {
             <main>
                 <body>
                     <span>
-                        <div class="container">
-                            <label for="show" class="close-btn fas fa-times" title="close"></label>
-                            <div class="text">
+                        <div className="container">
+                            <label for="show" className="close-btn fas fa-times" title="close"></label>
+                            <div className="text">
                                 Login Form
                             </div>
                             <form action="#">
-                                <div class="data">
+                                <div className="data">
                                     <label>Email or Phone</label>
                                     <input type="text" required />
                                 </div>
-                                <div class="data">
+                                <div className="data">
                                     <label>Password</label>
                                     <input type="password" required />
                                 </div>
-                                <div class="forgot-pass">
+                                <div className="forgot-pass">
                                     <a href="#">Forgot Password?</a>
+                                </div>
+                                <div className="btn">
+                                    <div className="inner"></div>
+                                    <button type="submit">LOGIN</button>
+                                </div>
+                                <div className="signup-link">
+                                    Not a member? <a href="#">Signup now.</a>
                                 </div>
                             </form>
                         </div>
@@ -29,3 +36,5 @@ function Login() {
         </>
     );
 }
+
+export default Login;
