@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 import { Button } from "../Buttons/Main";
 import { NavItem } from "./NavItem";
 const routes = [
@@ -22,12 +23,18 @@ export const Navbar = () => {
         </span>
 
         <span className="inline-flex w-max">
-          <Button onClick={() => {}}>Join us</Button>
+          <Button onClick={() => {}}>
+            <NavLink to={"/signup"}>
+              Join Us
+            </NavLink>
+          </Button>
           <Button
             onClick={() => {}}
             classes="bg-gray-700 ml-1 text-white hover:bg-kape-500 transition-color"
           >
-            Login
+            <NavLink to={"/login"}>
+              Login
+            </NavLink>
           </Button>
         </span>
       </span>
