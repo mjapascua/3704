@@ -1,6 +1,12 @@
 const express = require("express");
 const app = express();
 const port = 5000;
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+
+app.use(bodyParser.urlencoded({extended: true}));
+
+mongoose.connect("mongodb+srv://HOASYS3704:sanamataposThesis0@hoasys-3704-0.wnlx8.mongodb.net/user_accountsDB");
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
