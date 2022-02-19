@@ -15,7 +15,7 @@ function HeroSlider({ imgArr }) {
           Previous
         </button>
         <img
-          className="w-full object-cover h-scrn-8"
+          className="w-full object-cover bg-slate-500 h-scrn-8"
           src={imgArr[count]}
           alt={imgArr[count]}
         />

@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "../Buttons/Main";
 import { NavItem } from "./NavItem";
 const routes = [
@@ -8,36 +8,35 @@ const routes = [
   { to: "/about", label: "about" },
   { to: "/contact", label: "contact" },
 ];
-export const Navbar = () => {
+export const Navbar = React.memo(() => {
+  const navigate = useNavigate();
   return (
     <div className="px-7 pt-4 pb-5 sticky top-0 z-10 bg-gray-50 shadow-sm select-none flex justify-between">
-      <span className="">
+      <span className="material-icons-sharp md:hidden my-auto text-3xl">
+        menu
+      </span>
+      <span className="inline-block my-auto hover:ease-out duration-200 transition">
         <img src="" alt="LOGO" />
       </span>
-
       <span>
-        <span className=" w-fit inline-flex mr-8">
+        <span className="w-fit mr-8 hidden md:inline-flex">
           {routes.map((route) => (
             <NavItem route={route} key={route.label} />
           ))}
         </span>
 
-        <span className="inline-flex w-max">
-          <Button onClick={() => {}}>
-            <NavLink to={"/signup"}>
-              Join Us
-            </NavLink>
+        <span>
+          <Button onClick={() => navigate("/signup", { replace: true })}>
+            Join us
           </Button>
           <Button
-            onClick={() => {}}
-            classes="bg-gray-700 ml-1 text-white hover:bg-kape-500 transition-color"
+            onClick={() => navigate("/login", { replace: true })}
+            classes="bg-gray-700 ml-1 text-white hover:bg-meadow-700 transition-color"
           >
-            <NavLink to={"/login"}>
-              Login
-            </NavLink>
+            Login
           </Button>
         </span>
       </span>
     </div>
   );
-};
+});

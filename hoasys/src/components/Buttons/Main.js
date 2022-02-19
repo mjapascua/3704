@@ -6,7 +6,7 @@ export const Button = (props) => {
       onClick={props.onClick}
       className={
         props.classes +
-        " font-display transition-transform inline-flex max-w-xs select-none py-2 items-center justify-center font-semibold text-sm rounded-sm"
+        " font-display box-border select-none py-2 items-center justify-center font-semibold text-sm rounded-sm"
       }
     >
       <span

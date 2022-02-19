@@ -1,6 +1,12 @@
+import { useEffect } from "react";
+import axios from "axios";
 import HeroSlider from "../components/HeroSlider";
 
 function Home() {
+  useEffect(() => {
+    axios.get("http://localhost:5000").then((res) => console.log(res));
+  }, []);
+
   return (
     <>
       <main>
