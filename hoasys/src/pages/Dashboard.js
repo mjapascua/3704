@@ -11,9 +11,9 @@ import AdminBulletin from "./Admin/AdminBulletin";
 import { AdminScanner } from "./Admin/AdminScanner";
 
 const activeStyle =
-  "text-slate-50 bg-gray-700 w-full flex text-sm align-center cursor-pointer justify-center md:justify-start mb-4 py-5 px-8";
+  "text-slate-50 bg-meadow-700 w-full flex text-sm items-center cursor-pointer justify-center md:justify-start mb-4 py-5 px-8";
 const defStyle =
-  "text-gray-500 w-full text-sm flex align-center cursor-pointer justify-center md:justify-start mb-4 py-5 px-8";
+  "text-gray-500 w-full text-sm flex items-center cursor-pointer justify-center md:justify-start mb-4 py-5 px-8";
 
 const routes = [
   { to: "/dashboard", label: "Dashboard", icon: "home" },
@@ -107,9 +107,7 @@ export const Sidemenu = () => {
             <span className="material-icons-sharp md:mr-5 inline-block">
               {route.icon}
             </span>
-            <span className="md:w-max md:block hidden">
-              <b>{" " + route.label}</b>
-            </span>
+            <b className="md:w-max h-fit md:block hidden">{route.label}</b>
           </NavLink>
         );
       })}
