@@ -25,10 +25,11 @@ function Login() {
           >
             <b>To continue signup with</b>
           </div>
-          <form action="#" className="px-2 lg:px-4">
+          <form method="post" action="/" className="px-2 lg:px-4">
             <div className="data">
               <label>Email</label>
               <input
+                name="email"
                 type="text"
                 className="border border-gray-800 w-full p-2 mt-2 mb-4 rounded-sm"
                 required
@@ -37,6 +38,7 @@ function Login() {
             <div className="data">
               <label>Phone</label>
               <input
+                name="cellphone"
                 type="text"
                 className="border border-gray-800 w-full p-2 mt-2 mb-4 rounded-sm"
                 required
@@ -45,13 +47,11 @@ function Login() {
             <div className="data">
               <label>Password</label>
               <input
+                name="password"
                 type="current-password"
                 className="border border-gray-800 w-full p-2 mt-2 mb-4 rounded-sm"
                 required
               />
-            </div>
-            <div className="forgot-pass mb-2">
-              <a href="#">Forgot Password?</a>
             </div>
             <div className="btn mb-4">
               <Button classes={"block w-full h-11 bg-meadow-700 text-white"}>
