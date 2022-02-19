@@ -10,10 +10,10 @@ import { AdminAccounts } from "./Admin/AdminAccounts";
 import AdminBulletin from "./Admin/AdminBulletin";
 import { AdminScanner } from "./Admin/AdminScanner";
 
-const activeStyle =
-  "text-slate-50 bg-meadow-700 w-full flex text-sm items-center cursor-pointer justify-center md:justify-start mb-4 py-5 px-8";
-const defStyle =
-  "text-gray-500 w-full text-sm flex items-center cursor-pointer justify-center md:justify-start mb-4 py-5 px-8";
+const navStyle =
+  "w-full flex text-sm items-center cursor-pointer justify-center md:justify-start mb-4 py-5 px-8";
+const activeStyle = "text-slate-50 bg-meadow-700 " + navStyle;
+const defStyle = "text-gray-500 " + navStyle;
 
 const routes = [
   { to: "/dashboard", label: "Dashboard", icon: "home" },

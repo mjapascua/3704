@@ -65,3 +65,8 @@ code {
     );
   }
 }
+@layer components {
+  .form-input {
+    @apply border border-gray-600 text-sm w-full p-2 mt-2 mb-4 rounded-sm;
+  }
+}

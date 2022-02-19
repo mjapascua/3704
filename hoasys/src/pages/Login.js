@@ -1,36 +1,70 @@
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/Buttons/Main";
+import { apiClient } from "../utils/requests";
 
 function Login() {
+  const [credentials, setCredentials] = useState({
+    identifier: "",
+    password: "",
+    remember_me: false,
+  });
   const navigate = useNavigate();
+  const location = useLocation();
+  let from = location.state?.from?.pathname || "/";
+
+  const handleChange = ({ target }) => {
+    setCredentials((prev) => {
+      return { ...prev, [target.name]: target.value };
+    });
+  };
+  const handleLoginRequest = (e) => {
+    e.preventDefault();
+    apiClient.post("login", credentials).then((res) => {
+      res.status === 200 && console.log(res);
+    });
+  };
+
   return (
-    <main className="w-screen h-full">
-      <span>
-        <div
-          className=" bg-gray-50 container pt-4 pb-10 px-6
-           w-80
-            h-500
-            justify-center
-            mx-auto 
-            mt-5
-            flex 
+    <main className="w-screen h-screen flex">
+      <div
+        className=" bg-white p-7
+           w-full
+           md:w-1/2
+            inline-flex 
+            shadow-sm
             flex-col
             text-gray-800
-            lg:w-1/3
             "
+      >
+        <span
+          className="text
+              w-full border-b pb-5 border-gray-300 mb-10"
         >
-          <div
-            className="text p-2
-               inline-block text-xl text-center border-b border-gray-300 mb-6"
+          <span
+            onClick={() => navigate(from, { replace: true })}
+            className="material-icons-sharp cursor-pointer text-3xl text-gray-700"
           >
-            <b>To continue login to</b>
-          </div>
-          <form action="#" className="px-2 lg:px-4">
+            arrow_back
+          </span>
+          <span className="my-auto w-full text-center block font-bold">
+            LOGO
+          </span>
+        </span>
+        <div className="flex justify-center font-display">
+          <form onSubmit={handleLoginRequest} className="px-2 lg:px-4 w-96">
+            <span className="my-auto text-lg text-meadow-600 block pb-6 font-bold">
+              Login
+            </span>
             <div className="data">
               <b>Email or Phone</b>
               <input
                 type="text"
-                className="border border-gray-800 w-full p-2 mt-2 mb-4 rounded-sm"
+                name="identifier"
+                autoComplete="username"
+                value={credentials.identifier}
+                onChange={handleChange}
+                className="form-input"
                 required
                 placeholder="Enter email or phone number"
               />
@@ -39,32 +73,47 @@ function Login() {
               <b>Password</b>
               <input
                 type="password"
-                className="border border-gray-800 w-full p-2 mt-2 mb-4 rounded-sm"
+                autoComplete="current-password"
+                name="password"
+                value={credentials.password}
+                onChange={handleChange}
+                className="form-input"
                 required
                 placeholder="Enter password"
               />
             </div>
-            <span className="mb-2 inline-flex justify-between w-full">
-              <label>
-                Remember me <input type="checkbox" />
+            <span className="mb-2 inline-flex text-sm justify-between w-full">
+              <label className="flex items-center mb-5 ">
+                Remember me
+                <input
+                  name="remember_me"
+                  value={credentials.remember_me}
+                  onChange={(e) =>
+                    setCredentials((prev) => {
+                      return { ...prev, remember_me: e.target.checked };
+                    })
+                  }
+                  type="checkbox"
+                  className="ml-2"
+                />
               </label>
-              <span className="forgot-pass underline">
+              <span className="underline font-semibold text-meadow-700">
                 <a href="#">Forgot Password?</a>
               </span>
             </span>
 
-            <div className="bg-meadow-900 btn mb-2">
-              <Button
-                onClick={() => navigate("/dashboard", { replace: true })}
-                classes={"block w-full h-11 bg-meadow-700 text-white"}
-              >
-                LOGIN
-              </Button>
-            </div>
-            <div className="signup-link mb-2">Not a member?</div>
+            <Button
+              type={"submit"}
+              classes={"block w-full mb-2 h-11 bg-meadow-600 text-white"}
+            >
+              LOGIN
+            </Button>
+            <span className="signup-link mb-2 mt-3 text-sm block">
+              Not a member?
+            </span>
             <Button
               classes={
-                "block w-full h-11 border border-meadow-700 text-meadow-700"
+                "block w-full h-11 border border-meadow-600 text-meadow-600"
               }
               onClick={() => navigate("/signup", { replace: true })}
             >
@@ -72,7 +121,8 @@ function Login() {
             </Button>
           </form>
         </div>
-      </span>
+      </div>
+      <div className="w-1/2  bg-meadow-700  inline-block"></div>
     </main>
   );
 }

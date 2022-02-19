@@ -66,7 +66,6 @@ function App() {
           path="login"
           element={
             <>
-              <Navbar />
               <Login />
             </>
           }
@@ -75,7 +74,6 @@ function App() {
           path="signup"
           element={
             <>
-              <Navbar />
               <Signup />
             </>
           }
