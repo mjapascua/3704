@@ -38,7 +38,7 @@ function Login() {
             <div className="data">
               <b>Password</b>
               <input
-                type="current-password"
+                type="password"
                 className="border border-gray-800 w-full p-2 mt-2 mb-4 rounded-sm"
                 required
                 placeholder="Enter password"

@@ -25,7 +25,7 @@ function Login() {
           >
             <b>To continue signup with</b>
           </div>
-          <form method="post" action="/" className="px-2 lg:px-4">
+          <form method="post" action="http://localhost:5000/api/register" className="px-2 lg:px-4">
             <div className="data">
               <label>Email</label>
               <input
@@ -48,7 +48,7 @@ function Login() {
               <label>Password</label>
               <input
                 name="password"
-                type="current-password"
+                type="password"
                 className="border border-gray-800 w-full p-2 mt-2 mb-4 rounded-sm"
                 required
               />

@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.post("/", function(req, res) {
+app.post("/api/register", function(req, res) {
   let newAccount = new Account({
     email: req.body.email,
     cellphone: req.body.cellphone,
