@@ -1,4 +1,5 @@
 /* NAVBAR */
+
 .navlink:hover,
 .active-navlink {
   color: theme("colors.gray.800");
