@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { Dashboard } from "./pages/Dashboard";
 import { Contact } from "./pages/Contact";
+import UserHome from "./pages/UserHome";
 
 function App() {
   return (
@@ -50,6 +51,14 @@ function App() {
           element={
             <>
               <Dashboard />
+            </>
+          }
+        />
+        <Route
+          path="user/*"
+          element={
+            <>
+              <UserHome />
             </>
           }
         />

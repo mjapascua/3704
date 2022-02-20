@@ -35,11 +35,12 @@ function Login() {
             shadow-sm
             flex-col
             text-gray-800
+             text-sm 
             "
       >
         <span
           className="text
-              w-full border-b pb-5 border-gray-300 mb-10"
+              w-full border-b pb-5 border-gray-300 mb-5"
         >
           <span
             onClick={() => navigate(from, { replace: true })}
@@ -82,7 +83,7 @@ function Login() {
                 placeholder="Enter password"
               />
             </div>
-            <span className="mb-2 inline-flex text-sm justify-between w-full">
+            <span className="mb-2 inline-flex justify-between w-full">
               <label className="flex items-center mb-5 ">
                 Remember me
                 <input
@@ -101,16 +102,14 @@ function Login() {
                 <a href="#">Forgot Password?</a>
               </span>
             </span>
-
             <Button
               type={"submit"}
-              classes={"block w-full mb-2 h-11 bg-meadow-600 text-white"}
+              classes={"block w-full mb-5 h-11 bg-meadow-600 text-white"}
             >
               LOGIN
-            </Button>
-            <span className="signup-link mb-2 mt-3 text-sm block">
-              Not a member?
-            </span>
+            </Button>{" "}
+            <span className="border-b border-gray-300 mb-4 block w-full"></span>
+            <span className="w-fit block mx-auto mb-4">Not a member?</span>
             <Button
               classes={
                 "block w-full h-11 border border-meadow-600 text-meadow-600"

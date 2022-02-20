@@ -6,9 +6,9 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-import { AdminAccounts } from "./Admin/AdminAccounts";
-import AdminBulletin from "./Admin/AdminBulletin";
-import { AdminScanner } from "./Admin/AdminScanner";
+import ManageAccounts from "./Admin/ManageAccounts";
+import ManageBulletin from "./Admin/ManageBulletin";
+import AdminScanner from "./Admin/AdminScanner";
 
 const navStyle =
   "w-full flex text-sm items-center cursor-pointer justify-center md:justify-start mb-4 py-5 px-8";
@@ -55,8 +55,8 @@ export const Dashboard = () => {
         {open && <Sidemenu />}
         <div className="w-full overflow-scroll">
           <Routes>
-            <Route path={"/accounts"} element={<AdminAccounts />} />
-            <Route path={"/bulletin"} element={<AdminBulletin />} />
+            <Route path={"/accounts"} element={<ManageAccounts />} />
+            <Route path={"/bulletin"} element={<ManageBulletin />} />
             <Route path={"/qr-scanner"} element={<AdminScanner />} />
           </Routes>
         </div>

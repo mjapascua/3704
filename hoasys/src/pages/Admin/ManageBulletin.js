@@ -1,9 +1,9 @@
 import Bulletin from "../Bulletin";
-const AdminBulletin = () => {
+const ManageBulletin = () => {
   return (
     <div className="">
       <Bulletin />
     </div>
   );
 };
-export default AdminBulletin;
+export default ManageBulletin;

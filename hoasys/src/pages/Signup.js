@@ -33,6 +33,7 @@ function Login() {
             inline-flex 
             shadow-sm
             flex-col
+            text-sm
             text-gray-800
             "
       >
@@ -80,8 +81,8 @@ function Login() {
                 required
               />
             </div>
-            <div className="flex">
-              <label className="mr-1">
+            <div className="flex flex-col md:flex-row">
+              <label className="md:mr-1 md:w-44">
                 Password
                 <input
                   type="password"
@@ -95,7 +96,7 @@ function Login() {
                 />
               </label>
 
-              <label className="ml-1">
+              <label className="md:ml-1 md:w-44">
                 Confirm password
                 <input
                   type="password"
@@ -110,11 +111,12 @@ function Login() {
               </label>
             </div>
             <Button
-              classes={"block mt-5 mb-6 w-full h-11 bg-meadow-600 text-white"}
+              classes={"block mt-5 mb-5 w-full h-11 bg-meadow-600 text-white"}
             >
               SIGN UP
             </Button>
-            <span className="w-fit block mx-auto mb-2">Already a member?</span>
+            <span className="border-b border-gray-300 mb-4 block w-full"></span>
+            <span className="w-fit block mx-auto mb-4">Already a member?</span>
             <Button
               classes={
                 "block w-full h-11 border border-meadow-700 text-meadow-700"
