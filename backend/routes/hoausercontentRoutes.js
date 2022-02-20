@@ -7,8 +7,9 @@ const {
     deleteHOAusercontent
 } = require('../controllers/hoausercontentController')
 
-router.route('/').get(getHOAuserscontent).post(setHOAusercontent)
+const {protect} = require('../middleware/authMiddleware')
 
-router.route('/:id').delete(deleteHOAusercontent).put(updateHOAusercontent)
+router.route('/').get(protect, getHOAuserscontent).post(protect, setHOAusercontent)
+router.route('/:id').delete(protect, deleteHOAusercontent).put(protect, updateHOAusercontent)
 
 module.exports = router
