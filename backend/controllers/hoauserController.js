@@ -1,9 +1,13 @@
 const asyncHandler = require('express-async-handler')
 
+const HOAuser = require('../models/hoausermodel')
+
 // @desc    Get HOA users
 // @route   GET /api/hoausers
 // @access  Private
 const getHOAusers = asyncHandler(async (req, res) => {
+    const hoausers = await HOAuser.find()
+
     res.status(200).json({ message: "Get HOA users" })
 })
 
