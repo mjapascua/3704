@@ -37,7 +37,7 @@ export const Navbar = React.memo(() => {
             onClick={() =>
               navigate("/login", { replace: true, state: { from: location } })
             }
-            classes="bg-gray-700 ml-1 text-white hover:bg-meadow-700 transition-color"
+            classes=" ml-1 text-white bg-meadow-600 transition-color"
           >
             Login
           </Button>

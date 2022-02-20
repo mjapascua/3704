@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/Buttons/Main";
 import { apiClient } from "../utils/requests";
@@ -9,9 +9,11 @@ function Login() {
     password: "",
     remember_me: false,
   });
+  const [viewPass, setViewPass] = useState("password");
   const navigate = useNavigate();
   const location = useLocation();
   let from = location.state?.from?.pathname || "/";
+  let password_inp = useRef();
 
   const handleChange = ({ target }) => {
     setCredentials((prev) => {
@@ -23,6 +25,16 @@ function Login() {
     apiClient.post("login", credentials).then((res) => {
       res.status === 200 && console.log(res);
     });
+  };
+
+  const handlePasswordView = () => {
+    const type = password_inp.current.type;
+    if (type === "password") {
+      return setViewPass("text");
+    }
+    if (type === "text") {
+      return setViewPass("password");
+    }
   };
 
   return (
@@ -44,7 +56,7 @@ function Login() {
         >
           <span
             onClick={() => navigate(from, { replace: true })}
-            className="material-icons-sharp cursor-pointer text-3xl text-gray-700"
+            className="material-icons-sharp flex items-center justify-center rounded-full border-2 h-10 w-10  text-slate-700 border-slate-700 cursor-pointer text-2xl"
           >
             arrow_back
           </span>
@@ -52,7 +64,7 @@ function Login() {
             LOGO
           </span>
         </span>
-        <div className="flex justify-center font-display">
+        <div className="flex justify-center  font-display">
           <form onSubmit={handleLoginRequest} className="px-2 lg:px-4 w-96">
             <span className="my-auto text-lg text-meadow-600 block pb-6 font-bold">
               Login
@@ -70,16 +82,23 @@ function Login() {
                 placeholder="Enter email or phone number"
               />
             </div>
-            <div className="data">
+            <div className="data relative">
               <b>Password</b>
+              <span
+                onClick={handlePasswordView}
+                className="material-icons-sharp absolute cursor-pointer right-0 text-base px-1"
+              >
+                {viewPass === "password" ? "visibility_off" : "visibility"}
+              </span>
               <input
-                type="password"
+                type={viewPass}
                 autoComplete="current-password"
                 name="password"
                 value={credentials.password}
                 onChange={handleChange}
                 className="form-input"
                 required
+                ref={password_inp}
                 placeholder="Enter password"
               />
             </div>

@@ -11,9 +11,11 @@ import ManageBulletin from "./Admin/ManageBulletin";
 import AdminScanner from "./Admin/AdminScanner";
 
 const navStyle =
-  "w-full flex text-sm items-center cursor-pointer justify-center md:justify-start mb-4 py-5 px-8";
+  "w-full flex text-sm items-center cursor-pointer  md:rounded-tl-md md:rounded-bl-md justify-center md:justify-start mb-4 py-5 px-8";
 const activeStyle = "text-slate-50 bg-meadow-700 " + navStyle;
 const defStyle = "text-gray-500 " + navStyle;
+const sideMenuStyle =
+  "bg-neutral-900 z-20 left-0 w-max h-full box-border  md:pl-5";
 
 const routes = [
   { to: "/dashboard", label: "Dashboard", icon: "home" },
@@ -24,11 +26,22 @@ const routes = [
 
 export const Dashboard = () => {
   const [open, setOpen] = useState(false);
+  const [style, setStyle] = useState("hidden " + sideMenuStyle);
+
   const [pageLabel, setLabel] = useState(false);
   const location = useLocation();
 
   const handleMenuClick = () => {
-    setOpen((prev) => !prev);
+    if (open) {
+      setOpen(false);
+      setStyle("animate-slideToL " + sideMenuStyle);
+      setTimeout(() => {
+        setStyle("hidden " + sideMenuStyle);
+      }, 200);
+    } else {
+      setOpen(true);
+      setStyle("animate-slideToR " + sideMenuStyle);
+    }
   };
 
   const setHeader = () => {
@@ -52,8 +65,8 @@ export const Dashboard = () => {
       />
 
       <div className="pt-14 relative w-full flex h-screen box-border">
-        {open && <Sidemenu />}
-        <div className="w-full overflow-scroll">
+        <Sidemenu style={style} />
+        <div className="w-full flex overflow-scroll">
           <Routes>
             <Route path={"/accounts"} element={<ManageAccounts />} />
             <Route path={"/bulletin"} element={<ManageBulletin />} />
@@ -92,10 +105,11 @@ export const DashboardNav = ({ handleMenuClick, pageLabel, open }) => {
   );
 };
 
-export const Sidemenu = () => {
+export const Sidemenu = ({ style }) => {
   const navigate = useNavigate();
+
   return (
-    <div className=" bg-neutral-900 block z-20 left-0 w-max h-full box-border">
+    <div className={style}>
       {routes.map((route) => {
         return (
           <NavLink

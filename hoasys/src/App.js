@@ -11,6 +11,7 @@ import Signup from "./pages/Signup";
 import { Dashboard } from "./pages/Dashboard";
 import { Contact } from "./pages/Contact";
 import UserHome from "./pages/UserHome";
+import axios from "axios";
 
 function App() {
   return (

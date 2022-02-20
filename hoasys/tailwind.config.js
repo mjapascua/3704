@@ -62,6 +62,20 @@ module.exports = {
       gradientDividedKape: ["hover", "focus", "group-hover"],
       gradientDividedFroly: ["hover", "focus", "group-hover"],
       gradientDividedAmber: ["hover", "focus", "group-hover"],
+      keyframes: {
+        slideToR: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "0px" },
+        },
+        slideToL: {
+          "100%": { transform: "translateX(-100%)" },
+          "0%": { transform: "0px" },
+        },
+      },
+      animation: {
+        slideToR: "slideToR .25s ease-out",
+        slideToL: "slideToL .25s ease-out",
+      },
     },
   },
   plugins: [],

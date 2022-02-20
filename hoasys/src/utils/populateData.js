@@ -1,6 +1,4 @@
-export const generateObjectArray = (arr) => {
-  arr.map(() => {});
-};
+export const generateObjectArray = (arr) => {};
 export const articlePreviews = [
   {
     id: 1,
