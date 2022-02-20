@@ -171,6 +171,24 @@ function Login() {
                 </Button>
               </div>
             )}
+            <span className="w-full inline-block h-6 select-none relative text-lg text-meadow-600">
+              {progress > 1 && (
+                <span
+                  className="cursor-pointer absolute left-0 underline"
+                  onClick={() => setProgress(progress - 1)}
+                >
+                  Back
+                </span>
+              )}
+              {progress < 3 && (
+                <span
+                  className="cursor-pointer absolute right-0 underline"
+                  onClick={() => setProgress(progress + 1)}
+                >
+                  Next
+                </span>
+              )}
+            </span>
             <span className="block text-center border-b border-gray-300 py-3 mb-4 w-full">
               {[1, 2, 3].map((num) => {
                 return (
@@ -179,8 +197,8 @@ function Login() {
                     onClick={() => setProgress(num)}
                     className={
                       (progress >= num ? " bg-meadow-500" : "bg-gray-300") +
-                      (progress === num ? " w-6" : " w-2.5") +
-                      " transition mr-2 rounded-xl inline-block w-2.5 h-2.5 "
+                      (progress === num ? " w-7 " : " w-2.5") +
+                      " transition mr-2 rounded-xl inline-block w-2.5 h-2.5 bg-gray-300"
                     }
                   ></span>
                 );
