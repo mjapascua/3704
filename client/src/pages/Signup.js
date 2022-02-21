@@ -33,7 +33,10 @@ function Login() {
   const handleSignUpRequest = (e) => {
     e.preventDefault();
 
-    if (!phoneRegex.test(credentials.phone_number)) {
+    if (
+      !phoneRegex.test(credentials.phone_number) ||
+      !credentials.phone_number.startsWith("9")
+    ) {
       console.log("Invalid contact number");
       setProgress(2);
       return;
