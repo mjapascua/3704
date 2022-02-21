@@ -9,6 +9,7 @@ function Login() {
     email: "",
     first_name: "",
     last_name: "",
+    residence: "",
     phone_number: "",
     password: "",
     password_confirm: "",
@@ -31,6 +32,17 @@ function Login() {
   };
   const handleSignUpRequest = (e) => {
     e.preventDefault();
+
+    if (!phoneRegex.test(credentials.phone_number)) {
+      console.log("Invalid contact number");
+      setProgress(2);
+      return;
+    }
+
+    if (credentials.password !== credentials.password_confirm) {
+      console.log("Password does not match");
+      return;
+    }
 
     apiClient.post("register", credentials).then((res) => {
       res.status === 200 && console.log(res);
@@ -75,36 +87,46 @@ function Login() {
 
             {progress === 1 && (
               <div className=" animate-slideToR h-60 bg-white">
-                <div className="data">
-                  <label>
-                    First Name
+                <label>
+                  First Name
+                  <input
+                    type="text"
+                    name="first_name"
+                    onChange={handleChange}
+                    value={credentials.first_name}
+                    className="form-input"
+                    placeholder="Enter first name"
+                    required
+                  />
+                </label>
+                <label>
+                  Last Name
+                  <span className="flex">
                     <input
                       type="text"
-                      name="first_name"
+                      name="last_name"
                       onChange={handleChange}
-                      value={credentials.first_name}
+                      value={credentials.last_name}
                       className="form-input"
-                      placeholder="Enter first name"
+                      placeholder="Enter last name"
                       required
                     />
-                  </label>
-                </div>
-                <div className="data relative">
-                  <label>
-                    Last Name
-                    <span className="flex">
-                      <input
-                        type="text"
-                        name="last_name"
-                        onChange={handleChange}
-                        value={credentials.last_name}
-                        className="form-input"
-                        placeholder="Enter last name"
-                        required
-                      />
-                    </span>
-                  </label>
-                </div>
+                  </span>
+                </label>
+                <label>
+                  Residence
+                  <span className="flex">
+                    <input
+                      type="text"
+                      name="residence"
+                      onChange={handleChange}
+                      value={credentials.residence}
+                      className="form-input"
+                      placeholder="Enter your unit"
+                      required
+                    />
+                  </span>
+                </label>
               </div>
             )}
             {progress === 2 && (
@@ -194,7 +216,8 @@ function Login() {
               )}
               {progress === 1 &&
                 credentials.first_name &&
-                credentials.last_name && (
+                credentials.last_name &&
+                credentials.residence && (
                   <span
                     className="cursor-pointer absolute right-0 underline  underline-offset-1"
                     onClick={() => setProgress(progress + 1)}
