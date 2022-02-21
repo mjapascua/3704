@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/Buttons/Main";
+import StatusMessage from "../components/StatusMessage";
 import { apiClient } from "../utils/requests";
+const phoneRegex = /^([0-9]{10})*$/;
 function Login() {
   const [credentials, setCredentials] = useState({
     email: "",
@@ -12,6 +14,12 @@ function Login() {
     password_confirm: "",
   });
   const [progress, setProgress] = useState(1);
+  const [status, setStatus] = useState({
+    active: false,
+    message: null,
+    status: null,
+  });
+
   const navigate = useNavigate();
   const location = useLocation();
   let from = location.state?.from?.pathname || "/";
@@ -23,6 +31,7 @@ function Login() {
   };
   const handleSignUpRequest = (e) => {
     e.preventDefault();
+
     apiClient.post("register", credentials).then((res) => {
       res.status === 200 && console.log(res);
     });
@@ -54,12 +63,13 @@ function Login() {
             LOGO
           </span>
         </span>
+
         <div className="flex justify-center font-display">
           <form
             onSubmit={handleSignUpRequest}
-            className="px-2 lg:px-4 w-96 block mx-10"
+            className="px-2 lg:px-4 w-96 block  overflow-hidden "
           >
-            <span className="my-auto text-lg text-meadow-600 block pb-4 font-bold">
+            <span className="my-auto text-lg text-meadow-600 block pb-6 font-bold">
               Sign up
             </span>
 
@@ -144,6 +154,7 @@ function Login() {
                     autoComplete="current-password"
                     className="form-input"
                     placeholder="Atleast 8 characters"
+                    minLength="8"
                     required
                   />
                 </label>
@@ -158,6 +169,7 @@ function Login() {
                     autoComplete="current-password"
                     className="form-input"
                     placeholder="Passwords must match"
+                    minLength="8"
                     required
                   />
                 </label>
@@ -174,15 +186,25 @@ function Login() {
             <span className="w-full inline-block h-6 select-none relative text-lg text-meadow-600">
               {progress > 1 && (
                 <span
-                  className="cursor-pointer absolute left-0 underline"
+                  className="cursor-pointer absolute left-0 underline underline-offset-1"
                   onClick={() => setProgress(progress - 1)}
                 >
                   Back
                 </span>
               )}
-              {progress < 3 && (
+              {progress === 1 &&
+                credentials.first_name &&
+                credentials.last_name && (
+                  <span
+                    className="cursor-pointer absolute right-0 underline  underline-offset-1"
+                    onClick={() => setProgress(progress + 1)}
+                  >
+                    Next
+                  </span>
+                )}
+              {progress === 2 && credentials.email && credentials.phone_number && (
                 <span
-                  className="cursor-pointer absolute right-0 underline"
+                  className="cursor-pointer absolute right-0 underline  underline-offset-1"
                   onClick={() => setProgress(progress + 1)}
                 >
                   Next
@@ -194,11 +216,10 @@ function Login() {
                 return (
                   <span
                     key={num}
-                    onClick={() => setProgress(num)}
                     className={
                       (progress >= num ? " bg-meadow-500" : "bg-gray-300") +
-                      (progress === num ? " w-7 " : " w-2.5") +
-                      " transition mr-2 rounded-xl inline-block w-2.5 h-2.5 bg-gray-300"
+                      (progress === num ? " w-6 " : " w-2.5") +
+                      " transition-all mr-2 rounded-xl inline-block w-2.5 h-2.5 bg-gray-300"
                     }
                   ></span>
                 );
