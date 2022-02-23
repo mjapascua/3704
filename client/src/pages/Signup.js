@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/Buttons/Main";
 import StatusMessage from "../components/StatusMessage";
 import { apiClient } from "../utils/requests";
 const phoneRegex = /^([0-9]{10})*$/;
-function Login() {
+function SignUp() {
   const [credentials, setCredentials] = useState({
     email: "",
     first_name: "",
@@ -15,14 +15,16 @@ function Login() {
     password_confirm: "",
   });
   const [progress, setProgress] = useState(1);
-  const [status, setStatus] = useState({
+  const [message, setStatus] = useState({
     active: false,
-    message: null,
+    text: "",
     status: null,
   });
 
   const navigate = useNavigate();
   const location = useLocation();
+  const signUpBtn = useRef();
+
   let from = location.state?.from?.pathname || "/";
 
   const handleChange = ({ target }) => {
@@ -33,24 +35,69 @@ function Login() {
   const handleSignUpRequest = (e) => {
     e.preventDefault();
 
-    if (
-      !phoneRegex.test(credentials.phone_number) ||
-      !credentials.phone_number.startsWith("9")
-    ) {
-      console.log("Invalid contact number");
-      setProgress(2);
-      return;
-    }
-
-    if (credentials.password !== credentials.password_confirm) {
-      console.log("Password does not match");
-      return;
-    }
-
-    apiClient.post("register", credentials).then((res) => {
-      res.status === 200 && console.log(res);
-    });
+    apiClient
+      .post("users/", credentials)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res);
+        }
+      })
+      .catch((err) => {
+        setStatus({
+          active: true,
+          text: err.response.data.message,
+          status: err.response.status,
+        });
+      });
   };
+
+  const handlePasswordCheck = useCallback(() => {
+    if (progress !== 3) return;
+    if (
+      credentials.password &&
+      credentials.password_confirm &&
+      credentials.password !== credentials.password_confirm
+    ) {
+      setStatus({
+        active: true,
+        text: "Password does not match",
+        status: 400,
+      });
+    }
+    if (
+      !credentials.password_confirm ||
+      !credentials.password ||
+      credentials.password !== credentials.password_confirm
+    ) {
+      signUpBtn.current.disabled = true;
+    } else {
+      setStatus({
+        active: false,
+        text: "",
+        status: 200,
+      });
+      signUpBtn.current.disabled = false;
+    }
+  }, [credentials.password, credentials.password_confirm, progress]);
+
+  const handlePhoneNumberCheck = (
+    phoneNumber,
+    successCallback,
+    errCallback
+  ) => {
+    if (!phoneRegex.test(phoneNumber) || !phoneNumber.startsWith("9")) {
+      typeof successCallback === "function" && errCallback();
+      return false;
+    } else {
+      typeof errCallback === "function" && successCallback();
+      return true;
+    }
+  };
+
+  useEffect(() => {
+    handlePasswordCheck();
+  }, [handlePasswordCheck]);
+
   return (
     <main className="w-screen h-screen flex">
       <div
@@ -84,7 +131,7 @@ function Login() {
             onSubmit={handleSignUpRequest}
             className="px-2 lg:px-4 w-96 block  overflow-hidden "
           >
-            <span className="my-auto text-lg text-meadow-600 block pb-6 font-bold">
+            <span className="my-auto text-lg text-meadow-600 block pb-3 font-bold">
               Sign up
             </span>
 
@@ -156,7 +203,24 @@ function Login() {
                       <input
                         type="text"
                         name="phone_number"
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          handleChange(e);
+                          handlePhoneNumberCheck(
+                            e.target.value,
+                            () =>
+                              setStatus({
+                                active: false,
+                                text: "",
+                                status: 200,
+                              }),
+                            () =>
+                              setStatus({
+                                active: true,
+                                text: "Invalid phone number",
+                                status: 400,
+                              })
+                          );
+                        }}
                         value={credentials.phone_number}
                         className="form-input !inline-block"
                         placeholder="9*********"
@@ -203,16 +267,20 @@ function Login() {
                   classes={
                     "block mt-5 mb-5 w-full h-11 bg-meadow-600 text-white"
                   }
+                  ref={signUpBtn}
                 >
                   SIGN UP
                 </Button>
               </div>
             )}
-            <span className="w-full inline-block h-6 select-none relative text-lg text-meadow-600">
+            <StatusMessage {...message} />
+            <span className="w-full mt-1 inline-block h-6 select-none relative text-lg text-meadow-600">
               {progress > 1 && (
                 <span
                   className="cursor-pointer absolute left-0 underline underline-offset-1"
-                  onClick={() => setProgress(progress - 1)}
+                  onClick={() => {
+                    setProgress(progress - 1);
+                  }}
                 >
                   Back
                 </span>
@@ -228,24 +296,30 @@ function Login() {
                     Next
                   </span>
                 )}
-              {progress === 2 && credentials.email && credentials.phone_number && (
-                <span
-                  className="cursor-pointer absolute right-0 underline  underline-offset-1"
-                  onClick={() => setProgress(progress + 1)}
-                >
-                  Next
-                </span>
-              )}
+              {progress === 2 &&
+                credentials.email &&
+                handlePhoneNumberCheck(credentials.phone_number) && (
+                  <span
+                    className="cursor-pointer absolute right-0 underline  underline-offset-1"
+                    onClick={() => setProgress(progress + 1)}
+                  >
+                    Next
+                  </span>
+                )}
+              {}
             </span>
             <span className="block text-center border-b border-gray-300 py-3 mb-4 w-full">
               {[1, 2, 3].map((num) => {
+                const defClass =
+                  (progress === num ? " w-7" : " w-2.5") +
+                  " transition-all mr-2 rounded-xl inline-block h-2.5 bg-gray-300";
+
                 return (
                   <span
                     key={num}
                     className={
-                      (progress >= num ? " bg-meadow-500" : "bg-gray-300") +
-                      (progress === num ? " w-6 " : " w-2.5") +
-                      " transition-all mr-2 rounded-xl inline-block w-2.5 h-2.5 bg-gray-300"
+                      (progress >= num ? " bg-meadow-500" : " bg-gray-300") +
+                      defClass
                     }
                   ></span>
                 );
@@ -268,4 +342,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default SignUp;

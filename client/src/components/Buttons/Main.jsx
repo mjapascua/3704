@@ -1,14 +1,15 @@
 import React, { Children } from "react";
 
-export const Button = (props) => {
+export const Button = React.forwardRef((props, ref) => {
   return (
     <button
       type={props.type || "button"}
       onClick={props.onClick}
       className={
         props.classes +
-        " font-display box-border select-none py-2 items-center justify-center font-semibold text-sm rounded-sm"
+        " font-display box-border select-none py-2 items-center justify-center font-semibold text-sm rounded-sm disabled:bg-gray-300 disabled:text-gray-700 disabled:border-gray-300"
       }
+      ref={ref}
     >
       <span
         className={
@@ -21,4 +22,4 @@ export const Button = (props) => {
       </span>
     </button>
   );
-};
+});

@@ -1,7 +1,7 @@
 import React from "react";
-
-const StatusMessage = ({ active, message, status, className }) => {
-  let style = className;
+const defClass = " w-full flex items-center h-7 px-2 ";
+const StatusMessage = ({ active, text, status, className }) => {
+  let style = className + defClass;
   if (status >= 200 && status <= 299) {
     style = style + " bg-emerald-500";
   } else style = style + " bg-salmon-300";
@@ -11,14 +11,14 @@ const StatusMessage = ({ active, message, status, className }) => {
       {active ? (
         <span
           className={
-            "w-full block px-2 py-1 rounded-sm border text-red-700 border-salmon-500 " +
-            style
+            "rounded-sm border text-red-700 border-salmon-500 " + style
           }
         >
-          {message}
+          {text}
+          <span></span>
         </span>
       ) : (
-        <span className={"w-full block px-2 py-1 h-7"}></span>
+        <span className={defClass}></span>
       )}
     </>
   );
