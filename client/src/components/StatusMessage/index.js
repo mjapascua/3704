@@ -4,14 +4,14 @@ const StatusMessage = ({ active, text, status, className }) => {
   let style = className + defClass;
   if (status >= 200 && status <= 299) {
     style = style + " bg-emerald-500";
-  } else style = style + " bg-salmon-300";
+  } else style = style + " bg-salmon-200";
 
   return (
     <>
       {active ? (
         <span
           className={
-            "rounded-sm border text-red-700 border-salmon-500 " + style
+            "rounded-sm border text-red-700 border-salmon-400 " + style
           }
         >
           {text}

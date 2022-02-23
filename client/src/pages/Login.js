@@ -5,7 +5,7 @@ import { apiClient } from "../utils/requests";
 
 function Login() {
   const [credentials, setCredentials] = useState({
-    identifier: "",
+    email: "",
     password: "",
     remember_me: false,
   });
@@ -22,7 +22,7 @@ function Login() {
   };
   const handleLoginRequest = (e) => {
     e.preventDefault();
-    apiClient.post("login", credentials).then((res) => {
+    apiClient.post("users/login", credentials).then((res) => {
       res.status === 200 && console.log(res);
     });
   };
@@ -70,12 +70,12 @@ function Login() {
               Login
             </span>
             <div className="data">
-              <b>Email or Phone</b>
+              <b>Email</b>
               <input
                 type="text"
-                name="identifier"
+                name="email"
                 autoComplete="username"
-                value={credentials.identifier}
+                value={credentials.email}
                 onChange={handleChange}
                 className="form-input"
                 required

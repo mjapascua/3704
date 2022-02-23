@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/Buttons/Main";
 import StatusMessage from "../components/StatusMessage";
 import { apiClient } from "../utils/requests";
+const emailUnavailableMessage = "Email is already taken";
 const phoneRegex = /^([0-9]{10})*$/;
 function SignUp() {
   const [credentials, setCredentials] = useState({
@@ -48,11 +49,25 @@ function SignUp() {
           text: err.response.data.message,
           status: err.response.status,
         });
+        if (err.response.data.message === emailUnavailableMessage) {
+          setProgress(2);
+        }
       });
   };
 
   const handlePasswordCheck = useCallback(() => {
-    if (progress !== 3) return;
+    if (credentials.password && credentials.password.length < 8) {
+      setStatus({
+        active: true,
+        text: "Password must be atleast 8 characters long",
+        status: 400,
+      });
+    } else {
+      setStatus((prev) => {
+        return { ...prev, active: false };
+      });
+    }
+
     if (
       credentials.password &&
       credentials.password_confirm &&
@@ -78,7 +93,7 @@ function SignUp() {
       });
       signUpBtn.current.disabled = false;
     }
-  }, [credentials.password, credentials.password_confirm, progress]);
+  }, [credentials.password, credentials.password_confirm]);
 
   const handlePhoneNumberCheck = (
     phoneNumber,
@@ -95,8 +110,8 @@ function SignUp() {
   };
 
   useEffect(() => {
-    handlePasswordCheck();
-  }, [handlePasswordCheck]);
+    if (progress === 3) handlePasswordCheck();
+  }, [handlePasswordCheck, progress]);
 
   return (
     <main className="w-screen h-screen flex">
