@@ -62,22 +62,29 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users/login
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, remember } = req.body;
 
   // Check for user email
   const user = await User.findOne({ email });
 
   if (user && (await bcrypt.compare(password, user.password))) {
+    const token = generateToken(user._id);
+
+    // Set token as cookie on response
+    const cookieConfig = remember && { maxAge: 30 * 24 * 3600 * 1000 };
+
+    res.cookie("_token", token, cookieConfig);
+
     res.json({
       _id: user.id,
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
-      token: generateToken(user._id),
+      token: token,
     });
   } else {
     res.status(400);
-    throw new Error("Invalid credentials");
+    throw new Error("Provided information does not match our records");
   }
 });
 

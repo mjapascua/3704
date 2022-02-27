@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
 import Home from "./pages/Home.js";
 import About from "./pages/About.js";
 import Bulletin from "./pages/Bulletin.js";
@@ -11,7 +13,6 @@ import Signup from "./pages/Signup";
 import { Dashboard } from "./pages/Dashboard";
 import { Contact } from "./pages/Contact";
 import UserHome from "./pages/UserHome";
-import axios from "axios";
 
 function App() {
   return (
@@ -47,22 +48,8 @@ function App() {
             </>
           }
         />
-        <Route
-          path="dashboard/*"
-          element={
-            <>
-              <Dashboard />
-            </>
-          }
-        />
-        <Route
-          path="user/*"
-          element={
-            <>
-              <UserHome />
-            </>
-          }
-        />
+        <Route path="dashboard/*" element={<Dashboard />} />
+        <Route path="user/*" element={<UserHome />} />
         <Route
           path="bulletin"
           element={
@@ -89,6 +76,7 @@ function App() {
           }
         />
       </Routes>
+      <ToastContainer theme="colored" hideProgressBar />
     </div>
   );
 }

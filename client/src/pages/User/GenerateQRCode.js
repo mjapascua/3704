@@ -17,6 +17,7 @@ const GenerateQRCode = () => {
         }}
         style={{ width: "100%" }}
       />
+      {data}
     </div>
   );
 };

@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Button } from "../components/Buttons/Main";
 import StatusMessage from "../components/StatusMessage";
+import { reset } from "../utils/authSlice";
 import { apiClient } from "../utils/requests";
 const emailUnavailableMessage = "Email is already taken";
-const phoneRegex = /^([0-9]{10})*$/;
+const phoneRegex = /^([0-9]{10})$/;
 function SignUp() {
   const [credentials, setCredentials] = useState({
     email: "",
@@ -16,17 +19,37 @@ function SignUp() {
     password_confirm: "",
   });
   const [progress, setProgress] = useState(1);
-  const [message, setStatus] = useState({
+  const [status, setStatus] = useState({
     active: false,
     text: "",
     status: null,
   });
-
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
   const signUpBtn = useRef();
 
   let from = location.state?.from?.pathname || "/";
+
+  useEffect(() => {
+    if (isError) {
+      setStatus({
+        active: true,
+        text: message,
+        status: 400,
+      });
+    }
+
+    if (isSuccess || user) {
+      setTimeout(() => {
+        navigate(from, { replace: true });
+      }, 200);
+    }
+    dispatch(reset());
+  }, [user, navigate, isError, message, dispatch]);
 
   const handleChange = ({ target }) => {
     setCredentials((prev) => {
@@ -288,7 +311,7 @@ function SignUp() {
                 </Button>
               </div>
             )}
-            <StatusMessage {...message} />
+            <StatusMessage {...status} />
             <span className="w-full mt-1 inline-block h-6 select-none relative text-lg text-meadow-600">
               {progress > 1 && (
                 <span

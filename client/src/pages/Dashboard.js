@@ -9,6 +9,9 @@ import {
 import ManageAccounts from "./Admin/ManageAccounts";
 import ManageBulletin from "./Admin/ManageBulletin";
 import AdminScanner from "./Admin/AdminScanner";
+import { Protected } from "../context/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { logout, reset } from "../utils/authSlice";
 
 const navStyle =
   "w-full flex text-sm items-center cursor-pointer  md:rounded-tl-md md:rounded-bl-md justify-center md:justify-start mb-4 py-5 px-8";
@@ -27,9 +30,28 @@ const routes = [
 export const Dashboard = () => {
   const [open, setOpen] = useState(false);
   const [style, setStyle] = useState("hidden " + sideMenuStyle);
-
   const [pageLabel, setLabel] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      console.log(message);
+    }
+
+    if (!user) {
+      navigate("/login");
+    }
+
+    return () => {
+      dispatch(reset());
+    };
+  }, [user, navigate, isError, message, dispatch]);
 
   const handleMenuClick = () => {
     if (open) {
@@ -106,8 +128,8 @@ export const DashboardNav = ({ handleMenuClick, pageLabel, open }) => {
 };
 
 export const Sidemenu = ({ style }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-
   return (
     <div className={style}>
       {routes.map((route) => {
@@ -126,7 +148,10 @@ export const Sidemenu = ({ style }) => {
         );
       })}
       <span
-        onClick={() => navigate("/", { replace: true })}
+        onClick={() => {
+          dispatch(logout());
+          navigate("/", { replace: true });
+        }}
         className={defStyle}
       >
         <span className="material-icons-sharp md:mr-5">logout</span>
