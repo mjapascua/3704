@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../Buttons/Main";
 import { NavItem } from "./NavItem";
@@ -8,9 +9,17 @@ const routes = [
   { to: "/about", label: "about" },
   { to: "/contact", label: "contact" },
 ];
+const userRoutes = [
+  { to: "/", label: "home" },
+  { to: "/bulletin", label: "bulletin" },
+  { to: "/about", label: "about" },
+  { to: "/contact", label: "contact" },
+];
 export const Navbar = React.memo(() => {
   const navigate = useNavigate();
   let location = useLocation();
+
+  const { user } = useSelector((state) => state.auth);
 
   return (
     <div className="px-7 py-3 sticky h-16 top-0 z-10 bg-gray-50 shadow-sm select-none flex justify-between">

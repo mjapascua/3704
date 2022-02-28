@@ -1,10 +1,7 @@
 import Cookies from "js-cookie";
-
-const { apiClient } = require("./requests");
+import { apiClient } from "./requests";
 
 export const userFromCookie = Cookies.get("_token");
-
-console.log(userFromCookie);
 
 export const authConfig = {
   headers: {

@@ -10,6 +10,7 @@ export const Button = React.forwardRef((props, ref) => {
         " font-display box-border select-none py-2 items-center justify-center font-semibold text-sm rounded-sm disabled:bg-gray-300 disabled:text-gray-700 disabled:border-gray-300"
       }
       ref={ref}
+      disabled={props.disabled}
     >
       <span
         className={

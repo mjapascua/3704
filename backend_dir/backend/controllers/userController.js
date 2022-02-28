@@ -1,3 +1,7 @@
+import md5 from "crypto-js/md5";
+import { response } from "express";
+import userModel from "../models/userModel";
+
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
@@ -71,9 +75,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const token = generateToken(user._id);
 
     // Set token as cookie on response
-    const cookieConfig = remember && { maxAge: 30 * 24 * 3600 * 1000 };
-
-    res.cookie("_token", token, cookieConfig);
+    res.cookie("_token", token, remember && { maxAge: 30 * 24 * 3600 * 1000 });
 
     res.json({
       _id: user.id,
@@ -109,6 +111,33 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
+};
+
+const options = {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+};
+
+const generateQRPass = (id, addString) => {
+  const currDate = new Date();
+  const dateString = currDate.toLocaleDateString("en-US", options);
+
+  const hashed = md5(id + addString + dateString);
+  userModel.findByIdAndUpdate(
+    id,
+    { $push: { accessStrings: hashed } },
+    { new: true, upsert: true },
+    function (err, raw) {
+      if (err) throw new Error(err);
+      else {
+        res.json(raw);
+        res.status(200);
+      }
+    }
+  );
 };
 
 module.exports = {
