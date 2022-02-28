@@ -1,12 +1,8 @@
-import md5 from "crypto-js/md5";
-import { response } from "express";
-import userModel from "../models/userModel";
-
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const md5 = require("crypto-js/md5");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
-
 // @desc    Register new user
 // @route   POST /api/users
 // @access  Public
@@ -123,7 +119,9 @@ const options = {
 
 const generateQRPass = (id, addString) => {
   const currDate = new Date();
-  const dateString = currDate.toLocaleDateString("en-US", options);
+  const dateString = currDate
+    .toLocaleDateString("en-US", options)
+    .replace(/[^0-9]/g, "");
 
   const hashed = md5(id + addString + dateString);
   userModel.findByIdAndUpdate(
