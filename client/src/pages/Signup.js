@@ -9,7 +9,7 @@ import { reset } from "../utils/authSlice";
 import { apiClient } from "../utils/requests";
 import { redirect } from "./Login";
 const emailUnavailableMessage = "Email is already taken";
-const phoneRegex = /^([0-9]{10})$/;
+export const phoneRegex = /^([0-9]{10})$/;
 function SignUp() {
   const [credentials, setCredentials] = useState({
     email: "",
@@ -309,13 +309,7 @@ function SignUp() {
                         required
                       />
                     </label>
-                    <Button
-                      type={"submit"}
-                      classes={
-                        "block mt-5 mb-5 w-full h-11 bg-meadow-600 text-white"
-                      }
-                      ref={signUpBtn}
-                    >
+                    <Button type={"submit"} primary ref={signUpBtn}>
                       SIGN UP
                     </Button>
                   </div>
@@ -377,9 +371,7 @@ function SignUp() {
                   Already a member?
                 </span>
                 <Button
-                  classes={
-                    "block w-full h-11 border border-meadow-700 text-meadow-700"
-                  }
+                  secondary
                   onClick={() => navigate("/login", { replace: true })}
                 >
                   LOG IN

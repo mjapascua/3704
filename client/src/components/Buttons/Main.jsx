@@ -1,5 +1,6 @@
 import React, { Children } from "react";
-
+const primaryClass = " w-full mb-5 h-11 bg-meadow-600 text-white ";
+const secondaryClass = " w-full h-11 border border-meadow-600 text-meadow-600 ";
 export const Button = React.forwardRef((props, ref) => {
   return (
     <button
@@ -7,7 +8,9 @@ export const Button = React.forwardRef((props, ref) => {
       onClick={props.onClick}
       className={
         props.classes +
-        " font-display box-border select-none py-2 items-center justify-center font-semibold text-sm rounded-sm disabled:bg-gray-300 disabled:text-gray-700 disabled:border-gray-300"
+        " font-display box-border select-none py-2 items-center justify-center font-semibold text-sm rounded-sm disabled:bg-gray-300 disabled:text-gray-700 disabled:border-gray-300" +
+        (props.primary && primaryClass) +
+        (props.secondary && secondaryClass)
       }
       ref={ref}
       disabled={props.disabled}

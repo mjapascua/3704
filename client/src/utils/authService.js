@@ -10,13 +10,13 @@ export const authConfig = {
 };
 
 const register = async (userData) => {
-  const response = await apiClient.post("users/", userData, authConfig);
+  const response = await apiClient.post("user/", userData, authConfig);
 
   return response.data;
 };
 
 const login = async (credentials) => {
-  const response = await apiClient.post("users/login", credentials, authConfig);
+  const response = await apiClient.post("user/login", credentials, authConfig);
 
   return response.data;
 };

@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const md5 = require("crypto-js/md5");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 // @desc    Register new user
@@ -75,10 +74,6 @@ const loginUser = asyncHandler(async (req, res) => {
 
     res.json({
       _id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-      token: token,
     });
   } else {
     res.status(400);
@@ -107,35 +102,6 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
-};
-
-const options = {
-  year: "numeric",
-  month: "numeric",
-  day: "numeric",
-  hour: "numeric",
-  minute: "numeric",
-};
-
-const generateQRPass = (id, addString) => {
-  const currDate = new Date();
-  const dateString = currDate
-    .toLocaleDateString("en-US", options)
-    .replace(/[^0-9]/g, "");
-
-  const hashed = md5(id + addString + dateString);
-  userModel.findByIdAndUpdate(
-    id,
-    { $push: { accessStrings: hashed } },
-    { new: true, upsert: true },
-    function (err, raw) {
-      if (err) throw new Error(err);
-      else {
-        res.json(raw);
-        res.status(200);
-      }
-    }
-  );
 };
 
 module.exports = {

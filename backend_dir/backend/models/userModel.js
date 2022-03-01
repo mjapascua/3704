@@ -36,11 +36,15 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "Please add a password"],
     },
-
-    accessStrings: {
+    guests: {
       type: Array,
+      data: {
+        accessString_id: { type: mongoose.Schema.Types.ObjectId },
+        ref: "GuestAccessString",
+      },
     },
   },
+
   {
     timestamps: true,
   }

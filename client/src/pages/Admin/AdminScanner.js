@@ -1,24 +1,55 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QrReader } from "react-qr-reader";
+import { toast } from "react-toastify";
 import { Button } from "../../components/Buttons/Main";
+import { authConfig } from "../../utils/authService";
+import { apiClient } from "../../utils/requests";
 
 const AdminScanner = () => {
-  const [scanner, setScanner] = useState({ open: false, data: "No result" });
+  const toastId = useRef(null);
+
+  const handleScanSuccess = (hash) => {
+    console.log("scanned");
+    apiClient
+      .post("user/scan", { hash: hash }, authConfig)
+      .then((res) => {
+        if (res.status === 200) {
+          toastId.current = toast.success(res.data.message, { autoClose: 100 });
+        }
+      })
+      .catch((err) => {
+        toastId.current = toast.error(err.response.data.message, {
+          autoClose: 200,
+        });
+      });
+  };
+
   return (
     <div className="w-full flex pt-16 md:pt-10 items-center h-full flex-col">
+      <QRScanner
+        handleScanSuccess={handleScanSuccess}
+        openOnRender={false}
+        toastId={toastId}
+      />
+    </div>
+  );
+};
+export const QRScanner = ({ handleScanSuccess, openOnRender, toastId }) => {
+  const [scanner, setScanner] = useState(openOnRender);
+
+  return (
+    <>
       <Button
         onClick={() =>
           setTimeout(() => {
-            setScanner((prev) => {
-              return { ...prev, open: !prev.open };
-            });
+            setScanner((prev) => !prev);
           }, 300)
         }
       >
-        {!scanner.open ? "Open scanner" : "Close"}
+        {!scanner ? "Open scanner" : "Close"}
       </Button>
       <div className=" w-80 mt-5 block md:py-9 py-7 px-3 md:px-5 rounded-lg relative mb-12 border-y-8 border-meadow-500">
-        {!scanner.open ? (
+        {!scanner ? (
           <span className="w-full h-60 block">
             Please allow to access device's camera
           </span>
@@ -26,18 +57,20 @@ const AdminScanner = () => {
           <QrReader
             onResult={(result, error) => {
               if (!!result) {
-                setScanner((prev) => {
-                  return { ...prev, data: result?.text };
-                });
+                if (!toast.isActive(toastId.current)) {
+                  handleScanSuccess(result?.text);
+                }
+              }
+              if (error) {
+                toast.error(error);
               }
             }}
+            scanDelay={100}
             constraints={{ facingMode: "environment", height: 100, width: 100 }}
           />
         )}
       </div>
-      <span>{scanner.data}</span>
-    </div>
+    </>
   );
 };
-
 export default AdminScanner;

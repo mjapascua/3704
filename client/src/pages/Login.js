@@ -150,18 +150,16 @@ function Login() {
                   <Button
                     disabled={!(credentials.email && credentials.password)}
                     type={"submit"}
-                    classes={"block w-full mb-5 h-11 bg-meadow-600 text-white"}
+                    primary
                   >
                     LOGIN
-                  </Button>{" "}
+                  </Button>
                   <span className="border-b border-gray-300 mb-4 block w-full"></span>
                   <span className="w-fit block mx-auto mb-4">
                     Not a member?
                   </span>
                   <Button
-                    classes={
-                      "block w-full h-11 border border-meadow-600 text-meadow-600"
-                    }
+                    secondary
                     onClick={() => navigate("/signup", { replace: true })}
                   >
                     SIGN UP
