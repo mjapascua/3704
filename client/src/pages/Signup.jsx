@@ -36,7 +36,7 @@ function SignUp() {
   );
   const signUpBtn = useRef();
 
-  let from = location.state?.from?.pathname || "/";
+  let from = location.state?.from?.pathname || "/account";
 
   useEffect(() => {
     if (isError) {

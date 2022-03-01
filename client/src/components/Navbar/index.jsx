@@ -27,30 +27,42 @@ export const Navbar = React.memo(() => {
         menu
       </span>
       <span className="my-auto px-4  font-bold">LOGO</span>
-      <span>
-        <span className="w-fit mr-8 hidden md:inline-flex">
+      <span className="flex justify-center">
+        <span className="w-fit mr-8 justify-center hidden md:inline-flex">
           {routes.map((route) => (
             <NavItem route={route} key={route.label} />
           ))}
         </span>
 
-        <span>
-          <Button
-            onClick={() =>
-              navigate("/signup", { replace: true, state: { from: location } })
-            }
+        {!user ? (
+          <span>
+            <Button
+              onClick={() =>
+                navigate("/signup", {
+                  replace: true,
+                  state: { from: location },
+                })
+              }
+            >
+              Join us
+            </Button>
+            <Button
+              onClick={() =>
+                navigate("/login", { replace: true, state: { from: location } })
+              }
+              classes=" ml-1 text-white bg-meadow-600 transition-color"
+            >
+              Login
+            </Button>
+          </span>
+        ) : (
+          <span
+            onClick={() => navigate("account")}
+            className="material-icons-sharp text-4xl cursor-pointer"
           >
-            Join us
-          </Button>
-          <Button
-            onClick={() =>
-              navigate("/login", { replace: true, state: { from: location } })
-            }
-            classes=" ml-1 text-white bg-meadow-600 transition-color"
-          >
-            Login
-          </Button>
-        </span>
+            account_circle
+          </span>
+        )}
       </span>
     </div>
   );

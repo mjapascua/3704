@@ -1,6 +1,7 @@
 import React, { Children } from "react";
-const primaryClass = " w-full mb-5 h-11 bg-meadow-600 text-white ";
-const secondaryClass = " w-full h-11 border border-meadow-600 text-meadow-600 ";
+const primaryClass = " w-full mb-5 min-h-11 bg-meadow-600 text-white ";
+const secondaryClass =
+  " w-full min-h-11 border border-meadow-600 text-meadow-600 ";
 export const Button = React.forwardRef((props, ref) => {
   return (
     <button

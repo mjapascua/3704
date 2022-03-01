@@ -9,7 +9,6 @@ import {
 import ManageAccounts from "./Admin/ManageAccounts";
 import ManageBulletin from "./Admin/ManageBulletin";
 import AdminScanner from "./Admin/AdminScanner";
-import { Protected } from "../context/AuthContext";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, reset } from "../utils/authSlice";
 
@@ -27,7 +26,7 @@ const routes = [
   { to: "/dashboard/accounts", label: "Accounts", icon: "manage_accounts" },
 ];
 
-export const Dashboard = () => {
+const Dashboard = () => {
   const [open, setOpen] = useState(false);
   const [style, setStyle] = useState("hidden " + sideMenuStyle);
   const [pageLabel, setLabel] = useState(false);
@@ -160,3 +159,4 @@ export const Sidemenu = ({ style }) => {
     </div>
   );
 };
+export default Dashboard;

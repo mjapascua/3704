@@ -29,7 +29,7 @@ function Login() {
     (state) => state.auth
   );
 
-  const from = location.state?.from?.pathname || "/dashboard";
+  const from = location.state?.from?.pathname || "/account";
 
   useEffect(() => {
     if (isError) {

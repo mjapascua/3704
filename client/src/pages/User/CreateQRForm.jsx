@@ -9,7 +9,7 @@ import { apiClient } from "../../utils/requests";
 import { phoneRegex } from "../Signup";
 import GenerateQRCode from "./GenerateQRCode";
 
-const CreateQRForm = () => {
+const CreateQRForm = ({ handleReturn }) => {
   const [qr, setQR] = useState(null);
   const [status, setStatus] = useState({
     active: false,
@@ -74,6 +74,12 @@ const CreateQRForm = () => {
 
   return (
     <div className=" mx-auto w-fit bg-white py-6 px-10">
+      <span
+        onClick={handleReturn}
+        className="material-icons-sharp flex items-center justify-center rounded-full border-2 h-10 w-10  text-slate-700 border-slate-700 cursor-pointer text-2xl"
+      >
+        arrow_back
+      </span>
       {!qr ? (
         <>
           <span className="my-auto text-lg text-meadow-600 block pb-3 font-bold">
@@ -150,11 +156,8 @@ const CreateQRForm = () => {
           </form>
         </>
       ) : (
-        <div className="w-full flex pt-16 md:pt-10 items-center h-full flex-col">
-          <span className="material-icons-sharp flex items-center justify-center rounded-full border-2 h-10 w-10  text-slate-700 border-slate-700 cursor-pointer text-2xl">
-            arrow_back
-          </span>
-          <div className=" w-80 mt-5 block md:py-9 py-7 px-3 md:px-5 relative mb-12">
+        <div className="w-full flex items-center h-full flex-col">
+          <div className=" w-80 block md:py-9 py-7 px-3 md:px-5 relative mb-12">
             <GenerateQRCode
               text={qr}
               name={data.first_name + " " + data.last_name}

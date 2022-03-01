@@ -3,16 +3,19 @@ import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
-import Home from "./pages/Home.js";
-import About from "./pages/About.js";
-import Bulletin from "./pages/Bulletin.js";
-import { Navbar } from "./components/Navbar";
-import { Footer } from "./components/Footer";
+
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Bulletin from "./pages/Bulletin";
+import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import { Dashboard } from "./pages/Dashboard";
-import { Contact } from "./pages/Contact";
-import UserHome from "./pages/UserHome";
+
+import Dashboard from "./pages/Dashboard";
+import Account from "./pages/Account";
+
+import { Navbar } from "./components/Navbar";
+import { Footer } from "./components/Footer";
 
 function App() {
   return (
@@ -49,7 +52,7 @@ function App() {
           }
         />
         <Route path="dashboard/*" element={<Dashboard />} />
-        <Route path="user/*" element={<UserHome />} />
+        <Route path="account/*" element={<Account />} />
         <Route
           path="bulletin"
           element={
