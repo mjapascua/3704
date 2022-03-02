@@ -22,6 +22,14 @@
   }
 }
 
+.fc {
+  max-height: 80vh;
+}
+.fc button {
+  background-color: theme("colors.gray.600") !important;
+  border: none !important;
+  margin-left: 0.25rem !important;
+}
 /* ICONS */
 .white-fill {
   fill: invert(100%) sepia(0%) saturate(4310%) hue-rotate(35deg)

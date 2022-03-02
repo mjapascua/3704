@@ -5,6 +5,7 @@ import { Button } from "../components/Buttons/Main";
 import { Navbar } from "../components/Navbar";
 import { reset } from "../utils/authSlice";
 import CreateQRForm from "./User/CreateQRForm";
+import EventsCalendar from "./User/EventsCalendar";
 
 const Account = () => {
   const navigate = useNavigate();
@@ -58,26 +59,30 @@ const Account = () => {
             Create visitor pass
             <span className="material-icons-sharp text-3xl">qr_code</span>
           </Button>
-          <Button primary classes={"mb-5"}>
+          {/*  <Button primary classes={"mb-5"}>
             Dues
             <span className="material-icons-sharp text-3xl">payment</span>
           </Button>
           <Button primary classes={"mb-5"}>
             Message
             <span className="material-icons-sharp text-3xl">forum</span>
-          </Button>
-          <Button primary classes={"mb-5"}>
+          </Button> */}
+          <Button primary onClick={() => navigate("calendar")} classes={"mb-5"}>
             Calendar
             <span className="material-icons-sharp text-3xl">
               calendar_month
             </span>
           </Button>
         </span>
-        <div className="bg-white w-full">
+        <div className="bg-white w-full px-10 py-5">
           <Routes>
             <Route
               path="/generate-qr-pass"
               element={<CreateQRForm authConfig={authConfig} />}
+            />
+            <Route
+              path="/calendar"
+              element={<EventsCalendar authConfig={authConfig} />}
             />
           </Routes>
         </div>
