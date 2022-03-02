@@ -1,20 +1,32 @@
+import { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../components/Buttons/Main";
 import { Navbar } from "../components/Navbar";
 import { reset } from "../utils/authSlice";
+import { apiClient } from "../utils/requests";
 import CreateQRForm from "./User/CreateQRForm";
 import EventsCalendar from "./User/EventsCalendar";
 
 const Account = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation();
-
+  const [userData, setUserData] = useState(null);
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   );
+  const authConfig = {
+    headers: {
+      Authorization: "Bearer " + user,
+    },
+  };
+
+  const reqUserInfo = () => {
+    apiClient.get("user/me", authConfig).then((res) => {
+      setUserData(res.data);
+    });
+  };
 
   useEffect(() => {
     if (isError) {
@@ -31,14 +43,9 @@ const Account = () => {
   }, [user, navigate, isError, message, dispatch]);
 
   useEffect(() => {
+    reqUserInfo();
     document.title = "Account | Community";
   }, []);
-
-  const authConfig = {
-    headers: {
-      Authorization: "Bearer " + user,
-    },
-  };
 
   return (
     <div className="w-full flex h-screen flex-col box-border">
@@ -76,6 +83,7 @@ const Account = () => {
         </span>
         <div className="bg-white w-full px-10 py-5">
           <Routes>
+            <Route path="/" element={<UserAccount userData={userData} />} />
             <Route
               path="/generate-qr-pass"
               element={<CreateQRForm authConfig={authConfig} />}
@@ -90,5 +98,20 @@ const Account = () => {
     </div>
   );
 };
-
+const UserAccount = ({ userData }) => {
+  return (
+    userData && (
+      <div>
+        {Object.keys(userData).map((key) => {
+          return (
+            <span key={key} className="block capitalize">
+              <b>{key.split("_").join(" ") + ": "}</b>
+              {userData[key]}
+            </span>
+          );
+        })}
+      </div>
+    )
+  );
+};
 export default Account;

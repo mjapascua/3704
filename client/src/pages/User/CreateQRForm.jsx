@@ -73,7 +73,7 @@ const CreateQRForm = ({ authConfig }) => {
   }, [handlePhoneNumCheck]);
 
   return (
-    <div className=" w-full px-10 py-5">
+    <div className="w-full">
       {!qr ? (
         <>
           <span className="my-auto text-lg text-meadow-600 block pb-3 font-bold">

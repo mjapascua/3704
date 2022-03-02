@@ -3,7 +3,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 
 const EventsCalendar = () => {
   return (
-    <div className=" p-3 flex">
+    <div className="flex">
       <div className="w-full h-scrn-8 block">
         <FullCalendar plugins={[dayGridPlugin]} initialView="dayGridMonth" />
       </div>
