@@ -103,12 +103,30 @@ const UserAccount = ({ userData }) => {
     userData && (
       <div>
         {Object.keys(userData).map((key) => {
-          return (
-            <span key={key} className="block capitalize">
-              <b>{key.split("_").join(" ") + ": "}</b>
-              {userData[key]}
-            </span>
-          );
+          if (userData[key] instanceof Array) {
+            return (
+              <span key={key}>
+                <span key={key} className="block ">
+                  <b>{"Guests : "}</b>
+                </span>
+                <span className="h-80 block overflow-auto">
+                  {userData[key].map((el, index) => {
+                    return (
+                      <span key={index} className="block ">
+                        {el.first_name + " " + el.last_name}
+                      </span>
+                    );
+                  })}
+                </span>
+              </span>
+            );
+          } else
+            return (
+              <span key={key} className="block ">
+                <b className="capitalize">{key.split("_").join(" ") + ": "}</b>
+                {userData[key]}
+              </span>
+            );
         })}
       </div>
     )
