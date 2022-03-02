@@ -17,6 +17,11 @@ const requestGuestQR = asyncHandler(async (req, res) => {
     throw new Error("Invalid phone number");
   }
 
+  const hashExists = GuestAccessString.findOne({ hash: hash });
+  if (hashExists) {
+    res.status(200).json({ hash: hash });
+  }
+
   const guestAccess = await GuestAccessString.create({
     hash,
     patron_id: req.user.id,

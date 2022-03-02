@@ -3,20 +3,14 @@ import { apiClient } from "./requests";
 
 export const userFromCookie = Cookies.get("_token");
 
-export const authConfig = {
-  headers: {
-    Authorization: "Bearer " + userFromCookie,
-  },
-};
-
 const register = async (userData) => {
-  const response = await apiClient.post("user/", userData, authConfig);
+  const response = await apiClient.post("user/", userData);
 
   return response.data;
 };
 
 const login = async (credentials) => {
-  const response = await apiClient.post("user/login", credentials, authConfig);
+  const response = await apiClient.post("user/login", credentials);
 
   return response.data;
 };

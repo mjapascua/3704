@@ -77,6 +77,10 @@ const Dashboard = () => {
     setHeader();
   }, [location]);
 
+  useEffect(() => {
+    document.title = "Admin dashboard";
+  }, []);
+
   return (
     <div className=" font-display">
       <DashboardNav

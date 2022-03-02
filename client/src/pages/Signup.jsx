@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { Button } from "../components/Buttons/Main";
+import { ReturnButton } from "../components/Buttons/Return";
 import Loading from "../components/Loading/Loading";
 import StatusMessage from "../components/StatusMessage";
 import { reset } from "../utils/authSlice";
@@ -31,12 +31,15 @@ function SignUp() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { user, isLoading, isError, isSuccess, message } = useSelector(
+  const { user, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   );
   const signUpBtn = useRef();
 
-  let from = location.state?.from?.pathname || "/account";
+  const from =
+    (location.state?.from?.pathname === "/"
+      ? "/account"
+      : location.state?.from?.pathname) || "/";
 
   useEffect(() => {
     if (isError) {
@@ -137,10 +140,11 @@ function SignUp() {
   useEffect(() => {
     if (progress === 3) handlePasswordCheck();
   }, [handlePasswordCheck, progress]);
-
+  useEffect(() => {
+    document.title = "Login or Sign up";
+  }, []);
   return (
     <main className="w-screen h-screen flex">
-      {" "}
       {redir ? (
         <div className="w-full">
           <Loading text={"Authenticated, now redirecting"} />
@@ -162,12 +166,7 @@ function SignUp() {
               className="text
               w-full border-b pb-5 border-gray-300 mb-5"
             >
-              <span
-                onClick={() => navigate(from, { replace: true })}
-                className="material-icons-sharp flex items-center justify-center rounded-full border-2 h-10 w-10  text-slate-700 border-slate-700 cursor-pointer text-2xl"
-              >
-                arrow_back
-              </span>
+              <ReturnButton />
               <span className="my-auto w-full text-center block font-bold">
                 LOGO
               </span>

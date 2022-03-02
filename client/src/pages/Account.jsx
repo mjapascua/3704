@@ -2,10 +2,11 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../components/Buttons/Main";
+import { Navbar } from "../components/Navbar";
 import { reset } from "../utils/authSlice";
 import CreateQRForm from "./User/CreateQRForm";
 
-const UserHome = () => {
+const Account = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -13,10 +14,6 @@ const UserHome = () => {
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   );
-
-  const from = location.state?.from?.pathname || "/account";
-
-  const handleReturn = () => navigate(from, { replace: true });
 
   useEffect(() => {
     if (isError) {
@@ -32,23 +29,61 @@ const UserHome = () => {
     };
   }, [user, navigate, isError, message, dispatch]);
 
-  return (
-    <div className="w-screen">
-      <span className=" w-64 block">
-        <Button secondary onClick={() => navigate("generate-qr-pass")}>
-          Create visitor pass
-          <span className="material-icons-sharp text-4xl">qr_code</span>
-        </Button>
-      </span>
+  useEffect(() => {
+    document.title = "Account | Community";
+  }, []);
 
-      <Routes>
-        <Route
-          path="/generate-qr-pass"
-          element={<CreateQRForm handleReturn={handleReturn} />}
-        />
-      </Routes>
+  const authConfig = {
+    headers: {
+      Authorization: "Bearer " + user,
+    },
+  };
+
+  return (
+    <div className="w-full flex h-screen flex-col box-border">
+      <Navbar />
+      <div className="flex h-full">
+        <span className=" w-80 block p-4 h-64 md:h-full bg-meadow-800">
+          <Button primary onClick={() => navigate("/account")} classes={"mb-5"}>
+            My account
+            <span className="material-icons-sharp text-3xl">
+              manage_accounts
+            </span>
+          </Button>
+          <Button
+            primary
+            onClick={() => navigate("generate-qr-pass")}
+            classes={"mb-5"}
+          >
+            Create visitor pass
+            <span className="material-icons-sharp text-3xl">qr_code</span>
+          </Button>
+          <Button primary classes={"mb-5"}>
+            Dues
+            <span className="material-icons-sharp text-3xl">payment</span>
+          </Button>
+          <Button primary classes={"mb-5"}>
+            Message
+            <span className="material-icons-sharp text-3xl">forum</span>
+          </Button>
+          <Button primary classes={"mb-5"}>
+            Calendar
+            <span className="material-icons-sharp text-3xl">
+              calendar_month
+            </span>
+          </Button>
+        </span>
+        <div className="bg-white w-full">
+          <Routes>
+            <Route
+              path="/generate-qr-pass"
+              element={<CreateQRForm authConfig={authConfig} />}
+            />
+          </Routes>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default UserHome;
+export default Account;

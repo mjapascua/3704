@@ -5,6 +5,7 @@ import { Button } from "../components/Buttons/Main";
 import { toast } from "react-toastify";
 import { login, reset } from "../utils/authSlice";
 import Loading from "../components/Loading/Loading";
+import { ReturnButton } from "../components/Buttons/Return";
 
 export const redirect = (renderLoading, navigate, from) => {
   renderLoading(true);
@@ -29,7 +30,12 @@ function Login() {
     (state) => state.auth
   );
 
-  const from = location.state?.from?.pathname || "/account";
+  const from =
+    (location.state?.from?.pathname === "/"
+      ? "/account"
+      : location.state?.from?.pathname) || "/";
+
+  console.log(from);
 
   useEffect(() => {
     if (isError) {
@@ -51,7 +57,9 @@ function Login() {
     e.preventDefault();
     dispatch(login(credentials));
   };
-
+  useEffect(() => {
+    document.title = "Login or Sign up";
+  }, []);
   return (
     <main className="w-screen h-screen flex">
       {redir ? (
@@ -75,12 +83,7 @@ function Login() {
               className="text
               w-full border-b pb-5 border-gray-300 mb-5"
             >
-              <span
-                onClick={() => navigate(from, { replace: true })}
-                className="material-icons-sharp flex items-center justify-center rounded-full border-2 h-10 w-10  text-slate-700 border-slate-700 cursor-pointer text-2xl"
-              >
-                arrow_back
-              </span>
+              <ReturnButton />
               <span className="my-auto w-full text-center block font-bold">
                 LOGO
               </span>

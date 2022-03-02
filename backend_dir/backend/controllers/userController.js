@@ -44,13 +44,7 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    res.status(201).json({
-      _id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-      token: generateToken(user._id),
-    });
+    res.status(201).json(generateToken(user._id));
   } else {
     res.status(400);
     throw new Error("Invalid User Data");
@@ -72,9 +66,7 @@ const loginUser = asyncHandler(async (req, res) => {
     // Set token as cookie on response
     res.cookie("_token", token, remember && { maxAge: 30 * 24 * 3600 * 1000 });
 
-    res.json({
-      _id: user.id,
-    });
+    res.json(token);
   } else {
     res.status(400);
     throw new Error("Provided information does not match our records");

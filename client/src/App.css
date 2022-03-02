@@ -7,7 +7,7 @@
     theme("colors.gray.600"),
     theme("colors.gray.600")
   );
-  background-size: 80% 3px;
+  background-size: 100% 3px;
   background-repeat: no-repeat;
   background-position: bottom left;
   animation: expand-bgImg 0.15s linear;
@@ -18,7 +18,7 @@
     background-size: 10% 3px;
   }
   100% {
-    background-size: 80% 3px;
+    background-size: 100% 3px;
   }
 }
 

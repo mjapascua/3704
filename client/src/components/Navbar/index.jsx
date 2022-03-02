@@ -27,7 +27,7 @@ export const Navbar = React.memo(() => {
         menu
       </span>
       <span className="my-auto px-4  font-bold">LOGO</span>
-      <span className="flex justify-center">
+      <span className="flex items-center">
         <span className="w-fit mr-8 justify-center hidden md:inline-flex">
           {routes.map((route) => (
             <NavItem route={route} key={route.label} />
@@ -57,8 +57,8 @@ export const Navbar = React.memo(() => {
           </span>
         ) : (
           <span
-            onClick={() => navigate("account")}
-            className="material-icons-sharp text-4xl cursor-pointer"
+            onClick={() => navigate("/account")}
+            className="material-icons-sharp text-meadow-600 text-4xl cursor-pointer"
           >
             account_circle
           </span>

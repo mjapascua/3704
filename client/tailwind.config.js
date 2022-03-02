@@ -52,7 +52,7 @@ module.exports = {
       },
       height: {
         "scrn-8": "80vh",
-        "scrn-8.5": "85vh",
+        "scrn-9": "90vh",
       },
       boxShadow: {
         sprd: "0 3px 10px rgb(0 0 0 / 0.11)",
