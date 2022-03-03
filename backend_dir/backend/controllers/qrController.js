@@ -17,32 +17,32 @@ const requestGuestQR = asyncHandler(async (req, res) => {
     throw new Error("Invalid phone number");
   }
 
-  const hashExists = GuestAccessString.findOne({ hash: hash });
+  const hashExists = await GuestAccessString.findOne({ hash: hash });
   if (hashExists) {
-    res.status(200).json({ hash: hash });
+    res.status(200).json({ hash: hash, exists: true });
+  } else {
+    const guestAccess = await GuestAccessString.create({
+      hash,
+      patron_id: req.user.id,
+    });
+
+    if (!guestAccess) {
+      res.status(400);
+      throw new Error("QR registration failed");
+    }
+
+    const update = await User.findByIdAndUpdate(req.user.id, {
+      $push: {
+        guests: { ...req.body, accessString_id: guestAccess._id },
+      },
+    });
+
+    if (!update) {
+      res.status(400);
+      throw new Error("Guest entry failed");
+    }
+    res.status(201).json({ hash: hash });
   }
-
-  const guestAccess = await GuestAccessString.create({
-    hash,
-    patron_id: req.user.id,
-  });
-
-  if (!guestAccess) {
-    res.status(400);
-    throw new Error("QR registration failed");
-  }
-
-  const update = await User.findByIdAndUpdate(req.user.id, {
-    $push: {
-      guests: { ...req.body, accessString_id: guestAccess._id },
-    },
-  });
-
-  if (!update) {
-    res.status(400);
-    throw new Error("Guest entry failed");
-  }
-  res.status(201).json({ hash: hash });
 });
 
 const checkQR = asyncHandler(async (req, res) => {
