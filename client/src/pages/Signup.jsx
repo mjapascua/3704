@@ -5,7 +5,7 @@ import { Button } from "../components/Buttons/Main";
 import { ReturnButton } from "../components/Buttons/Return";
 import Loading from "../components/Loading/Loading";
 import StatusMessage from "../components/StatusMessage";
-import { reset } from "../utils/authSlice";
+import { register, reset } from "../utils/authSlice";
 import { apiClient } from "../utils/requests";
 import { redirect } from "./Login";
 const emailUnavailableMessage = "Email is already taken";
@@ -22,7 +22,6 @@ function SignUp() {
   });
   const [progress, setProgress] = useState(1);
   const [status, setStatus] = useState({
-    active: false,
     text: "",
     status: null,
   });
@@ -44,7 +43,6 @@ function SignUp() {
   useEffect(() => {
     if (isError) {
       setStatus({
-        active: true,
         text: message,
         status: 400,
       });
@@ -63,21 +61,14 @@ function SignUp() {
   };
   const handleSignUpRequest = (e) => {
     e.preventDefault();
-
-    apiClient
-      .post("users/", credentials)
-      .then((res) => {
-        if (res.status === 200) {
-          console.log(res);
-        }
-      })
-      .catch((err) => {
+    dispatch(register(credentials))
+      .unwrap()
+      .catch((errMess) => {
         setStatus({
-          active: true,
-          text: err.response.data.message,
-          status: err.response.status,
+          text: errMess,
+          status: 400,
         });
-        if (err.response.data.message === emailUnavailableMessage) {
+        if (errMess === emailUnavailableMessage) {
           setProgress(2);
         }
       });
@@ -86,13 +77,12 @@ function SignUp() {
   const handlePasswordCheck = useCallback(() => {
     if (credentials.password && credentials.password.length < 8) {
       setStatus({
-        active: true,
         text: "Password must be atleast 8 characters long",
         status: 400,
       });
     } else {
       setStatus((prev) => {
-        return { ...prev, active: false };
+        return { text: "" };
       });
     }
 
@@ -102,7 +92,6 @@ function SignUp() {
       credentials.password !== credentials.password_confirm
     ) {
       setStatus({
-        active: true,
         text: "Password does not match",
         status: 400,
       });
@@ -115,7 +104,6 @@ function SignUp() {
       signUpBtn.current.disabled = true;
     } else {
       setStatus({
-        active: false,
         text: "",
         status: 200,
       });
@@ -255,13 +243,11 @@ function SignUp() {
                                 e.target.value,
                                 () =>
                                   setStatus({
-                                    active: false,
                                     text: "",
                                     status: 200,
                                   }),
                                 () =>
                                   setStatus({
-                                    active: true,
                                     text: "Invalid phone number",
                                     status: 400,
                                   })

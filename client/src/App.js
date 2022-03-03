@@ -52,7 +52,15 @@ function App() {
           }
         />
         <Route path="dashboard/*" element={<Dashboard />} />
-        <Route path="account/*" element={<Account />} />
+        <Route
+          path="account/*"
+          element={
+            <div className="w-full flex h-screen flex-col box-border">
+              <Navbar />
+              <Account />
+            </div>
+          }
+        />
         <Route
           path="bulletin"
           element={

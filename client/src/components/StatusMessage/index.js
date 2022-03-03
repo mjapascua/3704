@@ -1,6 +1,6 @@
 import React from "react";
 const defClass = " w-full flex items-center h-7 px-2 ";
-const StatusMessage = ({ active, text, status, className }) => {
+const StatusMessage = ({ text, status, className }) => {
   let style = className + defClass;
   if (status >= 200 && status <= 299) {
     style = style + " bg-emerald-500";
@@ -8,7 +8,7 @@ const StatusMessage = ({ active, text, status, className }) => {
 
   return (
     <>
-      {active ? (
+      {text ? (
         <span
           className={
             "rounded-sm border text-red-700 border-salmon-400 " + style

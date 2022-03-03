@@ -48,25 +48,21 @@ const Account = () => {
   }, []);
 
   return (
-    <div className="w-full flex h-screen flex-col box-border">
-      <Navbar />
-      <div className="flex h-full">
-        <span className=" w-80 block p-4 h-64 md:h-full bg-meadow-800">
-          <Button primary onClick={() => navigate("/account")} classes={"mb-5"}>
-            My account
-            <span className="material-icons-sharp text-3xl">
-              manage_accounts
-            </span>
-          </Button>
-          <Button
-            primary
-            onClick={() => navigate("generate-qr-pass")}
-            classes={"mb-5"}
-          >
-            Create visitor pass
-            <span className="material-icons-sharp text-3xl">qr_code</span>
-          </Button>
-          {/*  <Button primary classes={"mb-5"}>
+    <div className="flex h-full">
+      <span className=" w-80 block p-4 h-64 md:h-full bg-meadow-800">
+        <Button primary onClick={() => navigate("/account")} classes={"mb-5"}>
+          My account
+          <span className="material-icons-sharp text-3xl">manage_accounts</span>
+        </Button>
+        <Button
+          primary
+          onClick={() => navigate("generate-qr-pass")}
+          classes={"mb-5"}
+        >
+          Create visitor pass
+          <span className="material-icons-sharp text-3xl">qr_code</span>
+        </Button>
+        {/*  <Button primary classes={"mb-5"}>
             Dues
             <span className="material-icons-sharp text-3xl">payment</span>
           </Button>
@@ -74,26 +70,23 @@ const Account = () => {
             Message
             <span className="material-icons-sharp text-3xl">forum</span>
           </Button> */}
-          <Button primary onClick={() => navigate("calendar")} classes={"mb-5"}>
-            Calendar
-            <span className="material-icons-sharp text-3xl">
-              calendar_month
-            </span>
-          </Button>
-        </span>
-        <div className="bg-white w-full px-10 py-5">
-          <Routes>
-            <Route path="/" element={<UserAccount userData={userData} />} />
-            <Route
-              path="/generate-qr-pass"
-              element={<CreateQRForm authConfig={authConfig} />}
-            />
-            <Route
-              path="/calendar"
-              element={<EventsCalendar authConfig={authConfig} />}
-            />
-          </Routes>
-        </div>
+        <Button primary onClick={() => navigate("calendar")} classes={"mb-5"}>
+          Calendar
+          <span className="material-icons-sharp text-3xl">calendar_month</span>
+        </Button>
+      </span>
+      <div className="bg-white w-full px-10 py-5">
+        <Routes>
+          <Route path="/" element={<UserAccount userData={userData} />} />
+          <Route
+            path="/generate-qr-pass"
+            element={<CreateQRForm authConfig={authConfig} />}
+          />
+          <Route
+            path="/calendar"
+            element={<EventsCalendar authConfig={authConfig} />}
+          />
+        </Routes>
       </div>
     </div>
   );
