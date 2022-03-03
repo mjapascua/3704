@@ -106,7 +106,7 @@ const UserAccount = ({ userData }) => {
           if (userData[key] instanceof Array) {
             return (
               <span key={key}>
-                <span key={key} className="block ">
+                <span className="block ">
                   <b>{"Guests : "}</b>
                 </span>
                 <span className="h-80 block overflow-auto">
