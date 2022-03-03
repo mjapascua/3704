@@ -80,9 +80,7 @@ function SignUp() {
         status: 400,
       });
     } else {
-      setStatus((prev) => {
-        return { text: "" };
-      });
+      setStatus({ text: "" });
     }
 
     if (

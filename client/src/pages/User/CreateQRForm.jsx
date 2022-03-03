@@ -101,22 +101,29 @@ const CreateQRForm = ({ authConfig }) => {
                   value={data.last_name}
                   className="form-input"
                   onChange={handleChange}
-                  placeholder="Enter lirst name"
+                  placeholder="Enter last name"
                   required
                 />
               </label>
-              <label>
-                Phone number
-                <input
-                  type="text"
-                  name="phone_number"
-                  value={data.phone_number}
-                  onChange={handleChange}
-                  className="form-input"
-                  placeholder="+63"
-                  required
-                />
-              </label>
+              <div className=" relative">
+                <label>
+                  Phone
+                  <span className="flex">
+                    <span className="px-1 mr-2 py-4 text-base inline-block">
+                      <>+63</>
+                    </span>
+                    <input
+                      type="text"
+                      name="phone_number"
+                      onChange={handleChange}
+                      value={data.phone_number}
+                      className="form-input !inline-block"
+                      placeholder="9*********"
+                      required
+                    />
+                  </span>
+                </label>
+              </div>
               <label>
                 Address
                 <input
