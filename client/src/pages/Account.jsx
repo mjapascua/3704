@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../components/Buttons/Main";
 import { Navbar } from "../components/Navbar";
-import { reset } from "../utils/authSlice";
+import { logout, reset } from "../utils/authSlice";
 import { apiClient } from "../utils/requests";
 import CreateQRForm from "./User/CreateQRForm";
 import EventsCalendar from "./User/EventsCalendar";
@@ -62,6 +62,7 @@ const Account = () => {
           Create visitor pass
           <span className="material-icons-sharp text-3xl">qr_code</span>
         </Button>
+
         {/*  <Button primary classes={"mb-5"}>
             Dues
             <span className="material-icons-sharp text-3xl">payment</span>
@@ -73,6 +74,17 @@ const Account = () => {
         <Button primary onClick={() => navigate("calendar")} classes={"mb-5"}>
           Calendar
           <span className="material-icons-sharp text-3xl">calendar_month</span>
+        </Button>
+        <Button
+          primary
+          onClick={() => {
+            dispatch(logout());
+            navigate("/", { replace: true });
+          }}
+          classes={"mb-5"}
+        >
+          Logout
+          <span className="material-icons-sharp text-3xl">logout</span>
         </Button>
       </span>
       <div className="bg-white w-full px-10 py-5">
