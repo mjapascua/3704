@@ -15,7 +15,7 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       required: [true, "Please add an email"],
-      unique: true,
+      unique: [true, "Email is already taken"],
     },
 
     phone_number: {
@@ -24,7 +24,6 @@ const userSchema = mongoose.Schema(
       minLength: 10,
       maxLength: 10,
       required: [true, "Please add a phone number"],
-      unique: true,
     },
 
     residence: {
@@ -36,6 +35,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "Please add a password"],
     },
+
     guests: {
       type: Array,
       data: {

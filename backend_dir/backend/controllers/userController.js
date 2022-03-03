@@ -44,7 +44,8 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    res.status(201).json(generateToken(user._id));
+    const token = generateToken(user._id);
+    res.cookie("_token", token).status(201).json(token);
   } else {
     res.status(400);
     throw new Error("Invalid User Data");
