@@ -6,7 +6,6 @@ import { ReturnButton } from "../components/Buttons/Return";
 import Loading from "../components/Loading/Loading";
 import StatusMessage from "../components/StatusMessage";
 import { register, reset } from "../utils/authSlice";
-import { apiClient } from "../utils/requests";
 import { redirect } from "./Login";
 const emailUnavailableMessage = "Email is already taken";
 export const phoneRegex = /^([0-9]{10})$/;

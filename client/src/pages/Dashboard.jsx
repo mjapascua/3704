@@ -37,6 +37,11 @@ const Dashboard = () => {
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   );
+  const authConfig = {
+    headers: {
+      Authorization: "Bearer " + user,
+    },
+  };
 
   useEffect(() => {
     if (isError) {
@@ -95,7 +100,10 @@ const Dashboard = () => {
           <Routes>
             <Route path={"/accounts"} element={<ManageAccounts />} />
             <Route path={"/bulletin"} element={<ManageBulletin />} />
-            <Route path={"/qr-scanner"} element={<AdminScanner />} />
+            <Route
+              path={"/qr-scanner"}
+              element={<AdminScanner authConfig={authConfig} />}
+            />
           </Routes>
         </div>
       </div>

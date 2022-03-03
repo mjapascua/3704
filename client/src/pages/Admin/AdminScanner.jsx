@@ -2,10 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { QrReader } from "react-qr-reader";
 import { toast } from "react-toastify";
 import { Button } from "../../components/Buttons/Main";
-import { authConfig } from "../../utils/requestConfig";
 import { apiClient } from "../../utils/requests";
 
-const AdminScanner = () => {
+const AdminScanner = ({ authConfig }) => {
   const toastId = useRef(null);
 
   const handleScanSuccess = (hash) => {
