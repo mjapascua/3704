@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../components/Buttons/Main";
 import { Navbar } from "../components/Navbar";
+import authService from "../utils/authService";
 import { logout, reset } from "../utils/authSlice";
 import { apiClient } from "../utils/requests";
 import CreateQRForm from "./User/CreateQRForm";
@@ -74,6 +75,18 @@ const Account = () => {
           Calendar
           <span className="material-icons-sharp text-3xl">calendar_month</span>
         </Button>
+        {user.role === authService.ROLES.ADMIN && (
+          <Button
+            primary
+            onClick={() => navigate("/dashboard")}
+            classes={"mb-5"}
+          >
+            Admin dashboard
+            <span className="material-icons-sharp text-3xl">
+              admin_panel_settings
+            </span>
+          </Button>
+        )}
         <Button
           primary
           onClick={() => {
