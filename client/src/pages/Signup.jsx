@@ -19,7 +19,7 @@ function SignUp() {
     phone_number: "",
     password: "",
     password_confirm: "",
-    role: "",
+    role: authService.ROLES.BASIC,
   });
   const [progress, setProgress] = useState(1);
   const [status, setStatus] = useState({
