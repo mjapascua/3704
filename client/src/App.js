@@ -67,6 +67,7 @@ function App() {
             <>
               <Navbar />
               <Bulletin />
+              <Footer />
             </>
           }
         />
