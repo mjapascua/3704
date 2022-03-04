@@ -6,8 +6,8 @@ import { ReactComponent as Email } from "../../images/email_white_24dp.svg";
 export const Footer = () => {
   return (
     <footer className="absolute text-center px-7 w-full flex-col lg:flex-row pt-3 pb-6 z-10 bg-gray-800 text-white shadow-sm select-none flex justify-between">
-      <span className="">
-        <img src="" alt="LOGO" />
+      <span className=" w-fit inline-flex mx-7">
+        <p>LOGO</p>
       </span>
       <span className=" w-fit inline-flex mx-7">
         <Place />
