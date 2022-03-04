@@ -16,10 +16,11 @@ function Home() {
             <div class="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
               <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">We are online!
               </h1>
-              <p class="mb-8 leading-relaxed">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+              <p class="mb-8 leading-relaxed">
+                Here in ResPass - HOA Solutions, you can manage QR codes to allow people to visit you in your subdivision.
+              </p>
               <div class="flex justify-center">
-                <button class="inline-flex text-white bg-slate-700 border-0 py-2 px-6 focus:outline-none hover:bg-teal-500 rounded text-lg">Get started</button>
-                <button class="ml-4 inline-flex text-gray-700 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded text-lg">Explore</button>
+                
               </div>
             </div>
             <div class="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
@@ -30,8 +31,11 @@ function Home() {
         <section class="text-gray-700 body-fontw-5/6 md:w-3/4 mx-auto">
   <div class="container px-5 py-24 mx-auto">
     <div class="text-center mb-20">
-      <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900 mb-4">Lorem Ipsum</h1>
-      <p class="text-base leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+      <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900 mb-4">ResPass now in Palmera Homes</h1>
+      <p class="text-base leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto">
+        ResPass manages the QR codes of residents of Palmera Homes.
+        These QR codes serve as identification of residents and their visitors upon entering the subdivision.
+      </p>
       <div class="flex mt-6 justify-center">
         <div class="w-16 h-1 rounded-full bg-slate-700 inline-flex"></div>
       </div>
@@ -41,43 +45,37 @@ function Home() {
         <div class="w-20 h-20 inline-flex items-center justify-center rounded-full bg-indigo-100 text-slate-700 mb-5 flex-shrink-0">
         </div>
         <div class="flex-grow">
-          <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Lorem Ipsum</h2>
-          <p class="leading-relaxed text-base">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-          <a class="mt-3 text-teal-500 inline-flex items-center">Learn More
-            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-2" viewBox="0 0 24 24">
-              <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
-          </a>
+          <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Create a User Account</h2>
+          <p class="leading-relaxed text-base">
+            To start creating QR codes for your visitors, create a ResPass account to register as a resident of Palmera Homes.
+          </p>
+          
         </div>
       </div>
       <div class="p-4 md:w-1/3 md:mb-0 mb-6 flex flex-col text-center items-center">
         <div class="w-20 h-20 inline-flex items-center justify-center rounded-full bg-indigo-100 text-slate-700 mb-5 flex-shrink-0">
         </div>
         <div class="flex-grow">
-          <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Lorem Ipsum</h2>
-          <p class="leading-relaxed text-base">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          <a class="mt-3 text-teal-500 inline-flex items-center">Learn More
-            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-2" viewBox="0 0 24 24">
-              <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
-          </a>
+          <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Create a Visitor QR code</h2>
+          <p class="leading-relaxed text-base">
+            In your account panel, you can create QR codes for visitors by typing in their information
+          </p>
+          
         </div>
       </div>
       <div class="p-4 md:w-1/3 md:mb-0 mb-6 flex flex-col text-center items-center">
         <div class="w-20 h-20 inline-flex items-center justify-center rounded-full bg-indigo-100 text-slate-700 mb-5 flex-shrink-0">
         </div>
         <div class="flex-grow">
-          <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Lorem Ipsum</h2>
-          <p class="leading-relaxed text-base">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-          <a class="mt-3 text-teal-500 inline-flex items-center">Learn More
-            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-2" viewBox="0 0 24 24">
-              <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
-          </a>
+          <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Scan QR Codes</h2>
+          <p class="leading-relaxed text-base">
+            Log in as a HOA representative to scan QR codes to verify if they are allowed to enter the subdivision
+          </p>
+          
         </div>
       </div>
     </div>
-    <button class="flex mx-auto mt-16 text-white bg-slate-700 border-0 py-2 px-6 focus:outline-none hover:bg-teal-500 rounded text-lg">Button</button>
+    
   </div>
 </section>
 <section class="text-gray-700 body-fontw-5/6 md:w-3/4 mx-auto">
