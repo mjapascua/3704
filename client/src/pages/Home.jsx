@@ -136,7 +136,7 @@ function Home() {
               </div>
             </div>
             <button className="flex mx-auto mt-16 text-white bg-slate-700 border-0 py-2 px-6 focus:outline-none hover:bg-teal-500 rounded text-lg">
-              Button
+              Join Now
             </button>
           </div>
         </section>
@@ -144,11 +144,12 @@ function Home() {
           <div className="container px-5 py-24 mx-auto">
             <div className="flex flex-col text-center w-full mb-20">
               <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">
-                Lorem Ipsum
+                Palmera Homes
               </h1>
               <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Welcome to Palmera Homes. We're dedicated to giving you the very
+                best of our homes, with a focus on durability, security, and a
+                friendly community.
               </p>
             </div>
             <div className="flex flex-wrap -m-4">
@@ -161,15 +162,14 @@ function Home() {
                   />
                   <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
                     <h2 className="tracking-widest text-sm title-font font-medium text-teal-500 mb-1">
-                      Lorem Ipsum
+                      Palmera Homes
                     </h2>
                     <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
-                      Lorem Ipsum
+                      Peaceful Neighborhood
                     </h1>
                     <p className="leading-relaxed">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua.
+                      Enjoy Palmera Homes and its surroundings free from smog thanks to the abundance of greenery.
+                      Lush plants and trees surround the subdivision, providing natural air to breathe.
                     </p>
                   </div>
                 </div>
@@ -183,15 +183,14 @@ function Home() {
                   />
                   <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
                     <h2 className="tracking-widest text-sm title-font font-medium text-teal-500 mb-1">
-                      Lorem Ipsum
+                      Palmera Homes
                     </h2>
                     <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
-                      Lorem Ipsum
+                      Natural Scenery
                     </h1>
                     <p className="leading-relaxed">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua.
+                      Palmera Homes is a place of beautiful scenery of nature, no skyscrapers blocking the view.
+                      The nice view together with the fresh air makes mornings wonderful.
                     </p>
                   </div>
                 </div>
@@ -205,15 +204,14 @@ function Home() {
                   />
                   <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
                     <h2 className="tracking-widest text-sm title-font font-medium text-teal-500 mb-1">
-                      Lorem Ipsum
+                      Palmera Homes
                     </h2>
                     <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
-                      The 400 Blows
+                      Blue Skies in the Summer
                     </h1>
                     <p className="leading-relaxed">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua.{" "}
+                      Located far away from Manila, Palmera Homes has less exposure to industrial smoke.
+                      Pure white clouds and clear blue sky can be admired during great weather.
                     </p>
                   </div>
                 </div>
@@ -227,15 +225,14 @@ function Home() {
                   />
                   <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
                     <h2 className="tracking-widest text-sm title-font font-medium text-teal-500 mb-1">
-                      Lorem Ipsum
+                      Palmera Homes
                     </h2>
                     <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
-                      Lorem Ipsum
+                      Open Park
                     </h1>
                     <p className="leading-relaxed">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua.{" "}
+                      In the subdivision lies a park shaded by large trees.
+                      The natural shade provides natural ventilation for a refreshing walk around the park.
                     </p>
                   </div>
                 </div>
@@ -249,15 +246,14 @@ function Home() {
                   />
                   <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
                     <h2 className="tracking-widest text-sm title-font font-medium text-teal-500 mb-1">
-                      Lorem Ipsum
+                      Palmera Homes
                     </h2>
                     <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
-                      Lorem Ipsum
+                      Reliable Security
                     </h1>
                     <p className="leading-relaxed">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua.
+                      Palmera Homes Subdivision is guarded by Baranggay Tanod in their outpost.
+                      The 24/7 security brings assurance to residents in their home.
                     </p>
                   </div>
                 </div>
@@ -271,15 +267,14 @@ function Home() {
                   />
                   <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
                     <h2 className="tracking-widest text-sm title-font font-medium text-teal-500 mb-1">
-                      Lorem Ipsum
+                      Palmera Homes
                     </h2>
                     <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
-                      Lorem Ipsum
+                      QR Code Identification
                     </h1>
                     <p className="leading-relaxed">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua.
+                      The subdivision has a system to identify residents and visitors entering the gates.
+                      With QR codes, there is contactless yet reliable security.
                     </p>
                   </div>
                 </div>
