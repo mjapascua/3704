@@ -22,7 +22,7 @@ export const Navbar = React.memo(() => {
   const { user } = useSelector((state) => state.auth);
 
   return (
-    <div className="px-7 py-3 sticky h-16 top-0 z-10 bg-gray-50 shadow-sm select-none flex justify-between">
+    <div className="px-7 py-3 sticky h-16 top-0 z-30 bg-white shadow-sm select-none flex justify-between">
       <span className="material-icons-sharp md:hidden my-auto text-3xl">
         menu
       </span>
