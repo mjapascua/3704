@@ -9,8 +9,14 @@ function About() {
       <section class="w-5/6 md:w-3/4 mx-auto text-gray-600 body-font">
         <div class="container px-5 py-24 mx-auto">
           <div class="flex flex-wrap w-full mb-20 flex-col items-center text-center">
-            <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Lorem Ipsum</h1>
-            <p class="lg:w-1/2 w-full leading-relaxed text-gray-500">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">About Us</h1>
+            <p class="lg:w-1/2 w-full leading-relaxed text-gray-500">
+              Welcome to Palmera Homes.
+              We're dedicated to giving you the very best of our homes, with a focus on durability, security, and a friendly community.
+              Founded in [year] by [founder's name], Palmera Homes has come a long way from its beginnings in a small subdivision with only a couple of families.
+              When Palmera Homes first started out, the community was very small but still very united.
+              With the help of everyone in the community, the Homeowners' Association for Palmera Homes joined together in making the subdivision the best place to call home.
+            </p>
           </div>
           <div class="flex flex-wrap -m-4">
             <div class="xl:w-1/3 md:w-1/2 p-4">
@@ -20,8 +26,10 @@ function About() {
                     <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
                   </svg>
                 </div>
-                <h2 class="text-lg text-gray-900 font-medium title-font mb-2">Lorem Ipsum</h2>
-                <p class="leading-relaxed text-base">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <h2 class="text-lg text-gray-900 font-medium title-font mb-2">Liveliness</h2>
+                <p class="leading-relaxed text-base">
+                  The HOA is very active in starting recreational events for the residents to join in such as Zumba Dance Programs, Basketball and Volleyball tournaments.
+                </p>
               </div>
             </div>
             <div class="xl:w-1/3 md:w-1/2 p-4">
