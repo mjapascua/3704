@@ -11,6 +11,9 @@ import ManageBulletin from "./Admin/ManageBulletin";
 import AdminScanner from "./Admin/AdminScanner";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, reset } from "../utils/authSlice";
+import { redirect } from "./Login";
+import Loading from "../components/Loading/Loading";
+import authService from "../utils/authService";
 
 const navStyle =
   "w-full flex text-sm items-center cursor-pointer  md:rounded-tl-md md:rounded-bl-md justify-center md:justify-start mb-4 py-5 px-8";
@@ -30,6 +33,7 @@ const Dashboard = () => {
   const [open, setOpen] = useState(false);
   const [style, setStyle] = useState("hidden " + sideMenuStyle);
   const [pageLabel, setLabel] = useState(false);
+  const [redir, setRedir] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -39,11 +43,17 @@ const Dashboard = () => {
   );
   const authConfig = {
     headers: {
-      Authorization: "Bearer " + user,
+      Authorization: "Bearer " + user.token,
     },
   };
 
   useEffect(() => {
+    if (
+      user.role !== authService.ROLES.ADMIN &&
+      user.role !== authService.ROLES.EDITOR
+    ) {
+      redirect(setRedir, navigate, "/");
+    }
     if (isError) {
       console.log(message);
     }
@@ -87,27 +97,35 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className=" font-display">
-      <DashboardNav
-        handleMenuClick={handleMenuClick}
-        pageLabel={pageLabel}
-        open={open}
-      />
-
-      <div className="pt-14 relative w-full flex h-screen box-border">
-        <Sidemenu style={style} />
-        <div className="w-full flex overflow-scroll">
-          <Routes>
-            <Route path={"/accounts"} element={<ManageAccounts />} />
-            <Route path={"/bulletin"} element={<ManageBulletin />} />
-            <Route
-              path={"/qr-scanner"}
-              element={<AdminScanner authConfig={authConfig} />}
-            />
-          </Routes>
+    <>
+      {redir ? (
+        <div className="w-full h-screen">
+          <Loading text={"Unauthorized, redirecting"} />
         </div>
-      </div>
-    </div>
+      ) : (
+        <div className=" font-display">
+          <DashboardNav
+            handleMenuClick={handleMenuClick}
+            pageLabel={pageLabel}
+            open={open}
+          />
+
+          <div className="pt-14 relative w-full flex h-screen box-border">
+            <Sidemenu style={style} />
+            <div className="w-full flex overflow-scroll">
+              <Routes>
+                <Route path={"/accounts"} element={<ManageAccounts />} />
+                <Route path={"/bulletin"} element={<ManageBulletin />} />
+                <Route
+                  path={"/qr-scanner"}
+                  element={<AdminScanner authConfig={authConfig} />}
+                />
+              </Routes>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

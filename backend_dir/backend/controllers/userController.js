@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
@@ -6,14 +7,22 @@ const User = require("../models/userModel");
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { first_name, last_name, email, phone_number, residence, password } =
-    req.body;
+  const {
+    first_name,
+    last_name,
+    email,
+    phone_number,
+    residence,
+    password,
+    role,
+  } = req.body;
 
   if (
     !first_name ||
     !last_name ||
     !email ||
     !phone_number ||
+    !role ||
     !residence ||
     !password
   ) {
@@ -37,18 +46,23 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     first_name,
     last_name,
+    role,
     email,
     phone_number,
     residence,
     password: hashedPassword,
   });
 
-  if (user) {
-    const token = generateToken(user._id);
-    res.cookie("_token", token).status(201).json(token);
-  } else {
+  if (user.message || !user) {
     res.status(400);
-    throw new Error("Invalid User Data");
+    throw new Error(user.message || "Invalid data");
+  } else {
+    const token = generateToken(user._id);
+    res
+      .cookie("_token", token)
+      .cookie("_ar", user.role)
+      .status(201)
+      .json({ token: token, role: user.role });
   }
 });
 
@@ -65,9 +79,10 @@ const loginUser = asyncHandler(async (req, res) => {
     const token = generateToken(user._id);
 
     // Set token as cookie on response
-    res.cookie("_token", token, remember && { maxAge: 30 * 24 * 3600 * 1000 });
-
-    res.json(token);
+    res
+      .cookie("_token", token, remember && { maxAge: 30 * 24 * 3600 * 1000 })
+      .cookie("_ar", user.role, remember && { maxAge: 30 * 24 * 3600 * 1000 })
+      .json({ token: token, role: user.role });
   } else {
     res.status(400);
     throw new Error("Provided information does not match our records");
@@ -78,10 +93,11 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users/me
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
-  const { first_name, last_name, email, residence, phone_number, guests } =
+  const { _id, first_name, last_name, email, residence, phone_number, guests } =
     await User.findById(req.user.id);
 
   res.status(200).json({
+    id: _id,
     residence,
     first_name,
     last_name,
@@ -89,6 +105,31 @@ const getMe = asyncHandler(async (req, res) => {
     phone_number,
     guests,
   });
+});
+
+const deleteGuests = asyncHandler(async (req, res) => {
+  if (!req.params.guest_id) {
+    res.status(400);
+    throw new Error("Unable to process");
+  }
+  const gId = mongoose.Types.ObjectId(req.params.guest_id);
+
+  const user = await User.findByIdAndUpdate(
+    req.params.id,
+    {
+      $pull: {
+        guests: { accessString_id: gId },
+      },
+    },
+    { new: true }
+  );
+
+  if (!user) {
+    res.status(401);
+    throw new Error("Unauthorized user not found");
+  }
+
+  res.json(user);
 });
 
 // Generate JWT
@@ -100,4 +141,5 @@ module.exports = {
   registerUser,
   loginUser,
   getMe,
+  deleteGuests,
 };

@@ -5,6 +5,7 @@ import { Button } from "../components/Buttons/Main";
 import { ReturnButton } from "../components/Buttons/Return";
 import Loading from "../components/Loading/Loading";
 import StatusMessage from "../components/StatusMessage";
+import authService from "../utils/authService";
 import { register, reset } from "../utils/authSlice";
 import { redirect } from "./Login";
 const emailUnavailableMessage = "Email is already taken";
@@ -18,6 +19,7 @@ function SignUp() {
     phone_number: "",
     password: "",
     password_confirm: "",
+    role: "",
   });
   const [progress, setProgress] = useState(1);
   const [status, setStatus] = useState({
@@ -36,7 +38,9 @@ function SignUp() {
 
   const from =
     (location.state?.from?.pathname === "/"
-      ? "/account"
+      ? credentials.role === authService.ROLES.ADMIN
+        ? "/dashboard"
+        : "/account"
       : location.state?.from?.pathname) || "/";
 
   useEffect(() => {
@@ -60,7 +64,7 @@ function SignUp() {
   };
   const handleSignUpRequest = (e) => {
     e.preventDefault();
-    dispatch(register(credentials))
+    dispatch(register({ ...credentials }))
       .unwrap()
       .catch((errMess) => {
         setStatus({
@@ -207,6 +211,18 @@ function SignUp() {
                           required
                         />
                       </span>
+                    </label>
+                    <label className=" text-gray-400">
+                      * Temporary for testing only!
+                      <select
+                        name="role"
+                        value={credentials.role}
+                        onChange={handleChange}
+                        className="mx-4"
+                      >
+                        <option value={authService.ROLES.BASIC}>USER</option>
+                        <option value={authService.ROLES.ADMIN}>ADMIN</option>
+                      </select>
                     </label>
                   </div>
                 )}

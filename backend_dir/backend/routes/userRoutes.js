@@ -4,14 +4,15 @@ const {
   registerUser,
   loginUser,
   getMe,
+  deleteGuests,
 } = require("../controllers/userController");
-const { requestGuestQR, checkQR } = require("../controllers/qrController");
+const { requestGuestQR } = require("../controllers/qrController");
 const { protect } = require("../middleware/authMiddleware");
 
 router.post("/", registerUser);
 router.post("/login", loginUser);
 router.get("/me", protect, getMe);
 router.post("/guests/create-qr", protect, requestGuestQR);
-router.post("/scan", protect, checkQR);
+router.delete("/:id/:guest_id", protect, deleteGuests);
 
 module.exports = router;

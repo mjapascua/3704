@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { login, reset } from "../utils/authSlice";
 import Loading from "../components/Loading/Loading";
 import { ReturnButton } from "../components/Buttons/Return";
+import authService from "../utils/authService";
 
 export const redirect = (renderLoading, navigate, from) => {
   renderLoading(true);
@@ -30,21 +31,13 @@ function Login() {
     (state) => state.auth
   );
 
-  const from =
-    (location.state?.from?.pathname === "/"
-      ? "/account"
-      : location.state?.from?.pathname) || "/";
-
-  console.log(from);
+  let from = location.state?.from?.pathname || "/";
 
   useEffect(() => {
     if (isError) {
       toast.error(message, { position: toast.POSITION.BOTTOM_LEFT });
     }
 
-    if (isSuccess || user) {
-      redirect(setRedir, navigate, from);
-    }
     dispatch(reset());
   }, [user, navigate, isError, message, dispatch]);
 
@@ -55,7 +48,13 @@ function Login() {
   };
   const handleLoginRequest = (e) => {
     e.preventDefault();
-    dispatch(login(credentials));
+    dispatch(login(credentials))
+      .unwrap()
+      .then((res) => {
+        if (res.role === authService.ROLES.ADMIN) {
+          redirect(setRedir, navigate, "/dashboard");
+        } else redirect(setRedir, navigate, "/account");
+      });
   };
   useEffect(() => {
     document.title = "Login or Sign up";

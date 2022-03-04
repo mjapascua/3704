@@ -1,8 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService, { userFromCookie } from "./authService";
-
 const initialState = {
-  user: userFromCookie || null,
+  user: userFromCookie.role ? userFromCookie : null,
   isError: false,
   isSuccess: false,
   message: "",

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { ROLES } = require("../config/roles");
 
 const userSchema = mongoose.Schema(
   {
@@ -10,6 +11,12 @@ const userSchema = mongoose.Schema(
     last_name: {
       type: String,
       required: [true, "Please add your surname"],
+    },
+
+    role: {
+      type: String,
+      enum: Object.values(ROLES),
+      required: true,
     },
 
     email: {

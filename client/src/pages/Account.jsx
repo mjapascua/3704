@@ -18,7 +18,7 @@ const Account = () => {
   );
   const authConfig = {
     headers: {
-      Authorization: "Bearer " + user,
+      Authorization: "Bearer " + user.token,
     },
   };
 
@@ -43,7 +43,6 @@ const Account = () => {
   }, [user, navigate, isError, message, dispatch]);
 
   useEffect(() => {
-    reqUserInfo();
     document.title = "Account | Community";
   }, []);
 
@@ -89,7 +88,16 @@ const Account = () => {
       </span>
       <div className="bg-white w-full px-10 py-5">
         <Routes>
-          <Route path="/" element={<UserAccount userData={userData} />} />
+          <Route
+            path="/"
+            element={
+              <UserAccount
+                userData={userData}
+                authConfig={authConfig}
+                reqUserInfo={reqUserInfo}
+              />
+            }
+          />
           <Route
             path="/generate-qr-pass"
             element={<CreateQRForm authConfig={authConfig} />}
@@ -103,7 +111,17 @@ const Account = () => {
     </div>
   );
 };
-const UserAccount = ({ userData }) => {
+const UserAccount = ({ userData, authConfig, reqUserInfo }) => {
+  //const [list ]
+  const removeGuest = (accessString_id) => {
+    apiClient
+      .delete("/user/" + userData.id + "/" + accessString_id, authConfig)
+      .then((res) => reqUserInfo());
+  };
+  useEffect(() => {
+    reqUserInfo();
+  }, []);
+
   return (
     userData && (
       <div>
@@ -119,6 +137,9 @@ const UserAccount = ({ userData }) => {
                     return (
                       <span key={index} className="block ">
                         {el.first_name + " " + el.last_name}
+                        <Button onClick={() => removeGuest(el.accessString_id)}>
+                          remove
+                        </Button>
                       </span>
                     );
                   })}
