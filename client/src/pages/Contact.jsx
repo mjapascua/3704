@@ -14,10 +14,9 @@ const Contact = () => {
               Contact Us
             </h1>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
+              Raise your concerns whether about Palmera Homes or about ResPass.
+              Let us know your name and your email to reach us.
+              Check your email for a response from authorized personnel of the HOA or from the ResPass team.
             </p>
           </div>
           <div className="lg:w-1/2 md:w-2/3 mx-auto">
@@ -72,11 +71,11 @@ const Contact = () => {
                 </button>
               </div>
               <div className="p-2 w-full pt-8 mt-8 border-t border-gray-200 text-center">
-                <a className="text-indigo-500">example@email.com</a>
+                <a className="text-indigo-500">espren.anjo@gmail.com</a>
                 <p className="leading-normal my-5">
-                  49 Lorem St.
+                  Block 15 Lot 13 Phase 3B Daniel St.
                   <br />
-                  Lorem Ipsum, MN 56301
+                  Palmera Northwinds City, San Jose Del Monte Bulacan
                 </p>
                 <span className="inline-flex">
                   <a className="text-gray-500">

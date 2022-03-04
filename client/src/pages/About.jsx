@@ -67,12 +67,10 @@ function About() {
                   </svg>
                 </div>
                 <h2 className="text-lg text-gray-900 font-medium title-font mb-2">
-                  Lorem Ipsum
+                  Community is known around the city
                 </h2>
                 <p className="leading-relaxed text-base">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna
-                  aliqua..
+                  The HOA collaborates with the City Mayor in holding events such as distribution of relief goods during the pandemic.
                 </p>
               </div>
             </div>
@@ -169,10 +167,8 @@ function About() {
                   Security
                 </h2>
                 <p className="leading-relaxed text-base">
-                  HOA officers are assigned in rotation to the outpost right at
-                  the entrance and exit of the subdivision. Feel even more safe
-                  with the implemented QR code system for verification of
-                  residents and visitors alike.
+                  HOA officers are assigned in rotation to the outposts around the subdivision.
+                  Feel safe with the QR code system for verification of residents and visitors.
                 </p>
               </div>
             </div>
@@ -186,7 +182,7 @@ function About() {
               OUR TEAM
             </h1>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-              Palmera Homes' Administration System is produced by studens of
+              Palmera Homes' HOA Administration System is produced by students of
               Polytechnic University of the Philippines. They had the idea of
               donating their services to the community to help the community
               take its next step towards modern age security.

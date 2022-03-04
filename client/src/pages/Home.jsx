@@ -18,7 +18,7 @@ function Home() {
                 We are online!
               </h1>
               <p className="mb-8 leading-relaxed">
-                ResPass manages the QR codes of residents of Palmera Homes.
+                ResPass manages the QR codes of residents of a subdivision.
                 These QR codes serve as identification of residents and their
                 visitors upon entering the subdivision.
               </p>

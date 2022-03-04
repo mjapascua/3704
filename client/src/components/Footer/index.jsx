@@ -9,20 +9,6 @@ export const Footer = () => {
       <span className=" w-fit inline-flex mx-7">
         <p>LOGO</p>
       </span>
-      <span className=" w-fit inline-flex mx-7">
-        <Place />
-        <p>
-          Phase 3B Palmera Northwinds, <br></br> San Jose Del Monte, Bulacan
-        </p>
-      </span>
-      <span className=" w-fit inline-flex mx-7">
-        <Phone />
-        <p>+639176559537</p>
-      </span>
-      <span className=" w-fit inline-flex mx-7">
-        <Email />
-        <p>espren.anjo101@gmail.com</p>
-      </span>
     </footer>
   );
 };
