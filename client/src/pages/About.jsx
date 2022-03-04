@@ -53,8 +53,11 @@ function About() {
                     <circle cx="12" cy="7" r="4"></circle>
                   </svg>
                 </div>
-                <h2 class="text-lg text-gray-900 font-medium title-font mb-2">Lorem Ipsum</h2>
-                <p class="leading-relaxed text-base">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <h2 class="text-lg text-gray-900 font-medium title-font mb-2">Affable People</h2>
+                <p class="leading-relaxed text-base">
+                  People who live here in Palmera Homes are easily approachable.
+                  Our friendliness will show that we are fun to talk to.
+                </p>
               </div>
             </div>
             <div class="xl:w-1/3 md:w-1/2 p-4">
@@ -64,8 +67,11 @@ function About() {
                     <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"></path>
                   </svg>
                 </div>
-                <h2 class="text-lg text-gray-900 font-medium title-font mb-2">Lorem Ipsum</h2>
-                <p class="leading-relaxed text-base">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <h2 class="text-lg text-gray-900 font-medium title-font mb-2">Respects Boundaries</h2>
+                <p class="leading-relaxed text-base">
+                  Every homeowner respect each others' personal space.
+                  The neighbors all contribute to make this community a safe space.  
+                </p>
               </div>
             </div>
             <div class="xl:w-1/3 md:w-1/2 p-4">
@@ -75,8 +81,11 @@ function About() {
                     <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
                   </svg>
                 </div>
-                <h2 class="text-lg text-gray-900 font-medium title-font mb-2">Lorem Ipsum</h2>
-                <p class="leading-relaxed text-base">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <h2 class="text-lg text-gray-900 font-medium title-font mb-2">Nighttime Curfew</h2>
+                <p class="leading-relaxed text-base">
+                  The HOA implements a nighttime curfew for everyone's safety.
+                  This ensures security so you can feel at ease inside the subdivision at night.
+                </p>
               </div>
             </div>
             <div class="xl:w-1/3 md:w-1/2 p-4">
@@ -86,28 +95,37 @@ function About() {
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                   </svg>
                 </div>
-                <h2 class="text-lg text-gray-900 font-medium title-font mb-2">Lorem Ipsum</h2>
-                <p class="leading-relaxed text-base">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <h2 class="text-lg text-gray-900 font-medium title-font mb-2">Security</h2>
+                <p class="leading-relaxed text-base">
+                  HOA officers are assigned in rotation to the outpost right at the entrance and exit of the subdivision.
+                  Feel even more safe with the implemented QR code system for verification of residents and visitors alike.
+                </p>
               </div>
             </div>
           </div>
-          <button class="flex mx-auto mt-16 text-white bg-slate-700 border-0 py-2 px-8 focus:outline-none hover:bg-teal-500 rounded text-lg">Button</button>
+          
         </div>
       </section>
       <section class="text-gray-600 body-font">
         <div class="container px-5 py-24 mx-auto">
           <div class="flex flex-col text-center w-full mb-20">
             <h1 class="text-2xl font-medium title-font mb-4 text-gray-900">OUR TEAM</h1>
-            <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p class="lg:w-2/3 mx-auto leading-relaxed text-base">
+              Palmera Homes' Administration System is produced by studens of Polytechnic University of the Philippines.
+              They had the idea of donating their services to the community to help the community take its next step towards modern age security.
+            </p>
           </div>
           <div class="flex flex-wrap -m-4">
             <div class="p-4 lg:w-1/4 md:w-1/2">
               <div class="h-full flex flex-col items-center text-center">
               <img alt="testimonial" class="w-20 h-20 mb-8 object-cover object-center rounded-full inline-block border-2 border-gray-200 bg-gray-100" src="https://dummyimage.com/302x302"/>
                 <div class="w-full">
-                  <h2 class="title-font font-medium text-lg text-gray-900">Lorem Ipsum</h2>
-                  <h3 class="text-gray-500 mb-3">Lorem Ipsum</h3>
-                  <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                  <h2 class="title-font font-medium text-lg text-gray-900">Angelo Niel I. Navarro</h2>
+                  <h3 class="text-gray-500 mb-3">Project Leader</h3>
+                  <p class="mb-4">
+                    An aspiring computer engineer of Polytechnic University of the Philippines.
+                    And a proud resident of Palmera Homes.
+                  </p>
                   <span class="inline-flex">
                     <a class="text-gray-500">
                       <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
@@ -132,9 +150,11 @@ function About() {
               <div class="h-full flex flex-col items-center text-center">
                 <img alt="testimonial" class="w-20 h-20 mb-8 object-cover object-center rounded-full inline-block border-2 border-gray-200 bg-gray-100" src="https://dummyimage.com/302x302"/>
                 <div class="w-full">
-                  <h2 class="title-font font-medium text-lg text-gray-900">Lorem Ipsum</h2>
-                  <h3 class="text-gray-500 mb-3">Lorem Ipsum</h3>
-                  <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                  <h2 class="title-font font-medium text-lg text-gray-900">Angelo Adrian Montales</h2>
+                  <h3 class="text-gray-500 mb-3">Front End Developer</h3>
+                  <p class="mb-4">
+                    An aspiring computer engineer of Polytechnic University of the Philippines.
+                  </p>
                   <span class="inline-flex">
                     <a class="text-gray-500">
                       <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
@@ -159,9 +179,11 @@ function About() {
               <div class="h-full flex flex-col items-center text-center">
               <img alt="testimonial" class="w-20 h-20 mb-8 object-cover object-center rounded-full inline-block border-2 border-gray-200 bg-gray-100" src="https://dummyimage.com/302x302"/>
                 <div class="w-full">
-                  <h2 class="title-font font-medium text-lg text-gray-900">Lorem Ipsum</h2>
-                  <h3 class="text-gray-500 mb-3">Lorem Ipsum</h3>
-                  <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                  <h2 class="title-font font-medium text-lg text-gray-900">Ralph Errol Montilla</h2>
+                  <h3 class="text-gray-500 mb-3">MERN Stack Developer</h3>
+                  <p class="mb-4">
+                    An aspiring computer engineer of Polytechnic University of the Philippines.  
+                  </p>
                   <span class="inline-flex">
                     <a class="text-gray-500">
                       <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
@@ -186,9 +208,11 @@ function About() {
               <div class="h-full flex flex-col items-center text-center">
               <img alt="testimonial" class="w-20 h-20 mb-8 object-cover object-center rounded-full inline-block border-2 border-gray-200 bg-gray-100" src="https://dummyimage.com/302x302"/>
                 <div class="w-full">
-                  <h2 class="title-font font-medium text-lg text-gray-900">Lorem Ipsum</h2>
-                  <h3 class="text-gray-500 mb-3">Lorem Ipsum</h3>
-                  <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                  <h2 class="title-font font-medium text-lg text-gray-900">Mike John Pascua</h2>
+                  <h3 class="text-gray-500 mb-3">MERN Stack Developer</h3>
+                  <p class="mb-4">
+                    An aspiring computer engineer of Polytechnic University of the Philippines.
+                  </p>
                   <span class="inline-flex">
                     <a class="text-gray-500">
                       <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
