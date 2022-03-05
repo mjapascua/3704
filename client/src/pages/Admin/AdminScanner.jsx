@@ -10,8 +10,9 @@ const AdminScanner = ({ authConfig }) => {
   const handleScanSuccess = (hash) => {
     console.log("scanned");
     apiClient
-      .post("user/scan", { hash: hash }, authConfig)
+      .post("admin/scan", { hash: hash }, authConfig)
       .then((res) => {
+        console.log(res);
         if (res.status === 200) {
           toastId.current = toast.success(res.data.message, { autoClose: 100 });
         }

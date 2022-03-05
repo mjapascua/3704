@@ -182,17 +182,18 @@ export const Sidemenu = ({ style }) => {
         }}
         className={defStyle}
       >
-        <span className="material-icons-sharp md:mr-5">logout</span>
-        <b className="md:w-max md:block hidden">Logout</b>
+        <span className="material-icons-sharp md:mr-5">face</span>
+        <b className="md:w-max md:block hidden">User page</b>
       </span>
       <span
         onClick={() => {
-          navigate("/account", { replace: true });
+          dispatch(logout());
+          navigate("/", { replace: true });
         }}
         className={defStyle}
       >
-        <span className="material-icons-sharp md:mr-5">face</span>
-        <b className="md:w-max md:block hidden">User page</b>
+        <span className="material-icons-sharp md:mr-5">logout</span>
+        <b className="md:w-max md:block hidden">Logout</b>
       </span>
     </div>
   );
