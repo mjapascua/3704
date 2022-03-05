@@ -39,15 +39,19 @@ export const QRScanner = ({ handleScanSuccess, openOnRender, toastId }) => {
 
   return (
     <>
-      <Button
-        onClick={() =>
-          setTimeout(() => {
-            setScanner((prev) => !prev);
-          }, 300)
-        }
-      >
-        {!scanner ? "Open scanner" : "Close"}
-      </Button>
+      <span className="w-48">
+        <Button
+          primary
+          onClick={() =>
+            setTimeout(() => {
+              setScanner((prev) => !prev);
+            }, 300)
+          }
+        >
+          {!scanner ? "Open scanner" : "Close"}
+        </Button>
+      </span>
+      
       <div className=" w-80 mt-5 block md:py-9 py-7 px-3 md:px-5 rounded-lg relative mb-12 border-y-8 border-meadow-500">
         {!scanner ? (
           <span className="w-full h-60 block">
