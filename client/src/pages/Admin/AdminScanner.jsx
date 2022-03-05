@@ -69,7 +69,7 @@ export const QRScanner = ({ handleScanSuccess, openOnRender, toastId }) => {
                 toast.error(error);
               }
             }}
-            scanDelay={100}
+            scanDelay={1000}
             constraints={{ facingMode: "environment", height: 100, width: 100 }}
           />
         )}
