@@ -4,11 +4,11 @@ import { toast } from "react-toastify";
 import Loading from "../components/Loading/Loading";
 import { apiClient } from "../utils/requests";
 import CreateQRForm from "./User/CreateQRForm";
-import GenerateQRCode from "./User/GenerateQRCode";
+import RenderQRCode from "./User/RenderQRCode";
 
 const VisitorForm = () => {
   const uIds = useParams().uIds.split("_");
-  const [qr, setQR] = useState({ hash: null, name: null });
+  const [qr, setQR] = useState({ url: null, name: null });
   const [status, setStatus] = useState({ loading: false });
 
   const checkValidity = useCallback(() => {
@@ -35,7 +35,7 @@ const VisitorForm = () => {
         if ((res.status === 201 || res.status === 200) && !res.data.message) {
           toast.success("QR generated!");
           setQR({
-            hash: res.data.hash,
+            hash: res.data.url,
             name: data.first_name + " " + data.last_name,
           });
         }
@@ -58,15 +58,15 @@ const VisitorForm = () => {
           {status?.message}
         </div>
       )}
-      {!qr.hash && status.valid && (
+      {!qr.url && status.valid && (
         <CreateQRForm handleQRRequest={handleQRRequest} />
       )}
-      {qr.hash && status.valid && (
+      {qr.url && status.valid && (
         <div className=" w-80 block px-3 md:px-5 relative">
-          <GenerateQRCode
-            text={qr.hash}
+          <RenderQRCode
+            url={qr.url}
             name={qr.name}
-            callback={() => setQR({ hash: null })}
+            callback={() => setQR({ url: null })}
           />
         </div>
       )}

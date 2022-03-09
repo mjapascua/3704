@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Button } from "../../components/Buttons/Main";
 import StatusMessage from "../../components/StatusMessage";
 import { phoneRegex } from "../Signup";
-import GenerateQRCode from "./GenerateQRCode";
 
 const CreateQRForm = ({ handleQRRequest }) => {
   const [status, setStatus] = useState({

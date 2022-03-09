@@ -1,11 +1,13 @@
 const asyncHandler = require("express-async-handler");
 const md5 = require("crypto-js/md5");
+const qrCode = require("qrcode");
 
 const User = require("../models/userModel");
 const GuestAccessString = require("../models/accessStringsModel");
 const TempLink = require("../models/tempLinkModel");
 const Guest = require("../models/guestModel");
 const phoneRegex = /^([0-9]{10})$/;
+const qrOptions = { scale: 8 };
 
 // @desc    Get a QR hash for guest
 // @route   GET /api/users/:id/:guest_id
@@ -44,33 +46,41 @@ const requestGuestQR = asyncHandler(async (req, res) => {
       used_by: guest.id,
     });
 
-    const updateGuest = await Guest.findByIdAndUpdate(guest.id, {
+    if (!guest || !guestAccess) {
+      res.status(400);
+      throw new Error("Guest registration failed");
+    }
+
+    await Guest.findByIdAndUpdate(guest._id, {
       access_string: guestAccess.id,
     });
 
-    if (!guestAccess || !guest || !updateGuest) {
-      res.status(400);
-      throw new Error("QR registration failed");
-    }
-
-    const update = await User.findByIdAndUpdate(req.user.id, {
+    await User.findByIdAndUpdate(req.user.id, {
       $push: {
         guests: guest.id,
       },
     });
 
-    if (!update) {
+    try {
+      const url = await qrCode.toDataURL(guestAccess.hash, qrOptions);
+      return res.status(201).json({ url: url });
+    } catch (error) {
       res.status(400);
-      throw new Error("Guest entry failed");
+      throw new Error("QR creation failed");
     }
-    res.status(201).json({ hash: hash });
   }
 
   if (guestExists.access_string) {
-    res.json({
-      hash: guestExists.access_string.hash,
-      exists: "access string",
-    });
+    try {
+      const url = await qrCode.toDataURL(
+        guestExists.access_string.hash,
+        qrOptions
+      );
+      return res.status(201).json({ url: url, exists: "already active" });
+    } catch (error) {
+      res.status(400);
+      throw new Error("QR creation failed");
+    }
   }
 
   if (!guestExists.active) {
@@ -94,7 +104,13 @@ const requestGuestQR = asyncHandler(async (req, res) => {
       res.status(404);
       throw new Error("QR registration failed");
     }
-    res.json({ hash: guestAccess.hash, exists: "inactive" });
+    try {
+      const url = await qrCode.toDataURL(guestAccess.hash, qrOptions);
+      return res.status(201).json({ url: url, exists: "inactive" });
+    } catch (error) {
+      res.status(400);
+      throw new Error("QR creation failed");
+    }
   }
 });
 

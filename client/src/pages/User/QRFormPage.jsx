@@ -3,10 +3,10 @@ import { toast } from "react-toastify";
 import { Button } from "../../components/Buttons/Main";
 import { apiClient } from "../../utils/requests";
 import CreateQRForm from "./CreateQRForm";
-import GenerateQRCode from "./GenerateQRCode";
+import RenderQRCode from "./RenderQRCode";
 
 const QRFormPage = ({ authConfig }) => {
-  const [qr, setQR] = useState({ hash: null, name: null });
+  const [qr, setQR] = useState({ url: null, name: null });
 
   const requestShareable = () => {
     apiClient
@@ -27,7 +27,7 @@ const QRFormPage = ({ authConfig }) => {
         if ((res.status === 201 || res.status === 200) && !res.data.message) {
           toast.success("QR generated!");
           setQR({
-            hash: res.data.hash,
+            url: res.data.url,
             name: data.first_name + " " + data.last_name,
           });
         }
@@ -39,7 +39,7 @@ const QRFormPage = ({ authConfig }) => {
   };
   return (
     <div>
-      {!qr.hash ? (
+      {!qr.url ? (
         <>
           <Button primary onClick={requestShareable}>
             Share link
@@ -49,10 +49,10 @@ const QRFormPage = ({ authConfig }) => {
         </>
       ) : (
         <div className=" w-80 block px-3 md:px-5 relative">
-          <GenerateQRCode
-            text={qr.hash}
+          <RenderQRCode
+            url={qr.url}
             name={qr.name}
-            callback={() => setQR({ hash: null })}
+            callback={() => setQR({ url: null })}
           />
         </div>
       )}
