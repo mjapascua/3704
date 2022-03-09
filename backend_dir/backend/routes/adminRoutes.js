@@ -11,11 +11,16 @@ const { protect } = require("../middleware/authMiddleware");
 
 router.post("/scan", protect, authAllow([ROLES.ADMIN, ROLES.EDITOR]), checkQR);
 
-router.get("/users", protect, authAllow([ROLES.ADMIN]), getAllUsers);
+router.get(
+  "/users",
+  protect,
+  authAllow([ROLES.ADMIN, ROLES.EDITOR]),
+  getAllUsers
+);
 router.delete(
   "/users/delete/:id",
   protect,
-  authAllow([ROLES.EDITOR]),
+  authAllow([ROLES.ADMIN]),
   deleteUser
 );
 module.exports = router;

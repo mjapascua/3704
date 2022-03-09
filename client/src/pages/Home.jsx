@@ -6,7 +6,7 @@ function Home() {
     axios.get("http://localhost:5000").then((res) => console.log(res));
   }, []); */
   useEffect(() => {
-    document.title = "Community";
+    document.title = process.env.REACT_APP_NAME;
   }, []);
   return (
     <>
@@ -168,8 +168,10 @@ function Home() {
                       Peaceful Neighborhood
                     </h1>
                     <p className="leading-relaxed">
-                      Enjoy Palmera Homes and its surroundings free from smog thanks to the abundance of greenery.
-                      Lush plants and trees surround the subdivision, providing natural air to breathe.
+                      Enjoy Palmera Homes and its surroundings free from smog
+                      thanks to the abundance of greenery. Lush plants and trees
+                      surround the subdivision, providing natural air to
+                      breathe.
                     </p>
                   </div>
                 </div>
@@ -189,8 +191,9 @@ function Home() {
                       Natural Scenery
                     </h1>
                     <p className="leading-relaxed">
-                      Palmera Homes is a place of beautiful scenery of nature, no skyscrapers blocking the view.
-                      The nice view together with the fresh air makes mornings wonderful.
+                      Palmera Homes is a place of beautiful scenery of nature,
+                      no skyscrapers blocking the view. The nice view together
+                      with the fresh air makes mornings wonderful.
                     </p>
                   </div>
                 </div>
@@ -210,8 +213,9 @@ function Home() {
                       Blue Skies in the Summer
                     </h1>
                     <p className="leading-relaxed">
-                      Located far away from Manila, Palmera Homes has less exposure to industrial smoke.
-                      Pure white clouds and clear blue sky can be admired during great weather.
+                      Located far away from Manila, Palmera Homes has less
+                      exposure to industrial smoke. Pure white clouds and clear
+                      blue sky can be admired during great weather.
                     </p>
                   </div>
                 </div>
@@ -231,8 +235,9 @@ function Home() {
                       Open Park
                     </h1>
                     <p className="leading-relaxed">
-                      In the subdivision lies a park shaded by large trees.
-                      The natural shade provides natural ventilation for a refreshing walk around the park.
+                      In the subdivision lies a park shaded by large trees. The
+                      natural shade provides natural ventilation for a
+                      refreshing walk around the park.
                     </p>
                   </div>
                 </div>
@@ -252,8 +257,9 @@ function Home() {
                       Reliable Security
                     </h1>
                     <p className="leading-relaxed">
-                      Palmera Homes Subdivision is guarded by Baranggay Tanod in their outpost.
-                      The 24/7 security brings assurance to residents in their home.
+                      Palmera Homes Subdivision is guarded by Baranggay Tanod in
+                      their outpost. The 24/7 security brings assurance to
+                      residents in their home.
                     </p>
                   </div>
                 </div>
@@ -273,8 +279,9 @@ function Home() {
                       QR Code Identification
                     </h1>
                     <p className="leading-relaxed">
-                      The subdivision has a system to identify residents and visitors entering the gates.
-                      With QR codes, there is contactless yet reliable security.
+                      The subdivision has a system to identify residents and
+                      visitors entering the gates. With QR codes, there is
+                      contactless yet reliable security.
                     </p>
                   </div>
                 </div>

@@ -7,8 +7,8 @@ import { Navbar } from "../components/Navbar";
 import authService from "../utils/authService";
 import { logout, reset } from "../utils/authSlice";
 import { apiClient } from "../utils/requests";
-import CreateQRForm from "./User/CreateQRForm";
 import EventsCalendar from "./User/EventsCalendar";
+import QRFormPage from "./User/QRFormPage";
 
 const Account = () => {
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ const Account = () => {
   }, [user, navigate, isError, message, dispatch]);
 
   useEffect(() => {
-    document.title = "Account | Community";
+    document.title = "Account | " + process.env.REACT_APP_NAME;
   }, []);
 
   return (
@@ -113,7 +113,7 @@ const Account = () => {
           />
           <Route
             path="/generate-qr-pass"
-            element={<CreateQRForm authConfig={authConfig} />}
+            element={<QRFormPage authConfig={authConfig} />}
           />
           <Route
             path="/calendar"

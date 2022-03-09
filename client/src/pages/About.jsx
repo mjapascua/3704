@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 function About() {
   useEffect(() => {
-    document.title = "About | Community";
+    document.title = "About | " + process.env.REACT_APP_NAME;
   }, []);
   return (
     <>
@@ -70,7 +70,8 @@ function About() {
                   Community is known around the city
                 </h2>
                 <p className="leading-relaxed text-base">
-                  The HOA collaborates with the City Mayor in holding events such as distribution of relief goods during the pandemic.
+                  The HOA collaborates with the City Mayor in holding events
+                  such as distribution of relief goods during the pandemic.
                 </p>
               </div>
             </div>
@@ -167,8 +168,9 @@ function About() {
                   Security
                 </h2>
                 <p className="leading-relaxed text-base">
-                  HOA officers are assigned in rotation to the outposts around the subdivision.
-                  Feel safe with the QR code system for verification of residents and visitors.
+                  HOA officers are assigned in rotation to the outposts around
+                  the subdivision. Feel safe with the QR code system for
+                  verification of residents and visitors.
                 </p>
               </div>
             </div>
@@ -178,12 +180,15 @@ function About() {
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-24 mx-auto">
           <div className="flex flex-col text-center w-full mb-20">
-            <h1 className="text-2xl font-medium title-font mb-4 text-gray-900">
-              OUR TEAM
+            <h1 className="text-4xl font-medium title-font mb-4 text-gray-900">
+              <b>ResPass</b>
             </h1>
+            <h3 className="text-xl font-medium title-font mb-4 text-gray-900">
+              OUR TEAM
+            </h3>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-              Palmera Homes' HOA Administration System is produced by students of
-              Polytechnic University of the Philippines. They had the idea of
+              Palmera Homes' HOA Administration System is produced by students
+              of Polytechnic University of the Philippines. They had the idea of
               donating their services to the community to help the community
               take its next step towards modern age security.
             </p>

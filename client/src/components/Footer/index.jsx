@@ -9,6 +9,10 @@ export const Footer = () => {
       <span className=" w-fit inline-flex mx-7">
         <p>LOGO</p>
       </span>
+      <span>
+        <span className=" text-xs">powered by </span>
+        <b>ResPass</b>
+      </span>
     </footer>
   );
 };

@@ -33,6 +33,11 @@ const userSchema = mongoose.Schema(
       required: [true, "Please add a phone number"],
     },
 
+    main_unique: {
+      type: String,
+      required: true,
+    },
+
     residence: {
       type: String,
       required: [true, "Please add your residence"],
@@ -41,6 +46,11 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: [true, "Please add a password"],
+    },
+
+    visitor_form_link: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "TempLink",
     },
 
     guests: {

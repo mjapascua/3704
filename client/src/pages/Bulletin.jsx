@@ -4,7 +4,7 @@ import { articlePreviews } from "../utils/populateData";
 
 function Bulletin() {
   useEffect(() => {
-    document.title = "Events & News | Community";
+    document.title = "Events & News | " + process.env.REACT_APP_NAME;
   }, []);
   return (
     <>

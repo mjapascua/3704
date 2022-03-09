@@ -16,6 +16,7 @@ import Account from "./pages/Account";
 
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
+import VisitorForm from "./pages/VistorForm";
 
 function App() {
   return (
@@ -84,6 +85,14 @@ function App() {
           element={
             <>
               <Signup />
+            </>
+          }
+        />
+        <Route
+          path="visitor_form/:uIds"
+          element={
+            <>
+              <VisitorForm />
             </>
           }
         />

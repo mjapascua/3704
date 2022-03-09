@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 const Contact = () => {
   useEffect(() => {
-    document.title = "Contact | Community";
+    document.title = "Contact | " + process.env.REACT_APP_NAME;
   }, []);
   return (
     <>
@@ -15,15 +15,19 @@ const Contact = () => {
             </h1>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
               Raise your concerns whether about Palmera Homes or about ResPass.
-              Let us know your name and your email to reach us.
-              Check your email for a response from authorized personnel of the HOA or from the ResPass team.
+              Let us know your name and your email to reach us. Check your email
+              for a response from authorized personnel of the HOA or from the
+              ResPass team.
             </p>
           </div>
           <div className="lg:w-1/2 md:w-2/3 mx-auto">
             <div className="flex flex-wrap -m-2">
               <div className="p-2 w-1/2">
                 <div className="relative">
-                  <label htmlFor="name" className="leading-7 text-sm text-gray-600">
+                  <label
+                    htmlFor="name"
+                    className="leading-7 text-sm text-gray-600"
+                  >
                     Name
                   </label>
                   <input

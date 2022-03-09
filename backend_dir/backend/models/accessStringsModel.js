@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const accessStringSchema = mongoose.Schema(
   {
-    patron_id: {
+    patron: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User",

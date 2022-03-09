@@ -93,7 +93,7 @@ const Dashboard = () => {
   }, [location]);
 
   useEffect(() => {
-    document.title = "Admin dashboard";
+    document.title = "Admin dashboard | " + process.env.REACT_APP_NAME;
   }, []);
 
   return (

@@ -351,7 +351,7 @@ function SignUp() {
                   {[1, 2, 3].map((num) => {
                     const defClass =
                       (progress === num ? " w-7" : " w-2.5") +
-                      " transition-all mr-2 rounded-xl inline-block h-2.5 bg-gray-300";
+                      " transition-all mr-2 rounded-xl inline-block transition-all ease-in h-2.5 bg-gray-300";
 
                     return (
                       <span

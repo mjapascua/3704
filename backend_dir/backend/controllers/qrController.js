@@ -3,11 +3,12 @@ const md5 = require("crypto-js/md5");
 
 const User = require("../models/userModel");
 const GuestAccessString = require("../models/accessStringsModel");
+const TempLink = require("../models/tempLinkModel");
 const phoneRegex = /^([0-9]{10})$/;
 
 const requestGuestQR = asyncHandler(async (req, res) => {
   const { first_name, last_name, phone_number, address } = req.body;
-  const hash = generateQRString(req.user.id, first_name + last_name);
+  const hash = generateMd5Hash(req.user.id + first_name + last_name);
   if (!first_name || !last_name || !phone_number || !address) {
     res.status(400);
     throw new Error("Please add all fields");
@@ -23,7 +24,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
   } else {
     const guestAccess = await GuestAccessString.create({
       hash,
-      patron_id: req.user.id,
+      patron: req.user.id,
     });
 
     if (!guestAccess) {
@@ -33,7 +34,13 @@ const requestGuestQR = asyncHandler(async (req, res) => {
 
     const update = await User.findByIdAndUpdate(req.user.id, {
       $push: {
-        guests: { ...req.body, accessString_id: guestAccess._id },
+        guests: {
+          first_name: first_name,
+          last_name: last_name,
+          phone_number: phone_number,
+          address: address,
+          accessString_id: guestAccess._id,
+        },
       },
     });
 
@@ -73,12 +80,42 @@ const options = {
   minute: "numeric",
 };
 
-const generateQRString = (id, addString) => {
-  const hashed = md5(id + addString).toString();
-  return hashed;
+const generateMd5Hash = (string) => {
+  let hashed = md5(string).toString();
+  let splitHash =
+    hashed.slice(0, 4) +
+    "-" +
+    hashed.slice(4, 10) +
+    "-" +
+    hashed.slice(10, 20) +
+    "-" +
+    hashed.slice(20);
+
+  return splitHash;
 };
+
+const validateLink = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    res.status(401);
+  }
+
+  const active = TempLink.find({ unique: req.params.uniq });
+
+  if (!active) {
+    res.status(404);
+    throw new Error(
+      "This link is unavailable! It may have expired or does not exist."
+    );
+  }
+
+  req.user = user;
+  next();
+});
 
 module.exports = {
   requestGuestQR,
   checkQR,
+  generateMd5Hash,
+  validateLink,
 };

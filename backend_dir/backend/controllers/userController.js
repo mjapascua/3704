@@ -3,6 +3,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
+const TempLink = require("../models/tempLinkModel");
+const GuestAccessString = require("../models/accessStringsModel");
+const { generateMd5Hash } = require("./qrController");
 // @desc    Register new user
 // @route   POST /api/users
 // @access  Public
@@ -41,7 +44,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // Hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
-
+  const main_unique = generateMd5Hash(first_name + email + residence);
   // Create user
   const user = await User.create({
     first_name,
@@ -50,6 +53,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     phone_number,
     residence,
+    main_unique,
     password: hashedPassword,
   });
 
@@ -124,17 +128,70 @@ const deleteGuests = asyncHandler(async (req, res) => {
     { new: true }
   );
 
+  const string = await GuestAccessString.findByIdAndDelete(gId);
+
   if (!user) {
     res.status(401);
     throw new Error("Unauthorized user not found");
   }
+  if (!string) {
+    res.status(400);
+    throw new Error("Access not removed");
+  }
 
-  res.json(user);
+  res.json("success");
 });
 
+const requestQRFormLink = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id).populate("visitor_form_link");
+
+  if (!user) {
+    res.status(404);
+  }
+  let unique;
+
+  if (!user.visitor_form_link) {
+    const tempLink = await TempLink.create({
+      unique: generateRandomString(13),
+      user: user.id,
+    });
+
+    user.visitor_form_link = tempLink.id;
+    user.save();
+
+    unique = tempLink.unique;
+  } else unique = user.visitor_form_link.unique;
+
+  res.json({
+    link: "http://localhost:3000/visitor_form/" + user.id + "_" + unique,
+  });
+});
+
+/* const requestQRFormLink2 = asyncHandler(async (req, res) => {
+  let formToken;
+  if(!req.user.visitor_form_link){
+    formToken = jwt.sign(req.user.id, "VISITOR_ONLY_FORM", {
+      expiresIn: "6h",
+    });
+    const user = User.findByIdAndUpdate()
+  } else formToken = req.user.visitor_form_link;
+
+  res.json({
+    link: "http://localhost:3000/visitor_form/" + formToken,
+  });
+});
+ */
 // Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET);
+};
+
+const generateRandomString = (len) => {
+  let string = "";
+  for (; string.length < len; ) {
+    string += Math.random().toString(20).substring(2);
+  }
+  return string.slice(0, len);
 };
 
 module.exports = {
@@ -142,4 +199,5 @@ module.exports = {
   loginUser,
   getMe,
   deleteGuests,
+  requestQRFormLink,
 };
