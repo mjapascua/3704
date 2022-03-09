@@ -11,10 +11,9 @@ const tempLink = mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: new Date(),
+    expires: "6h",
+    default: Date.now,
   },
 });
-
-tempLink.index({ createdAt: 1 }, { expireAfterSeconds: /* 6 * 3 */ 60 });
 
 module.exports = mongoose.model("TempLink", tempLink);

@@ -100,7 +100,7 @@ const getMe = asyncHandler(async (req, res) => {
   const { _id, first_name, last_name, email, residence, phone_number, guests } =
     await User.findById(req.user.id);
 
-  res.status(200).json({
+  res.json({
     id: _id,
     residence,
     first_name,
