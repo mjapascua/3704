@@ -100,7 +100,7 @@ const validateLink = asyncHandler(async (req, res, next) => {
     res.status(401);
   }
 
-  const active = TempLink.find({ unique: req.params.uniq });
+  const active = await TempLink.findOne({ unique: req.params.uniq });
 
   if (!active) {
     res.status(404);

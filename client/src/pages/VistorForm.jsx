@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import Loading from "../components/Loading/Loading";
 import { apiClient } from "../utils/requests";
 import CreateQRForm from "./User/CreateQRForm";
 import GenerateQRCode from "./User/GenerateQRCode";
@@ -8,10 +9,24 @@ import GenerateQRCode from "./User/GenerateQRCode";
 const VisitorForm = () => {
   const uIds = useParams().uIds.split("_");
   const [qr, setQR] = useState({ hash: null, name: null });
+  const [status, setStatus] = useState({ loading: false });
 
-  useEffect(() => {
-    apiClient.get(`public/visitor_form/${uIds[0]}/${uIds[1]}`);
-  }, [uIds]);
+  const checkValidity = useCallback(() => {
+    setStatus({ loading: true });
+    apiClient
+      .get(`public/visitor_form/${uIds[0]}/${uIds[1]}`)
+      .then((res) => {
+        if (res.status === 200 && res.data === "success")
+          setStatus({ loading: false, valid: true });
+      })
+      .catch((err) =>
+        setStatus({
+          loading: false,
+          valid: false,
+          message: err.response.data.message,
+        })
+      );
+  }, []);
 
   const handleQRRequest = (data) => {
     apiClient
@@ -31,13 +46,22 @@ const VisitorForm = () => {
       });
   };
 
+  useEffect(() => {
+    checkValidity();
+  }, [checkValidity]);
+
   return (
     <div>
-      {!qr.hash ? (
-        <>
-          <CreateQRForm handleQRRequest={handleQRRequest} />
-        </>
-      ) : (
+      {status.loading && <Loading />}
+      {!status.loading && !status.valid && (
+        <div className="w-full h-screen justify-center flex items-center text-gray-600">
+          {status?.message}
+        </div>
+      )}
+      {!qr.hash && status.valid && (
+        <CreateQRForm handleQRRequest={handleQRRequest} />
+      )}
+      {qr.hash && status.valid && (
         <div className=" w-80 block px-3 md:px-5 relative">
           <GenerateQRCode
             text={qr.hash}

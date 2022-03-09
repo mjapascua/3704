@@ -3,7 +3,7 @@ const router = express.Router();
 const { requestGuestQR, validateLink } = require("../controllers/qrController");
 
 router.get("/visitor_form/:id/:uniq", validateLink, (req, res) =>
-  res.json("success")
+  res.send("success")
 );
 router.post("/visitor_form/submit/:id/:uniq", validateLink, requestGuestQR);
 
