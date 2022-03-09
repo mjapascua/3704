@@ -53,13 +53,12 @@ const userSchema = mongoose.Schema(
       ref: "TempLink",
     },
 
-    guests: {
-      type: Array,
-      data: {
-        accessString_id: { type: mongoose.Schema.Types.ObjectId },
-        ref: "GuestAccessString",
+    guests: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Guest",
       },
-    },
+    ],
   },
 
   {

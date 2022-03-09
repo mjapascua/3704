@@ -4,11 +4,11 @@ const md5 = require("crypto-js/md5");
 const User = require("../models/userModel");
 const GuestAccessString = require("../models/accessStringsModel");
 const TempLink = require("../models/tempLinkModel");
+const Guest = require("../models/guestModel");
 const phoneRegex = /^([0-9]{10})$/;
 
 const requestGuestQR = asyncHandler(async (req, res) => {
   const { first_name, last_name, phone_number, address } = req.body;
-  const hash = generateMd5Hash(req.user.id + first_name + last_name);
   if (!first_name || !last_name || !phone_number || !address) {
     res.status(400);
     throw new Error("Please add all fields");
@@ -18,29 +18,40 @@ const requestGuestQR = asyncHandler(async (req, res) => {
     throw new Error("Invalid phone number");
   }
 
-  const hashExists = await GuestAccessString.findOne({ hash: hash });
-  if (hashExists) {
-    res.status(200).json({ hash: hash, exists: true });
-  } else {
-    const guestAccess = await GuestAccessString.create({
-      hash,
+  const guestExists = await Guest.findOne({
+    first_name,
+    last_name,
+    phone_number,
+    address,
+    patron: req.user.id,
+  }).populate("access_string");
+
+  if (!guestExists) {
+    const hash = generateMd5Hash(req.user.id + first_name + phone_number);
+    const guest = await Guest.create({
+      first_name,
+      last_name,
+      phone_number,
+      address,
       patron: req.user.id,
     });
 
-    if (!guestAccess) {
+    const guestAccess = await GuestAccessString.create({
+      hash,
+      patron: req.user.id,
+      used_by: guest.id,
+    });
+
+    const updateGuest = await guest.update({ access_string: guestAccess.id });
+
+    if (!guestAccess || !guest || !updateGuest) {
       res.status(400);
       throw new Error("QR registration failed");
     }
 
     const update = await User.findByIdAndUpdate(req.user.id, {
       $push: {
-        guests: {
-          first_name: first_name,
-          last_name: last_name,
-          phone_number: phone_number,
-          address: address,
-          accessString_id: guestAccess._id,
-        },
+        guests: guest.id,
       },
     });
 
@@ -49,6 +60,36 @@ const requestGuestQR = asyncHandler(async (req, res) => {
       throw new Error("Guest entry failed");
     }
     res.status(201).json({ hash: hash });
+  }
+
+  if (guestExists.access_string) {
+    res
+      .status(200)
+      .json({ hash: guestExists.access_string.hash, exists: true });
+  }
+
+  if (!guestExists.active) {
+    const hash = generateMd5Hash(req.user.id + first_name + phone_number);
+
+    const guestAccess = await GuestAccessString.create({
+      hash,
+      patron: req.user.id,
+      used_by: guestExists.id,
+    });
+    const guestUpdate = await guestExists.update({
+      active: true,
+      access_string: guestAccess.id,
+    });
+    const update = await User.findByIdAndUpdate(req.user.id, {
+      $push: {
+        guests: guestExists.id,
+      },
+    });
+    if (!guestUpdate || !update) {
+      res.status(404);
+      throw new Error("QR registration failed");
+    }
+    res.status(200).json({ hash: guestAccess.hash, exists: true });
   }
 });
 

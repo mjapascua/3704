@@ -126,9 +126,9 @@ const Account = () => {
 };
 const UserAccount = ({ userData, authConfig, reqUserInfo }) => {
   //const [list ]
-  const removeGuest = (accessString_id) => {
+  const removeGuest = (id) => {
     apiClient
-      .delete("/user/" + userData.id + "/" + accessString_id, authConfig)
+      .delete("/user/" + userData.id + "/" + id, authConfig)
       .then((res) => reqUserInfo());
   };
   useEffect(() => {
@@ -150,7 +150,7 @@ const UserAccount = ({ userData, authConfig, reqUserInfo }) => {
                     return (
                       <span key={index} className="block ">
                         {el.first_name + " " + el.last_name}
-                        <Button onClick={() => removeGuest(el.accessString_id)}>
+                        <Button onClick={() => removeGuest(el._id)}>
                           remove
                         </Button>
                       </span>

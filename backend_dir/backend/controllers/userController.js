@@ -6,6 +6,7 @@ const User = require("../models/userModel");
 const TempLink = require("../models/tempLinkModel");
 const GuestAccessString = require("../models/accessStringsModel");
 const { generateMd5Hash } = require("./qrController");
+const Guest = require("../models/guestModel");
 // @desc    Register new user
 // @route   POST /api/users
 // @access  Public
@@ -98,7 +99,7 @@ const loginUser = asyncHandler(async (req, res) => {
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
   const { _id, first_name, last_name, email, residence, phone_number, guests } =
-    await User.findById(req.user.id);
+    await User.findById(req.user.id).populate("guests");
 
   res.json({
     id: _id,
@@ -122,19 +123,24 @@ const deleteGuests = asyncHandler(async (req, res) => {
     req.params.id,
     {
       $pull: {
-        guests: { accessString_id: gId },
+        guests: gId,
       },
     },
     { new: true }
   );
 
-  const string = await GuestAccessString.findByIdAndDelete(gId);
+  const guest = await Guest.findByIdAndUpdate(gId, {
+    active: false,
+    last_disabled: new Date(),
+  });
+
+  const string = await GuestAccessString.findOneAndDelete({ used_by: gId });
 
   if (!user) {
     res.status(401);
     throw new Error("Unauthorized user not found");
   }
-  if (!string) {
+  if (!string || !guest) {
     res.status(400);
     throw new Error("Access not removed");
   }

@@ -7,6 +7,10 @@ const accessStringSchema = mongoose.Schema(
       required: true,
       ref: "User",
     },
+    used_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Guest",
+    },
     hash: {
       type: String,
     },
