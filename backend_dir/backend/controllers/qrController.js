@@ -7,6 +7,9 @@ const TempLink = require("../models/tempLinkModel");
 const Guest = require("../models/guestModel");
 const phoneRegex = /^([0-9]{10})$/;
 
+// @desc    Get a QR hash for guest
+// @route   GET /api/users/:id/:guest_id
+// @access  Private
 const requestGuestQR = asyncHandler(async (req, res) => {
   const { first_name, last_name, phone_number, address } = req.body;
   if (!first_name || !last_name || !phone_number || !address) {
@@ -22,7 +25,6 @@ const requestGuestQR = asyncHandler(async (req, res) => {
     first_name,
     last_name,
     phone_number,
-    address,
     patron: req.user.id,
   }).populate("access_string");
 
@@ -42,7 +44,9 @@ const requestGuestQR = asyncHandler(async (req, res) => {
       used_by: guest.id,
     });
 
-    const updateGuest = await guest.update({ access_string: guestAccess.id });
+    const updateGuest = await Guest.findByIdAndUpdate(guest.id, {
+      access_string: guestAccess.id,
+    });
 
     if (!guestAccess || !guest || !updateGuest) {
       res.status(400);
@@ -63,20 +67,20 @@ const requestGuestQR = asyncHandler(async (req, res) => {
   }
 
   if (guestExists.access_string) {
-    res
-      .status(200)
-      .json({ hash: guestExists.access_string.hash, exists: true });
+    res.json({
+      hash: guestExists.access_string.hash,
+      exists: "access string",
+    });
   }
 
   if (!guestExists.active) {
     const hash = generateMd5Hash(req.user.id + first_name + phone_number);
-
     const guestAccess = await GuestAccessString.create({
       hash,
       patron: req.user.id,
       used_by: guestExists.id,
     });
-    const guestUpdate = await guestExists.update({
+    const guestUpdate = await Guest.findByIdAndUpdate(guestExists.id, {
       active: true,
       access_string: guestAccess.id,
     });
@@ -85,11 +89,12 @@ const requestGuestQR = asyncHandler(async (req, res) => {
         guests: guestExists.id,
       },
     });
+
     if (!guestUpdate || !update) {
       res.status(404);
       throw new Error("QR registration failed");
     }
-    res.status(200).json({ hash: guestAccess.hash, exists: true });
+    res.json({ hash: guestAccess.hash, exists: "inactive" });
   }
 });
 
@@ -112,14 +117,6 @@ const checkQR = asyncHandler(async (req, res) => {
     message: "Allow",
   });
 });
-
-const options = {
-  year: "numeric",
-  month: "numeric",
-  day: "numeric",
-  hour: "numeric",
-  minute: "numeric",
-};
 
 const generateMd5Hash = (string) => {
   let hashed = md5(string).toString();

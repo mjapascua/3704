@@ -112,6 +112,9 @@ const getMe = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    Set guest to inactive
+// @route   GET /api/users/:id/:guest_id
+// @access  Private
 const deleteGuests = asyncHandler(async (req, res) => {
   if (!req.params.guest_id) {
     res.status(400);
@@ -173,20 +176,6 @@ const requestQRFormLink = asyncHandler(async (req, res) => {
   });
 });
 
-/* const requestQRFormLink2 = asyncHandler(async (req, res) => {
-  let formToken;
-  if(!req.user.visitor_form_link){
-    formToken = jwt.sign(req.user.id, "VISITOR_ONLY_FORM", {
-      expiresIn: "6h",
-    });
-    const user = User.findByIdAndUpdate()
-  } else formToken = req.user.visitor_form_link;
-
-  res.json({
-    link: "http://localhost:3000/visitor_form/" + formToken,
-  });
-});
- */
 // Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET);
