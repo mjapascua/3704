@@ -4,7 +4,7 @@ const User = require("../models/userModel");
 const getAllUsers = asyncHandler(async (req, res) => {
   const users = await User.find({});
   if (users) {
-    res.json(users);
+    return res.json(users);
   }
   res.status(401);
   throw new Error("No users found");

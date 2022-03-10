@@ -151,6 +151,14 @@ const deleteGuests = asyncHandler(async (req, res) => {
   res.json("success");
 });
 
+const updateUser = asyncHandler(async (req, res) => {
+  const userToUpdate = await User.findByIdAndUpdate(req.params.id, req.body);
+  if (!userToUpdate) {
+    res.status(404);
+    throw new Error("Unable to find and update the user");
+  } else return res.json({ first_name: userToUpdate.first_name });
+});
+
 const requestQRFormLink = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id).populate("visitor_form_link");
 
@@ -190,6 +198,7 @@ const generateRandomString = (len) => {
 };
 
 module.exports = {
+  updateUser,
   registerUser,
   loginUser,
   getMe,

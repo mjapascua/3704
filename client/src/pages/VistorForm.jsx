@@ -35,7 +35,7 @@ const VisitorForm = () => {
         if ((res.status === 201 || res.status === 200) && !res.data.message) {
           toast.success("QR generated!");
           setQR({
-            hash: res.data.url,
+            url: res.data.url,
             name: data.first_name + " " + data.last_name,
           });
         }

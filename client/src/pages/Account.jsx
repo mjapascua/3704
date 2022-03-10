@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Button } from "../components/Buttons/Main";
 import { Navbar } from "../components/Navbar";
 import authService from "../utils/authService";
@@ -9,11 +10,11 @@ import { logout, reset } from "../utils/authSlice";
 import { apiClient } from "../utils/requests";
 import EventsCalendar from "./User/EventsCalendar";
 import QRFormPage from "./User/QRFormPage";
+import RenderQRCode from "./User/RenderQRCode";
 
 const Account = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [userData, setUserData] = useState(null);
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   );
@@ -21,12 +22,6 @@ const Account = () => {
     headers: {
       Authorization: "Bearer " + user.token,
     },
-  };
-
-  const reqUserInfo = () => {
-    apiClient.get("user/me", authConfig).then((res) => {
-      setUserData(res.data);
-    });
   };
 
   useEffect(() => {
@@ -101,16 +96,7 @@ const Account = () => {
       </span>
       <div className="bg-white w-full px-10 py-5">
         <Routes>
-          <Route
-            path="/"
-            element={
-              <UserAccount
-                userData={userData}
-                authConfig={authConfig}
-                reqUserInfo={reqUserInfo}
-              />
-            }
-          />
+          <Route path="/" element={<UserAccount authConfig={authConfig} />} />
           <Route
             path="/generate-qr-pass"
             element={<QRFormPage authConfig={authConfig} />}
@@ -124,21 +110,201 @@ const Account = () => {
     </div>
   );
 };
-const UserAccount = ({ userData, authConfig, reqUserInfo }) => {
-  //const [list ]
-  const removeGuest = (id) => {
-    apiClient
-      .delete("/user/" + userData.id + "/" + id, authConfig)
-      .then((res) => reqUserInfo());
-  };
-  useEffect(() => {
-    reqUserInfo();
+
+const defUserState = {
+  id: null,
+  first_name: null,
+  last_name: null,
+  email: null,
+  phone_number: null,
+  residence: null,
+  guests: [],
+};
+const UserAccount = ({ authConfig }) => {
+  const [userData, setUserData] = useState(defUserState);
+  const [qr, setQr] = useState(null);
+
+  const { id, first_name, last_name, email, phone_number, residence, guests } =
+    userData;
+
+  const [edit, setEdit] = useState(false);
+  const [item, setItem] = useState(null);
+
+  const reqUserInfo = useCallback(() => {
+    apiClient.get("user/me", authConfig).then((res) => {
+      setUserData(res.data);
+    });
   }, []);
 
+  const removeGuest = (gId) => {
+    apiClient
+      .delete("/user/" + id + "/" + gId, authConfig)
+      .then(() => reqUserInfo());
+  };
+
+  useEffect(() => {
+    reqUserInfo();
+  }, [reqUserInfo]);
+
+  const handleChange = ({ target }) => {
+    setItem((prev) => {
+      return { ...prev, [target.name]: target.value };
+    });
+  };
+
+  const handleSubmitEdit = (e) => {
+    e.preventDefault();
+    apiClient
+      .post(`user/${id}/edit`, item, authConfig)
+      .then((res) => {
+        if (res.status === 200 && !res.data.message) {
+          reqUserInfo();
+          setEdit(false);
+          setItem(null);
+          toast.info(`Account information has been updated`);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.response.message);
+      });
+  };
+
+  const requestUserQR = () => {
+    apiClient
+      .get("user/qr", authConfig)
+      .then((res) => {
+        if (res.status === 200 && !res.data.message) {
+          setQr({ url: res.data });
+        } else toast.error(res.response.message);
+      })
+      .catch((error) => {
+        toast.error(error.response.message);
+      });
+  };
+  const requestGuestQR = (id) => {
+    apiClient
+      .get("user/guest_qr/" + id, authConfig)
+      .then((res) => {
+        if (res.status === 200 && !res.data.message) {
+          setQr({ url: res.data });
+        } else toast.error(res.response.message);
+      })
+      .catch((error) => {
+        toast.error(error.response.message);
+      });
+  };
+
   return (
-    userData && (
-      <div>
-        {Object.keys(userData).map((key) => {
+    <div>
+      <Button onClick={requestUserQR}>Show my QR code</Button>
+      {qr?.url && <img src={qr.url} className="w-64 mb-4" />}
+      <span
+        onClick={() => {
+          setEdit((prev) => !prev);
+          setItem({ first_name, last_name, email, phone_number, residence });
+        }}
+        className="material-icons-sharp text-gray-400 cursor-pointer"
+      >
+        edit
+      </span>
+      {userData && !edit && (
+        <div>
+          <div>
+            <span className="block ">
+              <b>First name:</b>
+              {first_name}
+            </span>
+            <span className="block ">
+              <b>Last name:</b>
+              {last_name}
+            </span>
+            <span className="block ">
+              <b>Phone number:</b>
+              {phone_number}
+            </span>
+            <span className="block ">
+              <b>Address:</b>
+              {residence}
+            </span>
+            {guests.length > 0 && (
+              <span className="block ">
+                <b>Guests:</b>
+              </span>
+            )}
+            <span className="h-80 block overflow-auto">
+              {guests.map((el, index) => {
+                return (
+                  <span key={index} className="block ">
+                    {el.first_name + " " + el.last_name}
+                    <Button onClick={() => requestGuestQR(el.access_string)}>
+                      show qr
+                    </Button>
+                    <Button onClick={() => removeGuest(el._id)}>remove</Button>
+                  </span>
+                );
+              })}
+            </span>
+          </div>
+        </div>
+      )}
+      {edit && item && (
+        <form className="w-full py-1" onSubmit={handleSubmitEdit}>
+          <span className="inline-flex w-3/4 justify-between ">
+            <label>
+              <input
+                type="text"
+                value={item.first_name}
+                name="first_name"
+                className="form-input !w-40"
+                onChange={handleChange}
+              />
+            </label>
+            <label>
+              <input
+                type="text"
+                value={item.last_name}
+                name="last_name"
+                className="form-input !w-40"
+                onChange={handleChange}
+              />
+            </label>
+            <label>
+              <span>
+                <span className="px-1 mr-2 py-4 text-base inline-block">
+                  <>+63</>
+                </span>
+                <input
+                  type="text"
+                  name="phone_number"
+                  onChange={handleChange}
+                  value={item.phone_number}
+                  className="form-input !inline-block !w-40"
+                  placeholder="9*********"
+                  required
+                />
+              </span>
+            </label>
+            <label>
+              <input
+                type="email"
+                value={item.email}
+                name="email"
+                className="form-input !w-56"
+                onChange={handleChange}
+              />
+            </label>
+          </span>
+
+          <Button className="w-40" type={"submit"}>
+            Submit
+          </Button>
+        </form>
+      )}
+    </div>
+  );
+};
+export default Account;
+/* Object.keys(userData).map((key) => {
           if (userData[key] instanceof Array) {
             return (
               <span key={key}>
@@ -166,9 +332,4 @@ const UserAccount = ({ userData, authConfig, reqUserInfo }) => {
                 {userData[key]}
               </span>
             );
-        })}
-      </div>
-    )
-  );
-};
-export default Account;
+        }) */

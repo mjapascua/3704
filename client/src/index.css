@@ -7,9 +7,9 @@
   --toastify-color-light: #fff;
   --toastify-color-dark: #121212;
   --toastify-color-info: #3498db;
-  --toastify-color-success: #48c54c;
+  --toastify-color-success: #4abc4e;
   --toastify-color-warning: #f1c40f;
-  --toastify-color-error: #e74c3c;
+  --toastify-color-error: #b23729;
   --toastify-color-transparent: rgba(255, 255, 255, 0.7);
 
   --toastify-icon-color-info: var(--toastify-color-info);
@@ -101,5 +101,8 @@ code {
 @layer components {
   .form-input {
     @apply border border-gray-300 focus:ring-2 duration-200 transition-colors ease-in-out outline-none focus:bg-white focus:border-meadow-800 focus:ring-meadow-50  bg-gray-100 text-sm w-full p-2 mt-2 mb-4 rounded-sm;
+  }
+  .table-spacing {
+    border-spacing: 0 theme("spacing.2");
   }
 }

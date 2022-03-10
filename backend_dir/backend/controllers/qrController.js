@@ -76,7 +76,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
         guestExists.access_string.hash,
         qrOptions
       );
-      return res.status(201).json({ url: url, exists: "already active" });
+      return res.json({ url: url, exists: "already active" });
     } catch (error) {
       res.status(400);
       throw new Error("QR creation failed");
@@ -114,6 +114,27 @@ const requestGuestQR = asyncHandler(async (req, res) => {
   }
 });
 
+const userQR = asyncHandler(async (req, res) => {
+  try {
+    const url = await qrCode.toDataURL(req.user.main_unique, qrOptions);
+    return res.json(url);
+  } catch (error) {
+    res.status(404);
+    throw new Error("Not found!");
+  }
+});
+
+const guestQR = asyncHandler(async (req, res) => {
+  const access = await GuestAccessString.findById(req.params.id);
+  try {
+    const url = await qrCode.toDataURL(access.hash, qrOptions);
+    return res.json(url);
+  } catch (error) {
+    res.status(404);
+    throw new Error("Not found!");
+  }
+});
+
 const checkQR = asyncHandler(async (req, res) => {
   const entry = await GuestAccessString.findOneAndUpdate(
     { hash: req.body.hash },
@@ -122,7 +143,8 @@ const checkQR = asyncHandler(async (req, res) => {
         scanHistory: new Date(),
       },
     }
-  );
+  ).populate("used_by");
+
   if (!entry) {
     res.status(400).json({
       message: "No entry",
@@ -131,6 +153,7 @@ const checkQR = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     message: "Allow",
+    information: entry,
   });
 });
 
@@ -172,4 +195,6 @@ module.exports = {
   checkQR,
   generateMd5Hash,
   validateLink,
+  userQR,
+  guestQR,
 };

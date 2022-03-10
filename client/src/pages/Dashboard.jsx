@@ -111,10 +111,13 @@ const Dashboard = () => {
           />
 
           <div className="pt-14 relative w-full flex h-screen box-border">
-            <Sidemenu style={style} />
+            <Sidemenu style={style} handleMenuClick={handleMenuClick} />
             <div className="w-full flex overflow-scroll">
               <Routes>
-                <Route path={"/accounts"} element={<ManageAccounts />} />
+                <Route
+                  path={"/accounts"}
+                  element={<ManageAccounts authConfig={authConfig} />}
+                />
                 <Route path={"/bulletin"} element={<ManageBulletin />} />
                 <Route
                   path={"/qr-scanner"}
@@ -156,7 +159,7 @@ export const DashboardNav = ({ handleMenuClick, pageLabel, open }) => {
   );
 };
 
-export const Sidemenu = ({ style }) => {
+export const Sidemenu = ({ style, handleMenuClick }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   return (
@@ -168,6 +171,7 @@ export const Sidemenu = ({ style }) => {
             key={route.to}
             to={route.to}
             className={({ isActive }) => (isActive ? activeStyle : defStyle)}
+            onClick={handleMenuClick}
           >
             <span className="material-icons-sharp md:mr-5 inline-block">
               {route.icon}
