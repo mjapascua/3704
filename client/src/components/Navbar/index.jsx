@@ -22,21 +22,21 @@ export const Navbar = React.memo(() => {
 
   const authConfig = {
     headers: {
-      Authorization: "Bearer " + user.token,
+      Authorization: "Bearer " + user?.token,
     },
   };
 
   useEffect(() => {
-    apiClient.get("user/notifs", authConfig).then((res) => {
-      // console.log(res.data.notifications.length);
-      setNotifs((prev) => {
-        return {
-          ...prev,
-          data: res.data.notifications,
-          unread: res.data.unreadCount,
-        };
+    if (user)
+      apiClient.get("user/notifs", authConfig).then((res) => {
+        setNotifs((prev) => {
+          return {
+            ...prev,
+            data: res.data.notifications,
+            unread: res.data.unreadCount,
+          };
+        });
       });
-    });
   }, []);
 
   return (
@@ -100,63 +100,71 @@ export const Navbar = React.memo(() => {
                 notifications
               </span>
               {notif.unread > 0 && (
-                <span className=" w-3 h-3 left-5 inline-block absolute rounded-md bg-red-500"></span>
+                <span className=" w-3 h-3 left-5  bottom-6 inline-block absolute rounded-md bg-red-500"></span>
               )}
             </span>
 
             {notif.show && (
-              <div className="absolute border border-slate-200 rounded-sm right-14 h-96 shadow block overflow-scroll bg-white">
-                {notif.data.map((item) => {
-                  const date = new Date(item.created_at).getTime();
-                  const elapedSince = (Date.now() - date) / 1000;
-                  let text;
+              <div className="absolute rounded-sm font-display right-14 shadow bg-white">
+                <span className="px-4 py-2 text-lg font-semibold block">
+                  Notifications
+                </span>
+                <div className="block overflow-scroll h-96">
+                  {notif.data.map((item) => {
+                    const date = new Date(item.created_at).getTime();
+                    const elapedSince = (Date.now() - date) / 1000;
+                    let text;
 
-                  switch (true) {
-                    case elapedSince < min:
-                      text = "Just now";
-                      break;
-                    case elapedSince >= min && elapedSince < 2 * min:
-                      text = "A minute ago";
-                      break;
-                    case elapedSince >= 2 * min && elapedSince < hr:
-                      text = Math.floor(elapedSince / 60) + " minutes ago";
-                      break;
-                    case elapedSince >= hr && elapedSince < 2 * hr:
-                      text = "An hour ago";
-                      break;
-                    case elapedSince >= 2 * hr && elapedSince < 24 * hr:
-                      text = Math.floor(elapedSince / hr) + " hours ago";
-                      break;
-                    case elapedSince >= 24 * hr && elapedSince < 48 * hr:
-                      text = "A day ago";
-                      break;
-                    case elapedSince >= 48 * hr && elapedSince <= 7 * 24 * hr:
-                      text =
-                        Math.floor(elapedSince / (7 * 24 * hr)) + " weeks ago";
-                      break;
-                    default:
-                      text = "";
-                      break;
-                  }
+                    switch (true) {
+                      case elapedSince < min:
+                        text = "Just now";
+                        break;
+                      case elapedSince >= min && elapedSince < 2 * min:
+                        text = "A minute ago";
+                        break;
+                      case elapedSince >= 2 * min && elapedSince < hr:
+                        text = Math.floor(elapedSince / 60) + " minutes ago";
+                        break;
+                      case elapedSince >= hr && elapedSince < 2 * hr:
+                        text = "An hour ago";
+                        break;
+                      case elapedSince >= 2 * hr && elapedSince < 24 * hr:
+                        text = Math.floor(elapedSince / hr) + " hours ago";
+                        break;
+                      case elapedSince >= 24 * hr && elapedSince < 48 * hr:
+                        text = "A day ago";
+                        break;
+                      case elapedSince >= 48 * hr && elapedSince <= 7 * 24 * hr:
+                        text =
+                          Math.floor(elapedSince / (7 * 24 * hr)) +
+                          " weeks ago";
+                        break;
+                      default:
+                        text = "";
+                        break;
+                    }
 
-                  return (
-                    <span
-                      key={item._id}
-                      className={
-                        "block w-80 pl-5 pr-7 " +
-                        (!item.read_status ? "bg-slate-200" : "bg-white")
-                      }
-                    >
-                      <span className="pt-2 block pb-4 border-b">
-                        <b className=" text-slate-800">{item.title}</b>
-                        <br />
-                        <span className=" text-slate-700">{item.text}</span>
-                        <br />
-                        <span className=" text-slate-400 text-sm">{text}</span>
+                    return (
+                      <span
+                        key={item._id}
+                        className={
+                          "block w-80 pl-5 pr-7 cursor-pointer hover:bg-slate-100 " +
+                          (!item.read_status ? "bg-slate-200" : "bg-white")
+                        }
+                      >
+                        <span className="pt-2 block pb-3 border-b">
+                          <b className=" text-slate-800">{item.title}</b>
+                          <span className=" block text-slate-700 font-display">
+                            {item.text}
+                          </span>
+                          <span className=" text-slate-400 text-sm font-display">
+                            {text}
+                          </span>
+                        </span>
                       </span>
-                    </span>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             )}
 
