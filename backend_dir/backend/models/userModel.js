@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { notifTypes } = require("../config/notifTypes");
 const { ROLES } = require("../config/roles");
 
 const userSchema = mongoose.Schema(
@@ -57,6 +58,16 @@ const userSchema = mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Guest",
+      },
+    ],
+    notifications: [
+      {
+        ref_link: String,
+        title: String,
+        category: { type: String, enum: Object.values(notifTypes) },
+        text: String,
+        read_status: Boolean,
+        created_at: Date,
       },
     ],
   },

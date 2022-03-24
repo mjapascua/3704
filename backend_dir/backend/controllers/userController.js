@@ -2,11 +2,13 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
+
 const User = require("../models/userModel");
+const Guest = require("../models/guestModel");
 const TempLink = require("../models/tempLinkModel");
 const GuestAccessString = require("../models/accessStringsModel");
+
 const { generateMd5Hash } = require("./qrController");
-const Guest = require("../models/guestModel");
 // @desc    Register new user
 // @route   POST /api/users
 // @access  Public

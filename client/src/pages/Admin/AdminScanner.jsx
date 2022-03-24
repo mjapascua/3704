@@ -8,11 +8,9 @@ const AdminScanner = ({ authConfig }) => {
   const toastId = useRef(null);
 
   const handleScanSuccess = (hash) => {
-    console.log("scanned");
     apiClient
       .post("admin/scan", { hash: hash }, authConfig)
       .then((res) => {
-        console.log(res);
         if (res.status === 200) {
           toastId.current = toast.success(res.data.message, { autoClose: 100 });
         }
@@ -51,7 +49,7 @@ export const QRScanner = ({ handleScanSuccess, openOnRender, toastId }) => {
           {!scanner ? "Open scanner" : "Close"}
         </Button>
       </span>
-      
+
       <div className=" w-80 mt-5 block md:py-9 py-7 px-3 md:px-5 rounded-lg relative mb-12 border-y-8 border-meadow-500">
         {!scanner ? (
           <span className="w-full h-60 block">

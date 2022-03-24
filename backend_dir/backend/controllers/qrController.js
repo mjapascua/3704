@@ -6,6 +6,8 @@ const User = require("../models/userModel");
 const GuestAccessString = require("../models/accessStringsModel");
 const TempLink = require("../models/tempLinkModel");
 const Guest = require("../models/guestModel");
+const { notifTypes } = require("../config/notifTypes");
+const { createNotif } = require("./notificationController");
 const phoneRegex = /^([0-9]{10})$/;
 const qrOptions = { scale: 8 };
 
@@ -146,14 +148,22 @@ const checkQR = asyncHandler(async (req, res) => {
   ).populate("used_by");
 
   if (!entry) {
-    res.status(400).json({
-      message: "No entry",
-    });
+    res.status(400);
+    throw new Error("No Entry");
   }
+
+  const notify = await createNotif(
+    {
+      title: "Guest QR scanned",
+      category: notifTypes.Entry_guest,
+      text: entry.used_by.first_name + " has arrived!",
+    },
+    { id: entry.patron }
+  );
 
   res.status(200).json({
     message: "Allow",
-    information: entry,
+    information: notify,
   });
 });
 

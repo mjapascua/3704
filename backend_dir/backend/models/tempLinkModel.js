@@ -11,8 +11,8 @@ const tempLink = mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    expires: "6h",
-    default: Date.now(),
+    expires: 21600, // 6 hours
+    default: Date.now,
   },
 });
 

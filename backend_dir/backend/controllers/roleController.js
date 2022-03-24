@@ -5,7 +5,8 @@ const authAllow = (role) => {
     if (!role.includes(req.req.user.role)) {
       res.res.status(401);
       throw new Error("Unathorized, you do not meet permission requirements");
-    } else next();
+    }
+    next();
   });
 };
 
