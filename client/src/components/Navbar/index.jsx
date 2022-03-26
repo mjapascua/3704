@@ -105,9 +105,9 @@ export const Navbar = React.memo(() => {
             </span>
 
             {notif.show && (
-              <div className="absolute rounded-sm font-display right-14 shadow bg-white">
-                <span className="px-4 py-2 text-lg font-semibold block">
-                  Notifications
+              <div className="absolute rounded-sm py-1 font-display right-14 shadow-sprd bg-white">
+                <span className="px-4 py-1 font-head font-semibold block">
+                  NOTIFICATIONS
                 </span>
                 <div className="block overflow-scroll h-96">
                   {notif.data.map((item) => {
@@ -152,7 +152,7 @@ export const Navbar = React.memo(() => {
                           (!item.read_status ? "bg-slate-200" : "bg-white")
                         }
                       >
-                        <span className="pt-2 block pb-3 border-b">
+                        <span className="pt-2 block pb-3 border-b border-slate-200">
                           <b className=" text-slate-800">{item.title}</b>
                           <span className=" block text-slate-700 font-display">
                             {item.text}

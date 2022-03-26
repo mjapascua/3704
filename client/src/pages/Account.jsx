@@ -11,6 +11,8 @@ import { apiClient } from "../utils/requests";
 import EventsCalendar from "./User/EventsCalendar";
 import QRFormPage from "./User/QRFormPage";
 import RenderQRCode from "./User/RenderQRCode";
+import swal from "sweetalert2";
+import { swalCustomClass } from "../utils/general";
 
 const Account = () => {
   const navigate = useNavigate();
@@ -135,11 +137,23 @@ const UserAccount = ({ authConfig }) => {
       setUserData(res.data);
     });
   }, []);
-
-  const removeGuest = (gId) => {
-    apiClient
-      .delete("/user/" + id + "/" + gId, authConfig)
-      .then(() => reqUserInfo());
+  const removeGuest = ({ gId, name }) => {
+    swal
+      .fire({
+        text: `Are you sure you want to remove ${name} as a guest?`,
+        confirmButtonColor: "var(--toastify-color-success)",
+        cancelButtonColor: "var(--toastify-color-error)",
+        showCancelButton: true,
+        confirmButtonText: "Confirm",
+        customClass: swalCustomClass,
+        icon: "warning",
+      })
+      .then((result) => {
+        if (result.isConfirmed)
+          apiClient
+            .delete("/user/" + id + "/" + gId, authConfig)
+            .then(() => reqUserInfo());
+      });
   };
 
   useEffect(() => {
@@ -239,7 +253,13 @@ const UserAccount = ({ authConfig }) => {
                     <Button onClick={() => requestGuestQR(el.access_string)}>
                       show qr
                     </Button>
-                    <Button onClick={() => removeGuest(el._id)}>remove</Button>
+                    <Button
+                      onClick={() =>
+                        removeGuest({ gId: el._id, name: el.first_name })
+                      }
+                    >
+                      remove
+                    </Button>
                   </span>
                 );
               })}
