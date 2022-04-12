@@ -5,36 +5,50 @@ import { Button } from "../../components/Buttons/Main";
 import { apiClient } from "../../utils/requests";
 
 const AdminScanner = ({ authConfig }) => {
+  /* useEffect(() => {
+    let setNull = setTimeout(() => {
+      console.log("nulled");
+      setLast(null);
+    }, 20000);
+
+    return () => {
+      clearTimeout(setNull);
+    };
+  }, [lastHash]); */
+
+  return (
+    <div className="w-full flex pt-16 md:pt-10 items-center h-full flex-col">
+      <QRScanner openOnRender={false} authConfig={authConfig} />
+    </div>
+  );
+};
+export const QRScanner = ({ openOnRender, authConfig }) => {
+  const [lastHash, setLast] = useState(null);
+  const [scanner, setScanner] = useState(openOnRender);
   const toastId = useRef(null);
+
+  useEffect(() => {
+    console.log(lastHash);
+  }, [lastHash]);
 
   const handleScanSuccess = (hash) => {
     apiClient
-      .post("admin/scan", { hash: hash }, authConfig)
+      .post("admin/scan", { hash }, authConfig)
       .then((res) => {
         if (res.status === 200) {
-          toastId.current = toast.success(res.data.message, { autoClose: 100 });
+          toastId.current = toast.success(res.data.message, {
+            autoClose: 500,
+          });
+          console.log("set");
+          setLast(hash);
         }
       })
       .catch((err) => {
         toastId.current = toast.error(err.response.data.message, {
-          autoClose: 200,
+          autoClose: 500,
         });
       });
   };
-
-  return (
-    <div className="w-full flex pt-16 md:pt-10 items-center h-full flex-col">
-      <QRScanner
-        handleScanSuccess={handleScanSuccess}
-        openOnRender={false}
-        toastId={toastId}
-      />
-    </div>
-  );
-};
-export const QRScanner = ({ handleScanSuccess, openOnRender, toastId }) => {
-  const [scanner, setScanner] = useState(openOnRender);
-
   return (
     <>
       <span className="w-48">
@@ -58,16 +72,20 @@ export const QRScanner = ({ handleScanSuccess, openOnRender, toastId }) => {
         ) : (
           <QrReader
             onResult={(result, error) => {
-              if (!!result) {
-                if (!toast.isActive(toastId.current)) {
-                  handleScanSuccess(result?.text);
-                }
+              if (
+                !!result &&
+                lastHash !== result?.text &&
+                !toast.isActive(toastId.current)
+              ) {
+                console.log(lastHash);
+                //  console.log(toast.isActive(toastId.current));
+                handleScanSuccess(result?.text);
               }
               if (error) {
                 toast.error(error);
               }
             }}
-            scanDelay={1000}
+            scanDelay={4000}
             constraints={{ facingMode: "environment", height: 100, width: 100 }}
           />
         )}

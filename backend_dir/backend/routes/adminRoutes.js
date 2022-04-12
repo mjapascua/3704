@@ -9,6 +9,9 @@ const { checkQR } = require("../controllers/qrController");
 const { authAllow } = require("../controllers/roleController");
 const { protect } = require("../middleware/authMiddleware");
 
+router.get("/scan/rfid", (req, res) => {
+  res.send("You are connected to the server!");
+});
 router.post("/scan", protect, authAllow([ROLES.ADMIN, ROLES.EDITOR]), checkQR);
 
 router.get(

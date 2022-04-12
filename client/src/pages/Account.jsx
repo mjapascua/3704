@@ -5,12 +5,12 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Button } from "../components/Buttons/Main";
 import { Navbar } from "../components/Navbar";
+import Loading from "../components/Loading/Loading";
 import authService from "../utils/authService";
 import { logout, reset } from "../utils/authSlice";
 import { apiClient } from "../utils/requests";
 import EventsCalendar from "./User/EventsCalendar";
 import QRFormPage from "./User/QRFormPage";
-import RenderQRCode from "./User/RenderQRCode";
 import swal from "sweetalert2";
 import { swalCustomClass } from "../utils/general";
 
@@ -210,115 +210,129 @@ const UserAccount = ({ authConfig }) => {
 
   return (
     <div>
-      <Button onClick={requestUserQR}>Show my QR code</Button>
-      {qr?.url && <img src={qr.url} className="w-64 mb-4" />}
-      <span
-        onClick={() => {
-          setEdit((prev) => !prev);
-          setItem({ first_name, last_name, email, phone_number, residence });
-        }}
-        className="material-icons-sharp text-gray-400 cursor-pointer"
-      >
-        edit
-      </span>
-      {userData && !edit && (
-        <div>
-          <div>
-            <span className="block ">
-              <b>First name:</b>
-              {first_name}
-            </span>
-            <span className="block ">
-              <b>Last name:</b>
-              {last_name}
-            </span>
-            <span className="block ">
-              <b>Phone number:</b>
-              {phone_number}
-            </span>
-            <span className="block ">
-              <b>Address:</b>
-              {residence}
-            </span>
-            {guests.length > 0 && (
-              <span className="block ">
-                <b>Guests:</b>
-              </span>
-            )}
-            <span className="h-80 block overflow-auto">
-              {guests.map((el, index) => {
-                return (
-                  <span key={index} className="block ">
-                    {el.first_name + " " + el.last_name}
-                    <Button onClick={() => requestGuestQR(el.access_string)}>
-                      show qr
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        removeGuest({ gId: el._id, name: el.first_name })
-                      }
-                    >
-                      remove
-                    </Button>
-                  </span>
-                );
-              })}
-            </span>
-          </div>
-        </div>
-      )}
-      {edit && item && (
-        <form className="w-full py-1" onSubmit={handleSubmitEdit}>
-          <span className="inline-flex w-3/4 justify-between ">
-            <label>
-              <input
-                type="text"
-                value={item.first_name}
-                name="first_name"
-                className="form-input !w-40"
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              <input
-                type="text"
-                value={item.last_name}
-                name="last_name"
-                className="form-input !w-40"
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              <span>
-                <span className="px-1 mr-2 py-4 text-base inline-block">
-                  <>+63</>
-                </span>
-                <input
-                  type="text"
-                  name="phone_number"
-                  onChange={handleChange}
-                  value={item.phone_number}
-                  className="form-input !inline-block !w-40"
-                  placeholder="9*********"
-                  required
-                />
-              </span>
-            </label>
-            <label>
-              <input
-                type="email"
-                value={item.email}
-                name="email"
-                className="form-input !w-56"
-                onChange={handleChange}
-              />
-            </label>
+      {!userData.id ? (
+        <Loading />
+      ) : (
+        <>
+          <Button onClick={requestUserQR}>Show my QR code</Button>
+          {qr?.url && <img src={qr.url} className="w-64 mb-4" />}
+          <span
+            onClick={() => {
+              setEdit((prev) => !prev);
+              setItem({
+                first_name,
+                last_name,
+                email,
+                phone_number,
+                residence,
+              });
+            }}
+            className="material-icons-sharp text-gray-400 cursor-pointer"
+          >
+            edit
           </span>
+          {userData && !edit && (
+            <div>
+              <div>
+                <span className="block ">
+                  <b>First name:</b>
+                  {first_name}
+                </span>
+                <span className="block ">
+                  <b>Last name:</b>
+                  {last_name}
+                </span>
+                <span className="block ">
+                  <b>Phone number:</b>
+                  {phone_number}
+                </span>
+                <span className="block ">
+                  <b>Address:</b>
+                  {residence}
+                </span>
+                {guests.length > 0 && (
+                  <span className="block ">
+                    <b>Guests:</b>
+                  </span>
+                )}
+                <span className="h-80 block overflow-auto">
+                  {guests.map((el, index) => {
+                    return (
+                      <span key={index} className="block ">
+                        {el.first_name + " " + el.last_name}
+                        <Button
+                          onClick={() => requestGuestQR(el.access_string)}
+                        >
+                          show qr
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            removeGuest({ gId: el._id, name: el.first_name })
+                          }
+                        >
+                          remove
+                        </Button>
+                      </span>
+                    );
+                  })}
+                </span>
+              </div>
+            </div>
+          )}
+          {edit && item && (
+            <form className="w-full py-1" onSubmit={handleSubmitEdit}>
+              <span className="inline-flex w-3/4 justify-between ">
+                <label>
+                  <input
+                    type="text"
+                    value={item.first_name}
+                    name="first_name"
+                    className="form-input !w-40"
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  <input
+                    type="text"
+                    value={item.last_name}
+                    name="last_name"
+                    className="form-input !w-40"
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  <span>
+                    <span className="px-1 mr-2 py-4 text-base inline-block">
+                      <>+63</>
+                    </span>
+                    <input
+                      type="text"
+                      name="phone_number"
+                      onChange={handleChange}
+                      value={item.phone_number}
+                      className="form-input !inline-block !w-40"
+                      placeholder="9*********"
+                      required
+                    />
+                  </span>
+                </label>
+                <label>
+                  <input
+                    type="email"
+                    value={item.email}
+                    name="email"
+                    className="form-input !w-56"
+                    onChange={handleChange}
+                  />
+                </label>
+              </span>
 
-          <Button className="w-40" type={"submit"}>
-            Submit
-          </Button>
-        </form>
+              <Button className="w-40" type={"submit"}>
+                Submit
+              </Button>
+            </form>
+          )}
+        </>
       )}
     </div>
   );

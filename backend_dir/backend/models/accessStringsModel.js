@@ -23,4 +23,4 @@ const accessStringSchema = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("GuestAccessString", accessStringSchema);
+module.exports = mongoose.model("AccessString", accessStringSchema);

@@ -3,7 +3,7 @@ const md5 = require("crypto-js/md5");
 const qrCode = require("qrcode");
 
 const User = require("../models/userModel");
-const GuestAccessString = require("../models/accessStringsModel");
+const AccessString = require("../models/accessStringsModel");
 const TempLink = require("../models/tempLinkModel");
 const Guest = require("../models/guestModel");
 const { notifTypes } = require("../config/notifTypes");
@@ -42,7 +42,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
       patron: req.user.id,
     });
 
-    const guestAccess = await GuestAccessString.create({
+    const guestAccess = await AccessString.create({
       hash,
       patron: req.user.id,
       used_by: guest.id,
@@ -87,7 +87,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
 
   if (!guestExists.active) {
     const hash = generateMd5Hash(req.user.id + first_name + phone_number);
-    const guestAccess = await GuestAccessString.create({
+    const guestAccess = await AccessString.create({
       hash,
       patron: req.user.id,
       used_by: guestExists.id,
@@ -127,7 +127,7 @@ const userQR = asyncHandler(async (req, res) => {
 });
 
 const guestQR = asyncHandler(async (req, res) => {
-  const access = await GuestAccessString.findById(req.params.id);
+  const access = await AccessString.findById(req.params.id);
   try {
     const url = await qrCode.toDataURL(access.hash, qrOptions);
     return res.json(url);
@@ -138,7 +138,7 @@ const guestQR = asyncHandler(async (req, res) => {
 });
 
 const checkQR = asyncHandler(async (req, res) => {
-  const entry = await GuestAccessString.findOneAndUpdate(
+  const entry = await AccessString.findOneAndUpdate(
     { hash: req.body.hash },
     {
       $push: {
@@ -147,7 +147,7 @@ const checkQR = asyncHandler(async (req, res) => {
     }
   ).populate("used_by");
 
-  if (!entry) {
+  if (!entry || entry.message) {
     res.status(400);
     throw new Error("No Entry");
   }
@@ -156,7 +156,9 @@ const checkQR = asyncHandler(async (req, res) => {
     {
       title: "Guest QR scanned",
       category: notifTypes.Entry_guest,
-      text: entry.used_by.first_name + " has arrived!",
+      text: entry.used_by
+        ? entry.used_by.first_name + " has arrived!"
+        : "Your QR has been scanned!",
     },
     { id: entry.patron }
   );
@@ -164,6 +166,7 @@ const checkQR = asyncHandler(async (req, res) => {
   res.status(200).json({
     message: "Allow",
     information: notify,
+    user: entry,
   });
 });
 

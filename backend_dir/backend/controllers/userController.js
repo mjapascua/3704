@@ -6,7 +6,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Guest = require("../models/guestModel");
 const TempLink = require("../models/tempLinkModel");
-const GuestAccessString = require("../models/accessStringsModel");
+const AccessString = require("../models/accessStringsModel");
 
 const { generateMd5Hash } = require("./qrController");
 // @desc    Register new user
@@ -48,6 +48,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
   const main_unique = generateMd5Hash(first_name + email + residence);
+
   // Create user
   const user = await User.create({
     first_name,
@@ -60,9 +61,15 @@ const registerUser = asyncHandler(async (req, res) => {
     password: hashedPassword,
   });
 
-  if (user.message || !user) {
+  const access = await AccessString.create({
+    hash: main_unique,
+    patron: user._id,
+    used_by: null,
+  });
+
+  if (user.message || !user || !access || access.message) {
     res.status(400);
-    throw new Error(user.message || "Invalid data");
+    throw new Error(user.message || access.message || "Invalid data");
   } else {
     const token = generateToken(user._id);
     res
@@ -139,7 +146,7 @@ const deleteGuests = asyncHandler(async (req, res) => {
     last_disabled: new Date(),
   });
 
-  const string = await GuestAccessString.findOneAndDelete({ used_by: gId });
+  const string = await AccessString.findOneAndDelete({ used_by: gId });
 
   if (!user) {
     res.status(401);

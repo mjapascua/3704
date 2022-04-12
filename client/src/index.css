@@ -45,7 +45,14 @@ body {
   /* FILLS */
   background-color: theme("colors.gray.50");
 }
-
+.swal2-icon {
+  width: 3em !important;
+  height: 3em !important;
+  font-size: small;
+  padding: 0.5em;
+}
+.swal2-icon-content {
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;

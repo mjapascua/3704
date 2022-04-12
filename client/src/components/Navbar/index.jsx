@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import { apiClient } from "../../utils/requests";
+import { logout } from "../../utils/authSlice";
 import { Button } from "../Buttons/Main";
 import { NavItem } from "./NavItem";
 const routes = [
@@ -11,14 +12,15 @@ const routes = [
   { to: "/contact", label: "contact" },
 ];
 
+const min = 60;
+const hr = 3600;
+
 export const Navbar = React.memo(() => {
   const [notif, setNotifs] = useState({ show: false, data: [], unread: 0 });
   const navigate = useNavigate();
   let location = useLocation();
   const { user } = useSelector((state) => state.auth);
-
-  const min = 60;
-  const hr = 3600;
+  const dispatch = useDispatch();
 
   const authConfig = {
     headers: {
@@ -28,15 +30,20 @@ export const Navbar = React.memo(() => {
 
   useEffect(() => {
     if (user)
-      apiClient.get("user/notifs", authConfig).then((res) => {
-        setNotifs((prev) => {
-          return {
-            ...prev,
-            data: res.data.notifications,
-            unread: res.data.unreadCount,
-          };
+      apiClient
+        .get("user/notifs", authConfig)
+        .then((res) => {
+          setNotifs((prev) => {
+            return {
+              ...prev,
+              data: res.data.notifications,
+              unread: res.data.unreadCount,
+            };
+          });
+        })
+        .catch(() => {
+          dispatch(logout());
         });
-      });
   }, []);
 
   return (
