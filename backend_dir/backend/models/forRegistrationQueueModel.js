@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 
-const tempLink = mongoose.Schema({
-  unique: {
-    type: String,
-    required: true,
-  },
+const forRegistrationSchema = mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -16,4 +12,8 @@ const tempLink = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("TempLink", tempLink, "temporary_links");
+module.exports = mongoose.model(
+  "ForRegistration",
+  forRegistrationSchema,
+  "registration_queue"
+);

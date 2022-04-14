@@ -39,6 +39,11 @@ const userSchema = mongoose.Schema(
       required: true,
     },
 
+    tag_uid: {
+      type: String,
+      default: null,
+    },
+
     residence: {
       type: String,
       required: [true, "Please add your residence"],

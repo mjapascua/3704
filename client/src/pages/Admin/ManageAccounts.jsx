@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { apiClient } from "../../utils/requests";
 import { useTable } from "react-table";
 import { Button } from "../../components/Buttons/Main";
+import Swal from "sweetalert2";
 
 const ManageAccounts = ({ authConfig }) => {
   const [users, setUsers] = useState([]);
@@ -37,7 +38,7 @@ const ManageAccounts = ({ authConfig }) => {
           <span
             onClick={() =>
               setItem({
-                _id,
+                id: _id,
                 first_name,
                 last_name,
                 email,
@@ -63,7 +64,7 @@ const ManageAccounts = ({ authConfig }) => {
   const handleSubmitEdit = (e) => {
     e.preventDefault();
     apiClient
-      .post(`user/${item._id}/edit`, item, authConfig)
+      .post(`user/${item.id}/edit`, item, authConfig)
       .then((res) => {
         if (res.status === 200) {
           console.log(res);
@@ -89,61 +90,105 @@ const ManageAccounts = ({ authConfig }) => {
     fetchUsers();
   }, [fetchUsers]);
 
+  const startCardRegistration = () => {
+    apiClient.post("admin/rfid/register/queue", { id: item.id }).then((res) => {
+      if (res.status === 201 || res.status === 200) {
+        Swal.fire({
+          title: !res.data
+            ? "Waiting for scanner"
+            : res.data + " waiting for scanner",
+          icon: "question",
+          showConfirmButton: false,
+          allowOutsideClick: false,
+        });
+        checkRegistration();
+      } else toast.error(res.data);
+    });
+  };
+
+  const checkRegistration = () => {
+    let timeout;
+    apiClient
+      .get("admin/users/is_registered/" + item.id, authConfig)
+      .then((res) => {
+        if (res.status !== 201) {
+          timeout = setTimeout(() => {
+            checkRegistration();
+          }, 8000);
+        } else {
+          clearTimeout(timeout);
+          Swal.fire({
+            title:
+              "Card registered to \n" +
+              item?.first_name +
+              " " +
+              item?.last_name,
+            icon: "success",
+          });
+        }
+      });
+  };
+
   return (
     <div className="w-full mx-12">
       <div>
         {item && (
-          <form className="w-full py-1" onSubmit={handleSubmitEdit}>
-            <span className="inline-flex w-3/4 justify-between ">
-              <label>
-                <input
-                  type="text"
-                  value={item.first_name}
-                  name="first_name"
-                  className="form-input !w-40"
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                <input
-                  type="text"
-                  value={item.last_name}
-                  name="last_name"
-                  className="form-input !w-40"
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                <span>
-                  <span className="px-1 mr-2 py-4 text-base inline-block">
-                    <>+63</>
-                  </span>
+          <>
+            <Button primary onClick={startCardRegistration}>
+              Register Card
+            </Button>
+            <form className="w-full py-1" onSubmit={handleSubmitEdit}>
+              <span className="inline-flex w-3/4 justify-between ">
+                <label>
                   <input
                     type="text"
-                    name="phone_number"
+                    value={item.first_name}
+                    name="first_name"
+                    className="form-input !w-40"
                     onChange={handleChange}
-                    value={item.phone_number}
-                    className="form-input !inline-block !w-40"
-                    placeholder="9*********"
-                    required
                   />
-                </span>
-              </label>
-              <label>
-                <input
-                  type="email"
-                  value={item.email}
-                  name="email"
-                  className="form-input !w-56"
-                  onChange={handleChange}
-                />
-              </label>
-            </span>
+                </label>
+                <label>
+                  <input
+                    type="text"
+                    value={item.last_name}
+                    name="last_name"
+                    className="form-input !w-40"
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  <span>
+                    <span className="px-1 mr-2 py-4 text-base inline-block">
+                      <>+63</>
+                    </span>
+                    <input
+                      type="text"
+                      name="phone_number"
+                      onChange={handleChange}
+                      value={item.phone_number}
+                      className="form-input !inline-block !w-40"
+                      placeholder="9*********"
+                      required
+                    />
+                  </span>
+                </label>
+                <label>
+                  <input
+                    type="email"
+                    value={item.email}
+                    name="email"
+                    className="form-input !w-56"
+                    onChange={handleChange}
+                  />
+                </label>
+              </span>
 
-            <Button className="w-40" type={"submit"}>
-              Submit
-            </Button>
-          </form>
+              <Button className="w-40" type={"submit"}>
+                Submit
+              </Button>
+            </form>
+          </>
         )}
       </div>
       <AccountsTable data={users} columns={columns} />

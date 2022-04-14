@@ -23,4 +23,8 @@ const accessStringSchema = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("AccessString", accessStringSchema);
+module.exports = mongoose.model(
+  "AccessString",
+  accessStringSchema,
+  "access_strings"
+);
