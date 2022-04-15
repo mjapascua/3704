@@ -24,6 +24,8 @@ app.use("/api/user", require("./routes/userRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/public", require("./routes/publicRoutes"));
 
+app.use('/api/bulletin-news', require('./routes/bulletinNewsRoutes'))
+
 app.use(errorHandler);
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
