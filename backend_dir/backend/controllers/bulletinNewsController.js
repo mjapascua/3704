@@ -1,12 +1,12 @@
 const asyncHandler = require('express-async-handler')
 
-const BulletinNews = require('../models/bulletinNewsModel')
+const Article = require('../models/articleModel')
 
 // @desc    Get Bulletin News
 // @route   GET /api/bulletin-news
 // @access  Private
 const getBulletinNews = asyncHandler(async (req, res) => {
-    const bulletinnews = await BulletinNews.find()
+    const bulletinnews = await Article.find()
     
     res.status(200).json(bulletinnews)
 })
@@ -20,7 +20,7 @@ const setBulletinNews = asyncHandler(async (req, res) => {
         throw new Error('Please add a text field')
     }
 
-    const bulletinnews = await BulletinNews.create({
+    const bulletinnews = await Article.create({
         text: req.body.text
     })
 
@@ -31,23 +31,23 @@ const setBulletinNews = asyncHandler(async (req, res) => {
 // @route   PUT /api/bulletin-news/:id
 // @access  Private
 const updateBulletinNews = asyncHandler(async (req, res) => {
-    const bulletinnews = await BulletinNews.findById(req.params.id)
+    const bulletinnews = await Article.findById(req.params.id)
 
     if(!bulletinnews) {
         res.status(400)
         throw new Error('Bulletin News not found')
     }
 
-    const updatedBulletinNews = await BulletinNews.findByIdAndUpdate(req.params.id, req.body, {new: true})
+    const updatedArticle = await Article.ArticlefindByIdAndUpdate(req.params.id, req.body, {new: true})
 
-    res.status(200).json(updatedBulletinNews)
+    res.status(200).json(updatedArticle)
 })
 
 // @desc    Delete Bulletin News
 // @route   DELETE /api/bulletin-news
 // @access  Private
 const deleteBulletinNews = asyncHandler(async (req, res) => {
-    const bulletinnews = await BulletinNews.findById(req.params.id)
+    const bulletinnews = await Article.findById(req.params.id)
 
     if(!bulletinnews) {
         res.status(400)
