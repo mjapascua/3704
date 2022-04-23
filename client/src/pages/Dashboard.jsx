@@ -14,6 +14,7 @@ import { logout, reset } from "../utils/authSlice";
 import { redirect } from "./Login";
 import Loading from "../components/Loading/Loading";
 import authService from "../utils/authService";
+import ManageDevices from "./Admin/ManageDevices";
 
 const navStyle =
   "w-full flex text-sm items-center cursor-pointer  md:rounded-tl-md md:rounded-bl-md justify-center md:justify-start mb-4 py-5 px-8";
@@ -27,6 +28,7 @@ const routes = [
   { to: "/dashboard/bulletin", label: "Manage bulletin", icon: "feed" },
   { to: "/dashboard/qr-scanner", label: "QR Scanner", icon: "qr_code_scanner" },
   { to: "/dashboard/accounts", label: "Accounts", icon: "manage_accounts" },
+  { to: "/dashboard/rfid-devices", label: "Devices", icon: "sensors" },
 ];
 
 const Dashboard = () => {
@@ -122,6 +124,10 @@ const Dashboard = () => {
                 <Route
                   path={"/qr-scanner"}
                   element={<AdminScanner authConfig={authConfig} />}
+                />
+                <Route
+                  path={"/rfid-devices"}
+                  element={<ManageDevices authConfig={authConfig} />}
                 />
               </Routes>
             </div>

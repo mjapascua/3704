@@ -1,24 +1,46 @@
 const { ObjectId } = require("mongodb");
+const { ROLES } = require("../config/roles");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
-const mongoose = require("mongoose");
 const ForRegistration = require("../models/forRegistrationQueueModel");
 const RegisteredTag = require("../models/registeredTagModel");
+const RFIDDeviceSchema = require("../models/rfidDeviceModel");
+const ScanLog = require("../models/scanLogModel");
+const { notifTypes } = require("../config/notifTypes");
+const { createNotif } = require("./notificationController");
 
-// @desc    Get a QR hash for guest
-// @route   GET /api/users/:id/:guest_id
+// @desc    Get all users
+// @route   GET /api/admin/users/
 // @access  Private
 const getAllUsers = asyncHandler(async (req, res) => {
   const users = await User.find({});
-  if (users) {
-    return res.json(users);
-  }
-  res.status(404);
-  throw new Error("No users found");
+  if (!users) {
+    res.status(404);
+    throw new Error("No users found");
+  } else res.json(users);
+});
+
+// @desc    Get user by role
+// @route   GET /api/admin/users/:role
+// @access  Private
+const getUsersByRole = asyncHandler(async (req, res) => {
+  const filter = await User.find({ role: ROLES[req.params.role] });
+
+  const users = filter.map((user) => {
+    return {
+      id: user.id,
+      name: user.first_name + " " + user.last_name,
+    };
+  });
+
+  if (!users || !filter) {
+    res.status(404);
+    throw new Error("No users found");
+  } else res.json(users);
 });
 
 // @desc    Delete account
-// @route   DELETE /api/users/:id
+// @route   DELETE /api/admin/users/:id
 // @access  Private
 const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
@@ -97,7 +119,7 @@ const checkRegistrationStatus = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Not in queue");
   }
-  if (!inQueue.registered_tag && !inQueue.continue) {
+  if (inQueue.registered_tag && !inQueue.continue) {
     res.status(201).json({
       message: "Already registered",
       tag: inQueue.registered_tag,
@@ -159,7 +181,7 @@ const tagRegistration = asyncHandler(async (req, res) => {
 
   const tag = await RegisteredTag.findOneAndUpdate(
     { uid: req.body.id },
-    { uid: req.body.id, user: inQueue.user.id, used_by: req.body.name },
+    { uid: req.body.id, patron: inQueue.user.id, used_by: req.body.name },
     { upsert: true, new: true }
   );
 
@@ -180,8 +202,83 @@ const removeFromQueue = asyncHandler(async (req, res) => {
   } else res.sendStatus(200);
 });
 
+// @desc    Register an rfid device
+// @route   POST /api/admin/rfid/device
+// @access  Private
+const registerRFIDDevice = asyncHandler(async (req, res) => {
+  const device = await RFIDDeviceSchema.findOne({ device_key: req.body.key });
+  if (device) {
+    res.status(400);
+    throw new Error("Key already taken please use another key");
+  }
+  const newDevice = await RFIDDeviceSchema.create({
+    user: req.body.user_id,
+    device_label: req.body.label,
+    device_key: req.body.key,
+    location: req.body.location ? req.body.location : null,
+  });
+
+  if (!newDevice) {
+    res.status(400);
+    throw new Error("Registration failed");
+  } else {
+    res.status(201).json(newDevice);
+  }
+});
+// @desc    Register an rfid device
+// @route   PUT /api/admin/rfid/device
+// @access  Private
+const updateRFIDDevice = asyncHandler(async (req, res) => {
+  const device = await RFIDDeviceSchema.findOneAndUpdate(
+    { device_key: req.body.key },
+    req.body,
+    { new: true }
+  );
+  if (!device) {
+    res.status(400);
+    throw new Error("Update failed");
+  } else {
+    res.sendStatus(200);
+  }
+});
+
+// @desc    Request from reader with tag uid as param
+// @route   GET /api/admin/rfid/scan/:key/:id
+// @access  Private
+const checkRFIDTag = asyncHandler(async (req, res) => {
+  const tag = await RegisteredTag.findOne({ uid: req.params.id });
+  const scanner = await RFIDDeviceSchema.findOne({
+    device_key: req.params.key,
+  });
+
+  if (!tag || !scanner) {
+    res.status(401);
+    throw new Error("Unauthorized");
+  }
+  const log = await ScanLog.create({
+    type: "rfid",
+    tag: tag.id,
+    from_reader: scanner.id,
+  });
+
+  const notify = await createNotif(
+    {
+      title: "RFID Tag scanned",
+      category: notifTypes.Entry_tag,
+      text: tag.used_by + " has arrived!",
+    },
+    { id: tag.user }
+  );
+
+  if (!log || !notify) {
+    res.status(400);
+    throw new Error("Not recorded");
+  } else res.sendStatus(200);
+});
+
 module.exports = {
   getAllUsers,
+  getUsersByRole,
   deleteUser,
   queueUserTagRegistration,
   verifyTagStatus,
@@ -189,4 +286,7 @@ module.exports = {
   updateQueueItem,
   checkRegistrationStatus,
   removeFromQueue,
+  registerRFIDDevice,
+  updateRFIDDevice,
+  checkRFIDTag,
 };

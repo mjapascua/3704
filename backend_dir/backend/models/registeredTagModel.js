@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const RegisteredTagSchema = mongoose.Schema({
-  user: {
+  patron: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,

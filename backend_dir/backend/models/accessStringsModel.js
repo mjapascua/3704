@@ -14,9 +14,6 @@ const accessStringSchema = mongoose.Schema(
     hash: {
       type: String,
     },
-    scanHistory: {
-      type: Array,
-    },
   },
   {
     timestamps: true,

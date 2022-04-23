@@ -6,6 +6,7 @@ const User = require("../models/userModel");
 const AccessString = require("../models/accessStringsModel");
 const TempLink = require("../models/tempLinkModel");
 const Guest = require("../models/guestModel");
+const ScanLog = require("../models/scanLogModel");
 const { notifTypes } = require("../config/notifTypes");
 const { createNotif } = require("./notificationController");
 const phoneRegex = /^([0-9]{10})$/;
@@ -97,11 +98,15 @@ const requestGuestQR = asyncHandler(async (req, res) => {
     guestExists.access_string = true;
     guestExists.save();
 
-    const update = await User.findByIdAndUpdate(req.user.id, {
-      $push: {
-        guests: guestExists.id,
+    const update = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        $push: {
+          guests: guestExists.id,
+        },
       },
-    });
+      { new: true }
+    );
 
     if (!guestUpdate || !update) {
       res.status(404);
@@ -109,7 +114,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
     }
     try {
       const url = await qrCode.toDataURL(guestAccess.hash, qrOptions);
-      return res.status(201).json({ url: url, exists: "inactive" });
+      res.status(201).json({ url: url, exists: "inactive" });
     } catch (error) {
       res.status(400);
       throw new Error("QR creation failed");
@@ -120,7 +125,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
 const userQR = asyncHandler(async (req, res) => {
   try {
     const url = await qrCode.toDataURL(req.user.main_unique, qrOptions);
-    return res.json(url);
+    res.json(url);
   } catch (error) {
     res.status(404);
     throw new Error("Not found!");
@@ -129,33 +134,38 @@ const userQR = asyncHandler(async (req, res) => {
 
 const guestQR = asyncHandler(async (req, res) => {
   const access = await AccessString.findById(req.params.id);
-  try {
-    const url = await qrCode.toDataURL(access.hash, qrOptions);
-    return res.json(url);
-  } catch (error) {
+  if (!access) {
     res.status(404);
     throw new Error("Not found!");
   }
+  const url = await qrCode.toDataURL(access.hash, qrOptions);
+  res.json(url);
 });
 
 const checkQR = asyncHandler(async (req, res) => {
-  const entry = await AccessString.findOneAndUpdate(
-    { hash: req.body.hash },
-    {
-      $push: {
-        scanHistory: new Date(),
-      },
-    }
-  ).populate("used_by");
+  const entry = await AccessString.findOne({ hash: req.body.hash }).populate(
+    "used_by"
+  );
 
   if (!entry || entry.message) {
-    res.status(400);
+    res.status(401);
     throw new Error("No Entry");
+  }
+
+  const log = await ScanLog.create({
+    type: "qr",
+    qr: entry.id,
+    from_account: req.user.id,
+  });
+
+  if (!log) {
+    res.status(400);
+    throw new Error("Not recorded");
   }
 
   const notify = await createNotif(
     {
-      title: "Guest QR scanned",
+      title: "QR scanned",
       category: notifTypes.Entry_guest,
       text: entry.used_by
         ? entry.used_by.first_name + " has arrived!"

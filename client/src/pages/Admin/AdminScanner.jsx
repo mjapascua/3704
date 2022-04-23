@@ -27,10 +27,6 @@ export const QRScanner = ({ openOnRender, authConfig }) => {
   const [scanner, setScanner] = useState(openOnRender);
   const toastId = useRef(null);
 
-  useEffect(() => {
-    console.log(lastHash);
-  }, [lastHash]);
-
   const handleScanSuccess = (hash) => {
     apiClient
       .post("admin/scan", { hash }, authConfig)

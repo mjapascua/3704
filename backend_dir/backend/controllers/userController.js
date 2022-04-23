@@ -7,6 +7,7 @@ const User = require("../models/userModel");
 const Guest = require("../models/guestModel");
 const TempLink = require("../models/tempLinkModel");
 const AccessString = require("../models/accessStringsModel");
+const RegisteredTag = require("../models/registeredTagModel");
 
 const { generateMd5Hash } = require("./qrController");
 // @desc    Register new user
@@ -109,6 +110,7 @@ const loginUser = asyncHandler(async (req, res) => {
 const getMe = asyncHandler(async (req, res) => {
   const { _id, first_name, last_name, email, residence, phone_number, guests } =
     await User.findById(req.user.id).populate("guests");
+  const user_tags = await RegisteredTag.find({ patron: req.user.id });
 
   res.json({
     id: _id,
@@ -117,6 +119,7 @@ const getMe = asyncHandler(async (req, res) => {
     last_name,
     email,
     phone_number,
+    user_tags,
     guests,
   });
 });
@@ -146,13 +149,13 @@ const deleteGuests = asyncHandler(async (req, res) => {
     last_disabled: new Date(),
   });
 
-  const string = await AccessString.findOneAndDelete({ used_by: gId });
+  await AccessString.findOneAndDelete({ used_by: gId });
 
   if (!user) {
     res.status(401);
     throw new Error("Unauthorized user not found");
   }
-  if (!string || !guest) {
+  if (!guest) {
     res.status(400);
     throw new Error("Access not removed");
   }

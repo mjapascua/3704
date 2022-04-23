@@ -125,8 +125,16 @@ const UserAccount = ({ authConfig }) => {
   const [userData, setUserData] = useState(defUserState);
   const [qr, setQr] = useState(null);
 
-  const { id, first_name, last_name, email, phone_number, residence, guests } =
-    userData;
+  const {
+    id,
+    first_name,
+    last_name,
+    email,
+    phone_number,
+    residence,
+    guests,
+    user_tags,
+  } = userData;
 
   const [edit, setEdit] = useState(false);
   const [item, setItem] = useState(null);
@@ -250,31 +258,53 @@ const UserAccount = ({ authConfig }) => {
                   {residence}
                 </span>
                 {guests.length > 0 && (
-                  <span className="block ">
-                    <b>Guests:</b>
-                  </span>
+                  <>
+                    <span className="block ">
+                      <b>Guests:</b>
+                    </span>
+
+                    <span className=" block overflow-auto">
+                      {guests.map((el, index) => {
+                        return (
+                          <span key={index} className="block ">
+                            {el.first_name + " " + el.last_name}
+                            <Button
+                              onClick={() => requestGuestQR(el.access_string)}
+                            >
+                              show qr
+                            </Button>
+                            <Button
+                              onClick={() =>
+                                removeGuest({
+                                  gId: el._id,
+                                  name: el.first_name,
+                                })
+                              }
+                            >
+                              remove
+                            </Button>
+                          </span>
+                        );
+                      })}
+                    </span>
+                  </>
                 )}
-                <span className="h-80 block overflow-auto">
-                  {guests.map((el, index) => {
-                    return (
-                      <span key={index} className="block ">
-                        {el.first_name + " " + el.last_name}
-                        <Button
-                          onClick={() => requestGuestQR(el.access_string)}
-                        >
-                          show qr
-                        </Button>
-                        <Button
-                          onClick={() =>
-                            removeGuest({ gId: el._id, name: el.first_name })
-                          }
-                        >
-                          remove
-                        </Button>
-                      </span>
-                    );
-                  })}
-                </span>
+                {user_tags.length > 0 && (
+                  <>
+                    <span className="block ">
+                      <b>Your Cards:</b>
+                    </span>
+                    <span className="h-80 block overflow-auto">
+                      {user_tags.map((el, index) => {
+                        return (
+                          <span key={index} className="block ">
+                            {el.used_by}
+                          </span>
+                        );
+                      })}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
           )}

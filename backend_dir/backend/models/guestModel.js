@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { ROLES } = require("../config/roles");
 
 const guestSchema = mongoose.Schema(
   {
