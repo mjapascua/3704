@@ -21,11 +21,14 @@ const {
 
 router.post("/", registerUser);
 router.post("/login", loginUser);
-router.post("/:id/edit", protect, updateUser);
+
+router.route("/:id").put(protect, updateUser);
 router.get("/me", protect, getMe);
+
 router.get("/notifs", protect, getNotifs);
 router.get("/read_notifs", protect, readNotifs);
 router.get("/qr", protect, userQR);
+
 router.get("/guest_qr/:id", protect, guestQR);
 router.get("/request_share_link", protect, requestQRFormLink);
 router.post("/guests/create-qr", protect, requestGuestQR);

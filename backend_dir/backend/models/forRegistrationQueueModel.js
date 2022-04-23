@@ -5,6 +5,22 @@ const forRegistrationSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  used_by: {
+    type: String,
+  },
+  registered_tag: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "RegisteredTag",
+    default: null,
+  },
+  available_tag: {
+    type: String,
+    default: null,
+  },
+  continue: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     expires: 21600, // 6 hours

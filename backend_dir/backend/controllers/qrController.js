@@ -92,10 +92,11 @@ const requestGuestQR = asyncHandler(async (req, res) => {
       patron: req.user.id,
       used_by: guestExists.id,
     });
-    const guestUpdate = await Guest.findByIdAndUpdate(guestExists.id, {
-      active: true,
-      access_string: guestAccess.id,
-    });
+
+    guestExists.active = true;
+    guestExists.access_string = true;
+    guestExists.save();
+
     const update = await User.findByIdAndUpdate(req.user.id, {
       $push: {
         guests: guestExists.id,

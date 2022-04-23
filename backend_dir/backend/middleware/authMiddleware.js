@@ -42,5 +42,14 @@ const protect = asyncHandler(async (req, res, next) => {
     throw new Error("Not authorized, no token");
   }
 });
+const authAllow = (role) => {
+  return asyncHandler(async (res, req, next) => {
+    if (!role.includes(req.req.user.role)) {
+      res.res.status(401);
+      throw new Error("Unathorized, you do not meet permission requirements");
+    }
+    next();
+  });
+};
 
-module.exports = { protect };
+module.exports = { protect, authAllow };

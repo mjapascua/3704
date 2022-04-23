@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 const ManageAccounts = ({ authConfig }) => {
   const [users, setUsers] = useState([]);
   const [item, setItem] = useState(null);
+  const [regData, setRegData] = useState({ queue_id: null });
   const columns = React.useMemo(() => [
     {
       Header: "First Name",
@@ -91,43 +92,112 @@ const ManageAccounts = ({ authConfig }) => {
   }, [fetchUsers]);
 
   const startCardRegistration = () => {
-    apiClient.post("admin/rfid/register/queue", { id: item.id }).then((res) => {
+    apiClient.post("admin/rfid/register/", { user: item.id }).then((res) => {
       if (res.status === 201 || res.status === 200) {
         Swal.fire({
           title: !res.data
             ? "Waiting for scanner"
-            : res.data + " waiting for scanner",
+            : res.data.message + " waiting for scanner",
           icon: "question",
+          showCancelButton: true,
           showConfirmButton: false,
           allowOutsideClick: false,
+        }).then((isDismissed) => {
+          if (isDismissed) {
+            cancelRegistration(res.data.id);
+          }
         });
-        checkRegistration();
-      } else toast.error(res.data);
+
+        setRegData((prev) => {
+          return { ...prev, queue_id: res.data.id };
+        });
+      } else toast.error(res.data.message);
     });
   };
 
-  const checkRegistration = () => {
+  const cancelRegistration = (queue_id) => {
+    apiClient.delete("admin/rfid/register/q/" + queue_id).then((res) => {
+      if (res.status === 200) {
+        setRegData((prev) => {
+          return { ...prev, queue_id: null };
+        });
+        Swal.close();
+      }
+    });
+  };
+
+  const checkRegistration = useCallback(() => {
+    if (!regData.queue_id) return;
     let timeout;
     apiClient
-      .get("admin/users/is_registered/" + item.id, authConfig)
+      .get("admin/rfid/register/q/" + regData.queue_id, authConfig)
       .then((res) => {
         if (res.status !== 201) {
           timeout = setTimeout(() => {
             checkRegistration();
-          }, 8000);
+          }, 10000);
         } else {
           clearTimeout(timeout);
-          Swal.fire({
-            title:
-              "Card registered to \n" +
-              item?.first_name +
-              " " +
-              item?.last_name,
-            icon: "success",
-          });
+          if (res.data.tag) {
+            Swal.fire({
+              title: "\n Do you wish to overwrite ",
+              text: "Tag is already registered to \n" + res.data.tag.used_by,
+              icon: "warning",
+              showConfirmButton: true,
+              showDenyButton: true,
+              allowOutsideClick: false,
+            }).then(({ isDenied, isConfirmed }) => {
+              if (isDenied) {
+                cancelRegistration(regData.queue_id);
+              }
+              if (isConfirmed) {
+                handleRegistration(res.data.tag.uid);
+              }
+            });
+          } else {
+            handleRegistration(res.data.available_tag);
+          }
         }
       });
+  }, [regData]);
+
+  const handleRegistration = (tag_uid) => {
+    Swal.fire({
+      title: "Register the card",
+      showConfirmButton: true,
+      input: "text",
+      inputLabel: "Full name",
+      inputValue: "",
+      showConfirmButton: true,
+      showDenyButton: true,
+      allowOutsideClick: false,
+    }).then(({ isDenied, isConfirmed, value }) => {
+      if (isDenied) {
+        cancelRegistration(regData.queue_id);
+      }
+      if (isConfirmed) {
+        apiClient
+          .post("admin/rfid/register/q/" + regData.queue_id, {
+            name: value,
+            id: tag_uid,
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              Swal.fire({
+                title: "Registered!",
+                showConfirmButton: true,
+                icon: "success",
+                text: "Tag is already registered to \n" + res.data.tag.used_by,
+              });
+            }
+          });
+      }
+    });
   };
+
+  useEffect(() => {
+    checkRegistration();
+  }, [checkRegistration]);
 
   return (
     <div className="w-full mx-12">
@@ -135,7 +205,7 @@ const ManageAccounts = ({ authConfig }) => {
         {item && (
           <>
             <Button primary onClick={startCardRegistration}>
-              Register Card
+              Add a tag to this account
             </Button>
             <form className="w-full py-1" onSubmit={handleSubmitEdit}>
               <span className="inline-flex w-3/4 justify-between ">
@@ -246,3 +316,18 @@ const AccountsTable = ({ columns, data }) => {
   );
 };
 export default ManageAccounts;
+
+/* const completeRegistration = (tag_id, name) => {
+    console.log("finishing..");
+    apiClient
+      .post("admin/rfid/register/q/" + regData.queue_id, {
+        name: name,
+        id: tag_id,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(1);
+        }
+      });
+  };
+ */

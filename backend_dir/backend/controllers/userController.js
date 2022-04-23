@@ -156,10 +156,12 @@ const deleteGuests = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Access not removed");
   }
-
   res.json("success");
 });
 
+// @desc    Update user data
+// @route   PUT /api/users/:id
+// @access  Private
 const updateUser = asyncHandler(async (req, res) => {
   const userToUpdate = await User.findByIdAndUpdate(req.params.id, req.body);
   if (!userToUpdate) {

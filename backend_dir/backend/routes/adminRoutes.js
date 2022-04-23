@@ -5,25 +5,30 @@ const {
   deleteUser,
   getAllUsers,
   queueUserTagRegistration,
+  verifyTagStatus,
   tagRegistration,
+  updateQueueItem,
+  checkRegistrationStatus,
   removeFromQueue,
-  checkIfRegistered,
 } = require("../controllers/adminRequestsController");
 const { checkQR } = require("../controllers/qrController");
-const { authAllow } = require("../controllers/roleController");
-const { protect } = require("../middleware/authMiddleware");
+const { protect, authAllow } = require("../middleware/authMiddleware");
 
-//tag registration
 router.get("/rfid/scan", (req, res) => {
   res.send("You are connected to the server!");
 });
-router.post("/rfid/register/queue", queueUserTagRegistration);
-router.post("/rfid/register", tagRegistration);
-router.get("/rfid/register/queue/:id", removeFromQueue);
+router.post("/rfid/register", queueUserTagRegistration);
+
+router.get("/rfid/register/:tag_id", verifyTagStatus);
 
 router.post("/scan", protect, authAllow([ROLES.ADMIN, ROLES.EDITOR]), checkQR);
 
-router.get("/users/is_registered/:id", protect, checkIfRegistered);
+router
+  .route("/rfid/register/q/:queue_id")
+  .get(checkRegistrationStatus)
+  .post(tagRegistration)
+  .put(updateQueueItem)
+  .delete(removeFromQueue);
 
 router.get(
   "/users",
@@ -31,10 +36,5 @@ router.get(
   authAllow([ROLES.ADMIN, ROLES.EDITOR]),
   getAllUsers
 );
-router.delete(
-  "/users/delete/:id",
-  protect,
-  authAllow([ROLES.ADMIN]),
-  deleteUser
-);
+router.delete("/users/:id", protect, authAllow([ROLES.ADMIN]), deleteUser);
 module.exports = router;

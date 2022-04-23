@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Button } from "../components/Buttons/Main";
-import { Navbar } from "../components/Navbar";
 import Loading from "../components/Loading/Loading";
 import authService from "../utils/authService";
 import { logout, reset } from "../utils/authSlice";
@@ -169,7 +168,7 @@ const UserAccount = ({ authConfig }) => {
   const handleSubmitEdit = (e) => {
     e.preventDefault();
     apiClient
-      .post(`user/${id}/edit`, item, authConfig)
+      .put(`user/${id}`, item, authConfig)
       .then((res) => {
         if (res.status === 200 && !res.data.message) {
           reqUserInfo();
@@ -328,7 +327,7 @@ const UserAccount = ({ authConfig }) => {
               </span>
 
               <Button className="w-40" type={"submit"}>
-                Submit
+                Save
               </Button>
             </form>
           )}
