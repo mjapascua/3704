@@ -36,12 +36,11 @@ function SignUp() {
   );
   const signUpBtn = useRef();
 
-  const from =
-    (location.state?.from?.pathname === "/"
-      ? credentials.role === authService.ROLES.ADMIN
-        ? "/dashboard"
-        : "/account"
-      : location.state?.from?.pathname) || "/";
+  let from = location.state?.from?.pathname
+    ? location.state?.from?.pathname
+    : user?.role === authService.ROLES.ADMIN
+    ? "/dashboard"
+    : "/account";
 
   useEffect(() => {
     if (isError) {

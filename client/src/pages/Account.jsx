@@ -12,18 +12,15 @@ import EventsCalendar from "./User/EventsCalendar";
 import QRFormPage from "./User/QRFormPage";
 import swal from "sweetalert2";
 import { swalCustomClass } from "../utils/general";
+import { redirect } from "./Login";
 
 const Account = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [redir, setRedir] = useState(false);
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   );
-  const authConfig = {
-    headers: {
-      Authorization: "Bearer " + user.token,
-    },
-  };
 
   useEffect(() => {
     if (isError) {
@@ -31,7 +28,7 @@ const Account = () => {
     }
 
     if (!user) {
-      navigate("/login");
+      redirect(setRedir, navigate, "/login");
     }
 
     return () => {
@@ -39,27 +36,45 @@ const Account = () => {
     };
   }, [user, navigate, isError, message, dispatch]);
 
+  const authConfig = {
+    headers: {
+      Authorization: "Bearer " + user?.token,
+    },
+  };
+
   useEffect(() => {
     document.title = "Account | " + process.env.REACT_APP_NAME;
   }, []);
 
   return (
-    <div className="flex h-full">
-      <span className=" w-80 block p-4 h-64 md:h-full bg-meadow-800">
-        <Button primary onClick={() => navigate("/account")} classes={"mb-5"}>
-          My account
-          <span className="material-icons-sharp text-3xl">manage_accounts</span>
-        </Button>
-        <Button
-          primary
-          onClick={() => navigate("generate-qr-pass")}
-          classes={"mb-5"}
-        >
-          Create visitor pass
-          <span className="material-icons-sharp text-3xl">qr_code</span>
-        </Button>
+    <>
+      {redir ? (
+        <div className="w-full h-screen">
+          <Loading text={"Unauthorized, redirecting"} />
+        </div>
+      ) : (
+        <div className="flex h-full">
+          <span className=" w-80 block p-4 h-64 md:h-full bg-meadow-800">
+            <Button
+              primary
+              onClick={() => navigate("/account")}
+              classes={"mb-5"}
+            >
+              My account
+              <span className="material-icons-sharp text-3xl">
+                manage_accounts
+              </span>
+            </Button>
+            <Button
+              primary
+              onClick={() => navigate("generate-qr-pass")}
+              classes={"mb-5"}
+            >
+              Create visitor pass
+              <span className="material-icons-sharp text-3xl">qr_code</span>
+            </Button>
 
-        {/*  <Button primary classes={"mb-5"}>
+            {/*  <Button primary classes={"mb-5"}>
             Dues
             <span className="material-icons-sharp text-3xl">payment</span>
           </Button>
@@ -67,48 +82,59 @@ const Account = () => {
             Message
             <span className="material-icons-sharp text-3xl">forum</span>
           </Button> */}
-        <Button primary onClick={() => navigate("calendar")} classes={"mb-5"}>
-          Calendar
-          <span className="material-icons-sharp text-3xl">calendar_month</span>
-        </Button>
-        {user.role === authService.ROLES.ADMIN && (
-          <Button
-            primary
-            onClick={() => navigate("/dashboard")}
-            classes={"mb-5"}
-          >
-            Admin dashboard
-            <span className="material-icons-sharp text-3xl">
-              admin_panel_settings
-            </span>
-          </Button>
-        )}
-        <Button
-          primary
-          onClick={() => {
-            dispatch(logout());
-            navigate("/", { replace: true });
-          }}
-          classes={"mb-5"}
-        >
-          Logout
-          <span className="material-icons-sharp text-3xl">logout</span>
-        </Button>
-      </span>
-      <div className="bg-white w-full px-10 py-5">
-        <Routes>
-          <Route path="/" element={<UserAccount authConfig={authConfig} />} />
-          <Route
-            path="/generate-qr-pass"
-            element={<QRFormPage authConfig={authConfig} />}
-          />
-          <Route
-            path="/calendar"
-            element={<EventsCalendar authConfig={authConfig} />}
-          />
-        </Routes>
-      </div>
-    </div>
+            <Button
+              primary
+              onClick={() => navigate("calendar")}
+              classes={"mb-5"}
+            >
+              Calendar
+              <span className="material-icons-sharp text-3xl">
+                calendar_month
+              </span>
+            </Button>
+            {user?.role === authService.ROLES.ADMIN && (
+              <Button
+                primary
+                onClick={() => navigate("/dashboard")}
+                classes={"mb-5"}
+              >
+                Admin dashboard
+                <span className="material-icons-sharp text-3xl">
+                  admin_panel_settings
+                </span>
+              </Button>
+            )}
+            <Button
+              primary
+              onClick={() => {
+                dispatch(logout());
+                navigate("/", { replace: true });
+              }}
+              classes={"mb-5"}
+            >
+              Logout
+              <span className="material-icons-sharp text-3xl">logout</span>
+            </Button>
+          </span>
+          <div className="bg-white w-full px-10 py-5">
+            <Routes>
+              <Route
+                path="/"
+                element={<UserAccount authConfig={authConfig} />}
+              />
+              <Route
+                path="/generate-qr-pass"
+                element={<QRFormPage authConfig={authConfig} />}
+              />
+              <Route
+                path="/calendar"
+                element={<EventsCalendar authConfig={authConfig} />}
+              />
+            </Routes>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

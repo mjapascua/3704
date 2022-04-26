@@ -16,6 +16,7 @@ const ManageScanLogs = ({ authConfig }) => {
     total_pages: 1,
   });
   const [loading, setLoading] = useState(false);
+  const [order, setOrder] = useState(-1);
   const [options, setOptions] = useState({
     users: [],
     locations: [],
@@ -38,7 +39,7 @@ const ManageScanLogs = ({ authConfig }) => {
         return (
           <span
             className={
-              "material-icons-sharp " +
+              "material-icons-sharp px-2 " +
               (row.original.access_type === "AccessString"
                 ? "text-cyan-600"
                 : "text-blue-500")
@@ -56,7 +57,19 @@ const ManageScanLogs = ({ authConfig }) => {
       accessor: "scan_point.label",
     },
     {
-      Header: "Date time",
+      Header: () => {
+        return (
+          <span
+            onClick={() => setOrder(order === 1 ? -1 : 1)}
+            className="flex items-center cursor-pointer"
+          >
+            Date time{" "}
+            <span className={"material-icons-sharp pl-3 text-white"}>
+              {order === 1 ? "arrow_drop_down" : "arrow_drop_up"}
+            </span>
+          </span>
+        );
+      },
       accessor: "createdAt",
       maxWidth: 300,
       minWidth: 250,
@@ -86,7 +99,10 @@ const ManageScanLogs = ({ authConfig }) => {
           {}
         );
         apiClient
-          .put(`/admin/scans?limit=${pageSize}&page=${pageIndex}`, cleanFilter)
+          .put(`/admin/scans?limit=${pageSize}&page=${pageIndex}`, {
+            filter: cleanFilter,
+            order: order,
+          })
           .then((res) => {
             if (res.status === 200) {
               setPaginate(res.data);
@@ -97,7 +113,7 @@ const ManageScanLogs = ({ authConfig }) => {
           });
       }
     },
-    [filter]
+    [filter, order]
   );
 
   const handleChangeFilter = ({ target }) => {
@@ -256,7 +272,7 @@ const Table = ({ columns, paginate, fetchData, loading }) => {
 
   return (
     <div>
-      <div className=" h-96 block overflow-scroll border-b-3 border-teal-800">
+      <div className=" h-96 block overflow-scroll ">
         <table
           {...getTableProps()}
           className=" table-spacing table-auto  w-full text-sm "
@@ -292,7 +308,7 @@ const Table = ({ columns, paginate, fetchData, loading }) => {
                             width: cell.column.width,
                           },
                         })}
-                        className="border-t border-b border-gray-200 p-4"
+                        className="border-t border-b border-gray-200 px-2 py-4"
                       >
                         {cell.render("Cell")}
                       </td>

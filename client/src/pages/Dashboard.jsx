@@ -49,16 +49,12 @@ const Dashboard = () => {
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   );
-  const authConfig = {
-    headers: {
-      Authorization: "Bearer " + user.token,
-    },
-  };
 
   useEffect(() => {
     if (
-      user.role !== authService.ROLES.ADMIN &&
-      user.role !== authService.ROLES.EDITOR
+      user &&
+      user?.role !== authService.ROLES.ADMIN &&
+      user?.role !== authService.ROLES.EDITOR
     ) {
       redirect(setRedir, navigate, "/");
     }
@@ -67,13 +63,19 @@ const Dashboard = () => {
     }
 
     if (!user) {
-      navigate("/login");
+      redirect(setRedir, navigate, "/login");
     }
 
     return () => {
       dispatch(reset());
     };
   }, [user, navigate, isError, message, dispatch]);
+
+  const authConfig = {
+    headers: {
+      Authorization: "Bearer " + user?.token,
+    },
+  };
 
   const handleMenuClick = () => {
     if (open) {

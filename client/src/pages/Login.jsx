@@ -31,13 +31,19 @@ function Login() {
     (state) => state.auth
   );
 
-  let from = location.state?.from?.pathname || "/";
+  let from = location.state?.from?.pathname
+    ? location.state?.from?.pathname
+    : user?.role === authService.ROLES.ADMIN
+    ? "/dashboard"
+    : "/account";
 
   useEffect(() => {
     if (isError) {
       toast.error(message, { position: toast.POSITION.BOTTOM_LEFT });
     }
-
+    if (user) {
+      redirect(setRedir, navigate, from);
+    }
     dispatch(reset());
   }, [user, navigate, isError, message, dispatch]);
 
