@@ -33,6 +33,7 @@ const ManageScanLogs = ({ authConfig }) => {
     {
       Header: "",
       accessor: "access_type",
+      width: 80,
       Cell: ({ row }) => {
         return (
           <span
@@ -50,10 +51,16 @@ const ManageScanLogs = ({ authConfig }) => {
         );
       },
     },
-    { Header: "Location", accessor: "scan_point.label" },
+    {
+      Header: "Location",
+      accessor: "scan_point.label",
+    },
     {
       Header: "Date time",
       accessor: "createdAt",
+      maxWidth: 300,
+      minWidth: 250,
+      width: 250,
       Cell: ({ row }) => {
         return new Date(row.original.createdAt).toLocaleString(
           undefined,
@@ -82,7 +89,6 @@ const ManageScanLogs = ({ authConfig }) => {
           .put(`/admin/scans?limit=${pageSize}&page=${pageIndex}`, cleanFilter)
           .then((res) => {
             if (res.status === 200) {
-              console.log(res.data);
               setPaginate(res.data);
             }
           })
@@ -113,7 +119,6 @@ const ManageScanLogs = ({ authConfig }) => {
       .all([adminReq, deviceReq, locReq])
       .then(
         axios.spread((...res) => {
-          console.log(res);
           setOptions({
             users: res[0].data,
             devices: res[1].data,
@@ -129,10 +134,6 @@ const ManageScanLogs = ({ authConfig }) => {
   useEffect(() => {
     getIntOpts();
   }, [getIntOpts]);
-
-  useEffect(() => {
-    console.log(filter);
-  }, [filter]);
 
   return (
     <div>
@@ -255,10 +256,10 @@ const Table = ({ columns, paginate, fetchData, loading }) => {
 
   return (
     <div>
-      <div className=" h-96 block overflow-scroll">
+      <div className=" h-96 block overflow-scroll border-b-3 border-teal-800">
         <table
           {...getTableProps()}
-          className="border-separate table-spacing table-auto w-full"
+          className=" table-spacing table-auto  w-full text-sm "
         >
           <thead>
             {headerGroups.map((headerGroup) => (
@@ -266,7 +267,7 @@ const Table = ({ columns, paginate, fetchData, loading }) => {
                 {headerGroup.headers.map((column) => (
                   <th
                     {...column.getHeaderProps()}
-                    className="sticky bg-slate-200 px-2 top-1 py-1"
+                    className="sticky bg-teal-800 text-white px-2 top-0 py-3"
                   >
                     {column.render("Header")}
                   </th>
@@ -280,11 +281,19 @@ const Table = ({ columns, paginate, fetchData, loading }) => {
               return (
                 <tr
                   {...row.getRowProps()}
-                  className="shadow border border-gray-800 rounded-tl-sm rounded-bl-sm rounded-tr-sm rounded-br-sm"
+                  className="rounded-tl-sm rounded-bl-sm rounded-tr-sm even:bg-gray-100 rounded-br-sm"
                 >
                   {row.cells.map((cell) => {
                     return (
-                      <td {...cell.getCellProps()} className="p-3">
+                      <td
+                        {...cell.getCellProps({
+                          style: {
+                            minWidth: cell.column.minWidth,
+                            width: cell.column.width,
+                          },
+                        })}
+                        className="border-t border-b border-gray-200 p-4"
+                      >
                         {cell.render("Cell")}
                       </td>
                     );
@@ -308,10 +317,10 @@ const Table = ({ columns, paginate, fetchData, loading }) => {
           {"<<"}
         </button>{" "}
         <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-          {"<"}
+          prev
         </button>{" "}
         <button onClick={() => nextPage()} disabled={!canNextPage}>
-          {">"}
+          next
         </button>{" "}
         <button onClick={() => gotoPage(pageCount)} disabled={!canNextPage}>
           {">>"}

@@ -136,7 +136,13 @@ const ManageDevices = ({ authConfig }) => {
             </select>
           </label>
         </span>
-        <Button primary type="submit">
+        <Button
+          primary
+          disabled={
+            info.label.length < 1 || info.label.length < 1 ? true : false
+          }
+          type="submit"
+        >
           Add
         </Button>
       </form>
