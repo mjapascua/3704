@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback, useState, useEffect, useMemo, useRef } from "react";
 import { usePagination, useTable } from "react-table";
-import { Button } from "../../components/Buttons/Main";
+import Loading from "../../components/Loading/Loading";
 import { apiClient } from "../../utils/requests";
 const dateOptions = {
   dateStyle: "medium",
@@ -32,14 +32,14 @@ const ManageScanLogs = ({ authConfig }) => {
 
   const columns = useMemo(() => [
     {
-      Header: "",
+      Header: "Type",
       accessor: "access_type",
-      width: 80,
+      width: 70,
       Cell: ({ row }) => {
         return (
           <span
             className={
-              "material-icons-sharp px-2 " +
+              "material-icons-sharp px-2 py-2 " +
               (row.original.access_type === "AccessString"
                 ? "text-cyan-600"
                 : "text-blue-500")
@@ -55,6 +55,11 @@ const ManageScanLogs = ({ authConfig }) => {
     {
       Header: "Location",
       accessor: "scan_point.label",
+      /*  Cell: ({ row }) => {
+        return row.original.scan_point?.label
+          ? row.original.scan_point.label
+          : "---";
+      }, */
     },
     {
       Header: () => {
@@ -85,7 +90,7 @@ const ManageScanLogs = ({ authConfig }) => {
     { Header: "First name", accessor: "access_obj.used_by.first_name" },
     { Header: "Last name", accessor: "access_obj.used_by.last_name" },
 
-    { Header: "scanned by", accessor: "by_account.first_name" },
+    { Header: "Scanned by", accessor: "by_account.first_name" },
   ]);
 
   const getLogs = useCallback(
@@ -152,28 +157,29 @@ const ManageScanLogs = ({ authConfig }) => {
   }, [getIntOpts]);
 
   return (
-    <div>
+    <div className="mx-10">
       <form action="" onSubmit={handleSubmitFilter}>
-        <span>
-          Sort by{" "}
-          <label>
+        <span className="w-full flex justify-end py-1 font-semibold text-sm">
+          <label className="ml-6">
             Type
             <select
               name="access_type"
               value={filter.access_type}
               onChange={handleChangeFilter}
+              className="ml-2"
             >
               <option value={""}>All</option>
               <option value={accessTypes[0]}>QR</option>
               <option value={accessTypes[1]}>RFID</option>
             </select>
           </label>
-          <label>
+          <label className="ml-6">
             Location
             <select
               name="scan_point"
-              value={filter.location}
+              value={filter.scan_point}
               onChange={handleChangeFilter}
+              className="ml-2"
             >
               <option value={""}>All</option>
               {options.locations.map((l, index) => {
@@ -185,12 +191,13 @@ const ManageScanLogs = ({ authConfig }) => {
               })}
             </select>
           </label>
-          <label>
-            Account
+          <label className="ml-6">
+            Scanned by
             <select
               name="by_account"
               value={filter.by_account}
               onChange={handleChangeFilter}
+              className="ml-2"
             >
               <option value={""}>All</option>
               {options.users.map((u, index) => {
@@ -202,12 +209,13 @@ const ManageScanLogs = ({ authConfig }) => {
               })}
             </select>
           </label>
-          <label>
+          <label className="ml-6">
             Device
             <select
               name="by_reader"
               value={filter.by_reader}
               onChange={handleChangeFilter}
+              className="ml-2"
             >
               <option value={""}>All</option>
               {options.devices.map((d, index) => {
@@ -219,9 +227,6 @@ const ManageScanLogs = ({ authConfig }) => {
               })}
             </select>
           </label>
-          <Button primary type="submit">
-            ok
-          </Button>
         </span>
       </form>
       <Table
@@ -272,10 +277,10 @@ const Table = ({ columns, paginate, fetchData, loading }) => {
 
   return (
     <div>
-      <div className=" h-96 block overflow-scroll ">
+      <div className="h-120 block border-b border-teal-700 overflow-scroll ">
         <table
           {...getTableProps()}
-          className=" table-spacing table-auto  w-full text-sm "
+          className=" table-spacing table-auto  w-full text-sm"
         >
           <thead>
             {headerGroups.map((headerGroup) => (
@@ -283,7 +288,7 @@ const Table = ({ columns, paginate, fetchData, loading }) => {
                 {headerGroup.headers.map((column) => (
                   <th
                     {...column.getHeaderProps()}
-                    className="sticky bg-teal-800 text-white px-2 top-0 py-3"
+                    className="sticky bg-teal-700 text-white top-0 py-2 pl-4"
                   >
                     {column.render("Header")}
                   </th>
@@ -292,55 +297,65 @@ const Table = ({ columns, paginate, fetchData, loading }) => {
             ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {page.map((row) => {
-              prepareRow(row);
-              return (
-                <tr
-                  {...row.getRowProps()}
-                  className="rounded-tl-sm rounded-bl-sm rounded-tr-sm even:bg-gray-100 rounded-br-sm"
-                >
-                  {row.cells.map((cell) => {
-                    return (
-                      <td
-                        {...cell.getCellProps({
-                          style: {
-                            minWidth: cell.column.minWidth,
-                            width: cell.column.width,
-                          },
-                        })}
-                        className="border-t border-b border-gray-200 px-2 py-4"
-                      >
-                        {cell.render("Cell")}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
+            {loading ? (
+              <tr>
+                <td colSpan={10000}>
+                  <Loading />
+                </td>
+              </tr>
+            ) : (
+              <>
+                {page.map((row) => {
+                  prepareRow(row);
+                  return (
+                    <tr
+                      {...row.getRowProps()}
+                      className="rounded-tl-sm rounded-bl-sm rounded-tr-sm even:bg-gray-100 rounded-br-sm"
+                    >
+                      {row.cells.map((cell) => {
+                        return (
+                          <td
+                            {...cell.getCellProps({
+                              style: {
+                                minWidth: cell.column.minWidth,
+                                width: cell.column.width,
+                              },
+                            })}
+                            className="border-t border-b border-gray-200 pl-4 py-2"
+                          >
+                            {cell.render("Cell")}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </>
+            )}
           </tbody>
         </table>
       </div>
-      {loading ? (
-        <span>Loading...</span>
-      ) : (
-        <span>
-          Showing {page.length} of {paginate.total_count}
-          results
-        </span>
-      )}
-      <div className="pagination">
+
+      <div className="flex justify-between px-2 py-1">
+        {loading ? (
+          <span>Loading...</span>
+        ) : (
+          <span>
+            Showing {page.length} of {paginate.total_count} results
+          </span>
+        )}
         <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
           {"<<"}
-        </button>{" "}
+        </button>
         <button onClick={() => previousPage()} disabled={!canPreviousPage}>
           prev
-        </button>{" "}
+        </button>
         <button onClick={() => nextPage()} disabled={!canNextPage}>
           next
-        </button>{" "}
-        <button onClick={() => gotoPage(pageCount)} disabled={!canNextPage}>
+        </button>
+        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
           {">>"}
-        </button>{" "}
+        </button>
         <span>
           Page{" "}
           <strong>
@@ -348,7 +363,7 @@ const Table = ({ columns, paginate, fetchData, loading }) => {
           </strong>{" "}
         </span>
         <span>
-          | Go to page:{" "}
+          Go to page:{" "}
           <input
             type="number"
             defaultValue={pageIndex + 1}

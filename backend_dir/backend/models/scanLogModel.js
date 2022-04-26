@@ -52,10 +52,10 @@ ScanLogSchema.statics.paginate = async function (
   const count = await this.count(checkFilter);
 
   totalCount = !count ? 0 : count;
-  totalPages = !count ? 0 : Math.ceil(count / limit);
+  totalPages = !count ? 1 : Math.ceil(count / limit);
 
   if (totalCount === 0) {
-    return callback("No entries found", null);
+    return callback(null, { data: [] });
   }
 
   this.find(checkFilter)
@@ -72,9 +72,6 @@ ScanLogSchema.statics.paginate = async function (
     .exec(function (err, docs) {
       if (err) {
         return callback("Error in query", null);
-      }
-      if (!docs) {
-        return callback("No entries found", null);
       } else {
         return callback(null, {
           total_count: totalCount,
