@@ -7,6 +7,7 @@ const dateOptions = {
   dateStyle: "medium",
   timeStyle: "short",
 };
+const accessTypes = ["AccessString", "RegisteredTag"];
 
 const ManageScanLogs = ({ authConfig }) => {
   const [paginate, setPaginate] = useState({
@@ -24,6 +25,7 @@ const ManageScanLogs = ({ authConfig }) => {
     by_account: "",
     by_reader: "",
     scan_point: "",
+    access_type: "",
   });
   const fetchIdRef = useRef(0);
 
@@ -59,13 +61,10 @@ const ManageScanLogs = ({ authConfig }) => {
         );
       },
     },
-    {
-      Header: "Name",
-      columns: [
-        { Header: "First name", accessor: "access_obj.used_by.first_name" },
-        { Header: "Last name", accessor: "access_obj.used_by.last_name" },
-      ],
-    },
+
+    { Header: "First name", accessor: "access_obj.used_by.first_name" },
+    { Header: "Last name", accessor: "access_obj.used_by.last_name" },
+
     { Header: "scanned by", accessor: "by_account.first_name" },
   ]);
 
@@ -143,13 +142,13 @@ const ManageScanLogs = ({ authConfig }) => {
           <label>
             Type
             <select
-              name="type"
-              value={filter.type}
+              name="access_type"
+              value={filter.access_type}
               onChange={handleChangeFilter}
             >
               <option value={""}>All</option>
-              <option value={"qr"}>QR</option>
-              <option value={"rfid"}>RFID</option>
+              <option value={accessTypes[0]}>QR</option>
+              <option value={accessTypes[1]}>RFID</option>
             </select>
           </label>
           <label>
@@ -173,7 +172,7 @@ const ManageScanLogs = ({ authConfig }) => {
             Account
             <select
               name="by_account"
-              value={filter.user}
+              value={filter.by_account}
               onChange={handleChangeFilter}
             >
               <option value={""}>All</option>
@@ -190,7 +189,7 @@ const ManageScanLogs = ({ authConfig }) => {
             Device
             <select
               name="by_reader"
-              value={filter.device}
+              value={filter.by_reader}
               onChange={handleChangeFilter}
             >
               <option value={""}>All</option>
@@ -256,54 +255,54 @@ const Table = ({ columns, paginate, fetchData, loading }) => {
 
   return (
     <div>
-      <table
-        {...getTableProps()}
-        className="border-separate table-spacing table-auto w-full my-5"
-      >
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr
-              {...headerGroup.getHeaderGroupProps()}
-              className=" text-left bg-gray-200 text-whitse"
-            >
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()} className=" px-2 py-1">
-                  {column.render("Header")}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {page.map((row) => {
-            prepareRow(row);
-            return (
-              <tr
-                {...row.getRowProps()}
-                className="shadow border border-gray-800 rounded-tl-sm rounded-bl-sm rounded-tr-sm rounded-br-sm"
-              >
-                {row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()} className="p-3">
-                      {cell.render("Cell")}
-                    </td>
-                  );
-                })}
+      <div className=" h-96 block overflow-scroll">
+        <table
+          {...getTableProps()}
+          className="border-separate table-spacing table-auto w-full"
+        >
+          <thead>
+            {headerGroups.map((headerGroup) => (
+              <tr {...headerGroup.getHeaderGroupProps()} className="text-left">
+                {headerGroup.headers.map((column) => (
+                  <th
+                    {...column.getHeaderProps()}
+                    className="sticky bg-slate-200 px-2 top-1 py-1"
+                  >
+                    {column.render("Header")}
+                  </th>
+                ))}
               </tr>
-            );
-          })}
-          <tr>
-            {loading ? (
-              <td colSpan="10000">Loading...</td>
-            ) : (
-              <td colSpan="10000">
-                Showing {page.length} of {paginate.total_count}
-                results
-              </td>
-            )}
-          </tr>
-        </tbody>
-      </table>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {page.map((row) => {
+              prepareRow(row);
+              return (
+                <tr
+                  {...row.getRowProps()}
+                  className="shadow border border-gray-800 rounded-tl-sm rounded-bl-sm rounded-tr-sm rounded-br-sm"
+                >
+                  {row.cells.map((cell) => {
+                    return (
+                      <td {...cell.getCellProps()} className="p-3">
+                        {cell.render("Cell")}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      {loading ? (
+        <span>Loading...</span>
+      ) : (
+        <span>
+          Showing {page.length} of {paginate.total_count}
+          results
+        </span>
+      )}
       <div className="pagination">
         <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
           {"<<"}
