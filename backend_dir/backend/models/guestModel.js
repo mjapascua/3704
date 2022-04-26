@@ -30,17 +30,24 @@ const guestSchema = mongoose.Schema(
       required: [true, "Please add your residence"],
     },
 
+    qr: {
+      type: mongoose.Schema.Types.ObjectId,
+      refPath: "AccessString",
+      default: null,
+    },
+
+    rfid: {
+      type: mongoose.Schema.Types.ObjectId,
+      refPath: "RegisteredTag",
+      default: null,
+    },
+
     active: {
       type: Boolean,
     },
 
     last_disabled: {
       type: Date,
-    },
-
-    access_string: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "GuestAccessString",
     },
   },
 

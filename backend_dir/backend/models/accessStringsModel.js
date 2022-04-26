@@ -2,14 +2,13 @@ const mongoose = require("mongoose");
 
 const accessStringSchema = mongoose.Schema(
   {
-    patron: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "User",
+    user_type: {
+      type: String,
+      enum: ["User", "Guest"],
     },
     used_by: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Guest",
+      refPath: "user_type",
     },
     hash: {
       type: String,

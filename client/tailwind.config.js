@@ -2,8 +2,8 @@ module.exports = {
   content: ["./src/**/*.{js,jsx}"],
   theme: {
     fontFamily: {
-      display: "Karla",
-      head: "Work Sans",
+      display: "Poppins",
+      head: "Poppins",
     },
     extend: {
       colors: {

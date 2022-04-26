@@ -29,7 +29,7 @@ export const QRScanner = ({ openOnRender, authConfig }) => {
 
   const handleScanSuccess = (hash) => {
     apiClient
-      .post("admin/scan", { hash }, authConfig)
+      .post("admin/scan", { hash, location: "site" }, authConfig)
       .then((res) => {
         if (res.status === 200) {
           toastId.current = toast.success(res.data.message, {

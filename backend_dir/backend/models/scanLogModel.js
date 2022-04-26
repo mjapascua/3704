@@ -2,43 +2,88 @@ const mongoose = require("mongoose");
 
 const ScanLogSchema = mongoose.Schema(
   {
-    type: {
+    access_type: {
       type: String,
       required: true,
-      enum: ["rfid", "qr"],
+      enum: ["RegisteredTag", "AccessString"],
     },
-    tag: {
+
+    access_obj: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "RegisteredTag",
-      required: function () {
-        return this.type === "rfid" ? true : false;
-      },
+      refPath: "access_type",
+      required: true,
     },
-    qr: {
+
+    scan_point: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "AccessString",
-      required: function () {
-        return this.type === "qr" ? true : false;
-      },
+      ref: "ScanPoint",
+      required: true,
     },
-    from_reader: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "RFIDDevice",
-      required: function () {
-        return this.type === "rfid" ? true : false;
-      },
-    },
-    from_account: {
+
+    by_account: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: function () {
-        return this.type === "qr" ? true : false;
-      },
+      required: true,
+    },
+
+    by_reader: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "RFIDDevice",
     },
   },
   {
     timestamps: true,
   }
 );
+
+ScanLogSchema.statics.paginate = async function (
+  pageNo,
+  limit,
+  filter,
+  callback
+) {
+  const skip = limit * pageNo;
+  let totalCount;
+  let totalPages;
+
+  const checkFilter = typeof filter !== undefined && filter ? filter : {};
+
+  const count = await this.count(checkFilter);
+
+  totalCount = !count ? 0 : count;
+  totalPages = !count ? 0 : Math.ceil(count / limit);
+
+  if (totalCount === 0) {
+    return callback("No entries found", null);
+  }
+
+  this.find(checkFilter)
+    .populate("by_account", "_id first_name last_name")
+    .populate("scan_point", "_id label")
+    .populate({
+      path: "access_obj",
+      select: "user_type -_id ",
+      populate: { path: "used_by", select: "_id first_name last_name" },
+    })
+    .skip(skip)
+    .limit(limit)
+    .exec(function (err, docs) {
+      if (err) {
+        return callback("Error in query", null);
+      }
+      if (!docs) {
+        return callback("No entries found", null);
+      } else {
+        return callback(null, {
+          total_count: totalCount,
+          total_pages: totalPages,
+          prev_page: pageNo >= 2 ? pageNo - 1 : null,
+          current_page: pageNo,
+          next_page: pageNo < totalPages ? pageNo + 1 : null,
+          data: docs,
+        });
+      }
+    });
+};
 
 module.exports = mongoose.model("ScanLog", ScanLogSchema, "scan_logs");

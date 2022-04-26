@@ -15,20 +15,26 @@ import { redirect } from "./Login";
 import Loading from "../components/Loading/Loading";
 import authService from "../utils/authService";
 import ManageDevices from "./Admin/ManageDevices";
+import ManageScanLogs from "./Admin/ManageScanLogs";
 
 const navStyle =
-  "w-full flex text-sm items-center cursor-pointer  md:rounded-tl-md md:rounded-bl-md justify-center md:justify-start mb-4 py-5 px-8";
-const activeStyle = "text-slate-50 bg-meadow-700 " + navStyle;
-const defStyle = "text-gray-500 " + navStyle;
+  "w-full flex items-center font-display cursor-pointer md:rounded-tl-md md:rounded-bl-md justify-center md:justify-start mb-3 px-8";
+const activeStyle = "text-slate-50 bg-violet-700 py-6 " + navStyle;
+const defStyle = "text-gray-500 text-sm py-4 " + navStyle;
 const sideMenuStyle =
-  "bg-neutral-900 z-20 left-0 w-max h-full box-border  md:pl-5";
+  "bg-neutral-900 z-20 left-0 w-max box-border block h-screen md:pl-5";
 
 const routes = [
   { to: "/dashboard", label: "Dashboard", icon: "home" },
-  { to: "/dashboard/bulletin", label: "Manage bulletin", icon: "feed" },
+  { to: "/dashboard/bulletin", label: "Manage Bulletin", icon: "feed" },
   { to: "/dashboard/qr-scanner", label: "QR Scanner", icon: "qr_code_scanner" },
+  { to: "/dashboard/scan-logs", label: "Scan Records", icon: "history" },
   { to: "/dashboard/accounts", label: "Accounts", icon: "manage_accounts" },
-  { to: "/dashboard/rfid-devices", label: "Devices", icon: "sensors" },
+  {
+    to: "/dashboard/rfid-devices",
+    label: "Locations & Devices",
+    icon: "sensors",
+  },
 ];
 
 const Dashboard = () => {
@@ -105,34 +111,48 @@ const Dashboard = () => {
           <Loading text={"Unauthorized, redirecting"} />
         </div>
       ) : (
-        <div className=" font-display">
+        <>
           <DashboardNav
             handleMenuClick={handleMenuClick}
             pageLabel={pageLabel}
             open={open}
           />
-
-          <div className="pt-14 relative w-full flex h-screen box-border">
+          <div className="pt-14 z-40 fixed">
             <Sidemenu style={style} handleMenuClick={handleMenuClick} />
-            <div className="w-full flex overflow-scroll">
-              <Routes>
-                <Route
-                  path={"/accounts"}
-                  element={<ManageAccounts authConfig={authConfig} />}
-                />
-                <Route path={"/bulletin"} element={<ManageBulletin />} />
-                <Route
-                  path={"/qr-scanner"}
-                  element={<AdminScanner authConfig={authConfig} />}
-                />
-                <Route
-                  path={"/rfid-devices"}
-                  element={<ManageDevices authConfig={authConfig} />}
-                />
-              </Routes>
+          </div>
+
+          <div className="absolute">
+            <div className="pt-14 relative w-full flex h-screen box-border">
+              <div
+                className="w-full flex overflow-scroll"
+                onClick={() => open && handleMenuClick()}
+              >
+                {open && (
+                  <div className="w-full flex h-screen fixed z-10 bg-slate-700 opacity-50 "></div>
+                )}
+                <Routes>
+                  <Route
+                    path={"/accounts"}
+                    element={<ManageAccounts authConfig={authConfig} />}
+                  />
+                  <Route path={"/bulletin"} element={<ManageBulletin />} />
+                  <Route
+                    path={"/qr-scanner"}
+                    element={<AdminScanner authConfig={authConfig} />}
+                  />
+                  <Route
+                    path={"/scan-logs"}
+                    element={<ManageScanLogs authConfig={authConfig} />}
+                  />
+                  <Route
+                    path={"/rfid-devices"}
+                    element={<ManageDevices authConfig={authConfig} />}
+                  />
+                </Routes>
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );
@@ -140,7 +160,7 @@ const Dashboard = () => {
 
 export const DashboardNav = ({ handleMenuClick, pageLabel, open }) => {
   return (
-    <div className=" bg-neutral-900 z-10 absolute flex select-none top-0 h-14 w-full text-gray-50">
+    <div className=" bg-neutral-900 z-50 absolute flex select-none top-0 h-14 w-full text-gray-50">
       {!open ? (
         <span
           onClick={handleMenuClick}
@@ -182,7 +202,9 @@ export const Sidemenu = ({ style, handleMenuClick }) => {
             <span className="material-icons-sharp md:mr-5 inline-block">
               {route.icon}
             </span>
-            <b className="md:w-max h-fit md:block hidden">{route.label}</b>
+            <span className="md:w-max h-fit font-semibold md:block hidden">
+              {route.label}
+            </span>
           </NavLink>
         );
       })}
@@ -193,7 +215,9 @@ export const Sidemenu = ({ style, handleMenuClick }) => {
         className={defStyle}
       >
         <span className="material-icons-sharp md:mr-5">face</span>
-        <b className="md:w-max md:block hidden">User page</b>
+        <span className="md:w-max md:block font-semibold hidden">
+          User page
+        </span>
       </span>
       <span
         onClick={() => {
@@ -203,7 +227,7 @@ export const Sidemenu = ({ style, handleMenuClick }) => {
         className={defStyle}
       >
         <span className="material-icons-sharp md:mr-5">logout</span>
-        <b className="md:w-max md:block hidden">Logout</b>
+        <span className="md:w-max md:block font-semibold hidden">Logout</span>
       </span>
     </div>
   );

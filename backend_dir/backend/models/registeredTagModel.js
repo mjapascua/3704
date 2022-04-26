@@ -1,16 +1,15 @@
 const mongoose = require("mongoose");
 
 const RegisteredTagSchema = mongoose.Schema({
-  patron: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  uid: {
+  user_type: {
     type: String,
-    required: true,
+    enum: ["User", "Guest"],
   },
   used_by: {
+    type: mongoose.Schema.Types.ObjectId,
+    refPath: "user_type",
+  },
+  uid: {
     type: String,
     required: true,
   },

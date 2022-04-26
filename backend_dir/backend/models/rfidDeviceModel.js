@@ -5,7 +5,11 @@ const RFIDDeviceSchema = mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+    },
+    scan_point: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ScanPoint",
+      default: null,
     },
     device_label: {
       type: String,
@@ -14,9 +18,6 @@ const RFIDDeviceSchema = mongoose.Schema(
     device_key: {
       type: String,
       required: true,
-    },
-    location: {
-      type: String,
     },
   },
   {

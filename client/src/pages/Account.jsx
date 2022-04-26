@@ -125,16 +125,8 @@ const UserAccount = ({ authConfig }) => {
   const [userData, setUserData] = useState(defUserState);
   const [qr, setQr] = useState(null);
 
-  const {
-    id,
-    first_name,
-    last_name,
-    email,
-    phone_number,
-    residence,
-    guests,
-    user_tags,
-  } = userData;
+  const { id, first_name, last_name, email, phone_number, residence, guests } =
+    userData;
 
   const [edit, setEdit] = useState(false);
   const [item, setItem] = useState(null);
@@ -268,9 +260,7 @@ const UserAccount = ({ authConfig }) => {
                         return (
                           <span key={index} className="block ">
                             {el.first_name + " " + el.last_name}
-                            <Button
-                              onClick={() => requestGuestQR(el.access_string)}
-                            >
+                            <Button onClick={() => requestGuestQR(el.qr)}>
                               show qr
                             </Button>
                             <Button
@@ -289,7 +279,7 @@ const UserAccount = ({ authConfig }) => {
                     </span>
                   </>
                 )}
-                {user_tags.length > 0 && (
+                {/*                 {user_tags.length > 0 && (
                   <>
                     <span className="block ">
                       <b>Your Cards:</b>
@@ -304,7 +294,7 @@ const UserAccount = ({ authConfig }) => {
                       })}
                     </span>
                   </>
-                )}
+                )} */}
               </div>
             </div>
           )}

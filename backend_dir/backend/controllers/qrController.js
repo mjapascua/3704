@@ -9,6 +9,7 @@ const Guest = require("../models/guestModel");
 const ScanLog = require("../models/scanLogModel");
 const { notifTypes } = require("../config/notifTypes");
 const { createNotif } = require("./notificationController");
+const ScanPoint = require("../models/scanPointModel");
 const phoneRegex = /^([0-9]{10})$/;
 const qrOptions = { scale: 8 };
 
@@ -31,7 +32,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
     last_name,
     phone_number,
     patron: req.user.id,
-  }).populate("access_string");
+  }).populate("qr");
 
   if (!guestExists) {
     const hash = generateMd5Hash(req.user.id + first_name + phone_number);
@@ -44,6 +45,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
     });
 
     const guestAccess = await AccessString.create({
+      user_type: "Guest",
       hash,
       patron: req.user.id,
       used_by: guest.id,
@@ -54,15 +56,23 @@ const requestGuestQR = asyncHandler(async (req, res) => {
       throw new Error("Guest registration failed");
     }
 
-    await Guest.findByIdAndUpdate(guest._id, {
-      access_string: guestAccess.id,
-    });
-
-    await User.findByIdAndUpdate(req.user.id, {
-      $push: {
-        guests: guest.id,
+    guest.qr = guestAccess.id;
+    guest.save();
+    /* 
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        $push: {
+          guests: guest.id,
+        },
       },
-    });
+      { new: true }
+    );
+
+    if (!user) {
+      res.status(400);
+      throw new Error("Guest registration failed");
+    } */
 
     try {
       const url = await qrCode.toDataURL(guestAccess.hash, qrOptions);
@@ -73,12 +83,9 @@ const requestGuestQR = asyncHandler(async (req, res) => {
     }
   }
 
-  if (guestExists.access_string) {
+  if (guestExists.qr) {
     try {
-      const url = await qrCode.toDataURL(
-        guestExists.access_string.hash,
-        qrOptions
-      );
+      const url = await qrCode.toDataURL(guestExists.qr.hash, qrOptions);
       return res.json({ url: url, exists: "already active" });
     } catch (error) {
       res.status(400);
@@ -89,15 +96,15 @@ const requestGuestQR = asyncHandler(async (req, res) => {
   if (!guestExists.active) {
     const hash = generateMd5Hash(req.user.id + first_name + phone_number);
     const guestAccess = await AccessString.create({
+      user_type: "Guest",
       hash,
       patron: req.user.id,
       used_by: guestExists.id,
     });
 
     guestExists.active = true;
-    guestExists.access_string = true;
     guestExists.save();
-
+    /* 
     const update = await User.findByIdAndUpdate(
       req.user.id,
       {
@@ -106,9 +113,9 @@ const requestGuestQR = asyncHandler(async (req, res) => {
         },
       },
       { new: true }
-    );
+    ); */
 
-    if (!guestUpdate || !update) {
+    if (!guestUpdate /* || !update */) {
       res.status(404);
       throw new Error("QR registration failed");
     }
@@ -144,8 +151,10 @@ const guestQR = asyncHandler(async (req, res) => {
 
 const checkQR = asyncHandler(async (req, res) => {
   const entry = await AccessString.findOne({ hash: req.body.hash }).populate(
-    "used_by"
+    "used_by",
+    "first_name"
   );
+  //const loc = await ScanPoint.findById(req.body.locID);
 
   if (!entry || entry.message) {
     res.status(401);
@@ -153,9 +162,10 @@ const checkQR = asyncHandler(async (req, res) => {
   }
 
   const log = await ScanLog.create({
-    type: "qr",
-    qr: entry.id,
-    from_account: req.user.id,
+    access_type: "AccessString",
+    by_account: req.user.id,
+    scan_point: "6266777e8eba44af778c1912" /* loc */,
+    access_obj: entry.id,
   });
 
   if (!log) {

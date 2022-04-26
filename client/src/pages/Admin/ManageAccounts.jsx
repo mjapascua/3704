@@ -265,6 +265,7 @@ const ManageAccounts = ({ authConfig }) => {
     </div>
   );
 };
+
 const AccountsTable = ({ columns, data }) => {
   const tData = React.useMemo(() => data);
   const tableInstance = useTable({ columns, data: tData });

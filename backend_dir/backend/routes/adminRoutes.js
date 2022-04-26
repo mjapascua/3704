@@ -3,6 +3,7 @@ const router = express.Router();
 const { ROLES } = require("../config/roles");
 const {
   deleteUser,
+  filterUsers,
   getAllUsers,
   getUsersByRole,
   queueUserTagRegistration,
@@ -11,9 +12,14 @@ const {
   updateQueueItem,
   checkRegistrationStatus,
   removeFromQueue,
+  getScanPoints,
+  addScanPoint,
+  getRFIDDevices,
   registerRFIDDevice,
   updateRFIDDevice,
   checkRFIDTag,
+  filterScanLogs,
+  getScanLogsFilters,
 } = require("../controllers/adminRequestsController");
 const { checkQR } = require("../controllers/qrController");
 const { protect, authAllow } = require("../middleware/authMiddleware");
@@ -21,8 +27,17 @@ const { protect, authAllow } = require("../middleware/authMiddleware");
 router.get("/rfid/scan/:key/:id", checkRFIDTag);
 router.post("/rfid/register", queueUserTagRegistration);
 
+router.get("/users/filter", filterUsers);
+router.route("/scans").get(getScanLogsFilters).put(filterScanLogs);
+
 router
-  .route("/rfid/device")
+  .route("/locations")
+  .get(protect, getScanPoints)
+  .post(protect, addScanPoint);
+
+router
+  .route("/rfid/devices")
+  .get(protect, getRFIDDevices)
   .post(protect, registerRFIDDevice)
   .put(protect, updateRFIDDevice);
 

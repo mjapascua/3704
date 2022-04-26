@@ -64,8 +64,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const access = await AccessString.create({
     hash: main_unique,
-    patron: user._id,
-    used_by: null,
+    user_type: "User",
+    used_by: user._id,
   });
 
   if (user.message || !user || !access || access.message) {
@@ -108,9 +108,14 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users/me
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
-  const { _id, first_name, last_name, email, residence, phone_number, guests } =
-    await User.findById(req.user.id).populate("guests");
-  const user_tags = await RegisteredTag.find({ patron: req.user.id });
+  const { _id, first_name, last_name, email, residence, phone_number } =
+    await User.findById(req.user.id);
+  const guests = await Guest.find({ patron: req.user.id });
+
+  if (!_id) {
+    res.status(404);
+    throw new Error("Not found");
+  }
 
   res.json({
     id: _id,
@@ -119,7 +124,6 @@ const getMe = asyncHandler(async (req, res) => {
     last_name,
     email,
     phone_number,
-    user_tags,
     guests,
   });
 });
@@ -132,8 +136,8 @@ const deleteGuests = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Unable to process");
   }
-  const gId = mongoose.Types.ObjectId(req.params.guest_id);
-
+  //const gId = mongoose.Types.ObjectId();
+  /* 
   const user = await User.findByIdAndUpdate(
     req.params.id,
     {
@@ -143,18 +147,23 @@ const deleteGuests = asyncHandler(async (req, res) => {
     },
     { new: true }
   );
+ */
+  const guest = await Guest.findByIdAndUpdate(
+    req.params.guest_id,
+    {
+      active: false,
+      qr: null,
+      last_disabled: new Date(),
+    },
+    { new: true }
+  );
 
-  const guest = await Guest.findByIdAndUpdate(gId, {
-    active: false,
-    last_disabled: new Date(),
-  });
+  await AccessString.findOneAndDelete({ used_by: req.params.guest_id });
 
-  await AccessString.findOneAndDelete({ used_by: gId });
-
-  if (!user) {
+  /*   if (!user) {
     res.status(401);
     throw new Error("Unauthorized user not found");
-  }
+  } */
   if (!guest) {
     res.status(400);
     throw new Error("Access not removed");
