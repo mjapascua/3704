@@ -7,7 +7,7 @@ export const ProceedButton = ({ classes, onClick, children }) => {
   return (
     <Button
       onClick={onClick}
-      classes={classes + primClass + "  hover:translate-x-1"}
+      className={classes + primClass + "  hover:translate-x-1"}
     >
       {children}
     </Button>

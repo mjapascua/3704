@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { QrReader } from "react-qr-reader";
 import { toast } from "react-toastify";
 import { Button } from "../../components/Buttons/Main";
 import { apiClient } from "../../utils/requests";
 
 const AdminScanner = ({ authConfig }) => {
+  const [locations, setLocations] = useState([]);
+  const [location, setLocation] = useState("");
   /* useEffect(() => {
     let setNull = setTimeout(() => {
       console.log("nulled");
@@ -15,28 +17,73 @@ const AdminScanner = ({ authConfig }) => {
       clearTimeout(setNull);
     };
   }, [lastHash]); */
+  const getLoc = useCallback(() => {
+    apiClient
+      .get("admin/locations", authConfig)
+      .then((res) => {
+        if (res.status === 200) {
+          setLocations(res.data);
+          setLocation(res.data[0]._id);
+        }
+      })
+      .catch((err) => {
+        toast.error(err);
+      });
+  }, []);
+
+  useEffect(() => {
+    getLoc();
+  }, [getLoc]);
 
   return (
-    <div className="w-full flex pt-16 md:pt-10 items-center h-full flex-col">
-      <QRScanner openOnRender={false} authConfig={authConfig} />
+    <div className="w-screen flex pt-16 md:pt-10 items-center h-full flex-col">
+      <label className="ml-6">
+        Location
+        <select
+          name="scan_point"
+          value={location}
+          onChange={(e) => {
+            setLocation(e.target.value);
+          }}
+          className="ml-2"
+        >
+          {locations.map((l, index) => {
+            return (
+              <option key={index} value={l._id}>
+                {l.label}
+              </option>
+            );
+          })}
+        </select>
+      </label>
+      <QRScanner
+        location={location}
+        openOnRender={false}
+        authConfig={authConfig}
+      />
     </div>
   );
 };
-export const QRScanner = ({ openOnRender, authConfig }) => {
-  const [lastHash, setLast] = useState(null);
-  const [scanner, setScanner] = useState(openOnRender);
-  const toastId = useRef(null);
 
-  const handleScanSuccess = (hash) => {
+export const QRScanner = ({ location, openOnRender, authConfig }) => {
+  const [scanner, setScanner] = useState(openOnRender);
+  const [lastHash, setLastHash] = useState("");
+  const toastId = useRef(null);
+  let expireHash;
+
+  const handleScanSuccess = useCallback(() => {
+    if (!lastHash) return;
     apiClient
-      .post("admin/scan", { hash, location: "site" }, authConfig)
+      .post(
+        "admin/scan",
+        { hash: lastHash, locID: location ? location : null },
+        authConfig
+      )
       .then((res) => {
         if (res.status === 200) {
           toastId.current = toast.success(res.data.message, {
             autoClose: 500,
           });
-          console.log("set");
-          setLast(hash);
         }
       })
       .catch((err) => {
@@ -44,7 +91,18 @@ export const QRScanner = ({ openOnRender, authConfig }) => {
           autoClose: 500,
         });
       });
-  };
+    expireHash = setTimeout(() => {
+      setLastHash("");
+    }, 5000);
+  }, [lastHash]);
+
+  useEffect(() => {
+    handleScanSuccess();
+    return () => {
+      clearTimeout(expireHash);
+    };
+  }, [lastHash]);
+
   return (
     <>
       <span className="w-48">
@@ -68,15 +126,17 @@ export const QRScanner = ({ openOnRender, authConfig }) => {
         ) : (
           <QrReader
             onResult={(result, error) => {
-              if (
+              if (!!result && lastHash !== result?.text) {
+                setLastHash(result.text);
+              }
+              /*  if (
                 !!result &&
                 lastHash !== result?.text &&
                 !toast.isActive(toastId.current)
               ) {
-                console.log(lastHash);
                 //  console.log(toast.isActive(toastId.current));
-                handleScanSuccess(result?.text);
-              }
+                //handleScanSuccess(result?.text);
+              } */
               if (error) {
                 toast.error(error);
               }

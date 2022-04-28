@@ -165,7 +165,7 @@ function SignUp() {
                 onSubmit={handleSignUpRequest}
                 className="px-2 lg:px-4 w-96 block  overflow-hidden "
               >
-                <span className="my-auto text-lg text-meadow-600 block pb-3 font-bold">
+                <span className="my-auto text-lg text-violet-600 block pb-3 font-bold">
                   Sign up
                 </span>
 
@@ -306,7 +306,12 @@ function SignUp() {
                         required
                       />
                     </label>
-                    <Button type={"submit"} primary ref={signUpBtn}>
+                    <Button
+                      type={"submit"}
+                      primary
+                      ref={signUpBtn}
+                      className="w-full"
+                    >
                       SIGN UP
                     </Button>
                   </div>
@@ -369,6 +374,7 @@ function SignUp() {
                 </span>
                 <Button
                   secondary
+                  className="w-full"
                   onClick={() => navigate("/login", { replace: true })}
                 >
                   LOG IN

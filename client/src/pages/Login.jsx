@@ -158,6 +158,7 @@ function Login() {
                   <Button
                     disabled={!(credentials.email && credentials.password)}
                     type={"submit"}
+                    className="w-full"
                     primary
                   >
                     LOGIN
@@ -168,6 +169,7 @@ function Login() {
                   </span>
                   <Button
                     secondary
+                    className="w-full"
                     onClick={() => navigate("/signup", { replace: true })}
                   >
                     SIGN UP

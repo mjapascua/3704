@@ -64,8 +64,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const access = await AccessString.create({
     hash: main_unique,
-    user_type: "User",
-    used_by: user._id,
+    u_id: user._id,
   });
 
   if (user.message || !user || !access || access.message) {
@@ -110,7 +109,7 @@ const loginUser = asyncHandler(async (req, res) => {
 const getMe = asyncHandler(async (req, res) => {
   const { _id, first_name, last_name, email, residence, phone_number } =
     await User.findById(req.user.id);
-  const guests = await Guest.find({ patron: req.user.id });
+  const guests = await Guest.find({ u_id: req.user.id });
 
   if (!_id) {
     res.status(404);
@@ -158,7 +157,7 @@ const deleteGuests = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  await AccessString.findOneAndDelete({ used_by: req.params.guest_id });
+  await AccessString.findOneAndDelete({ g_id: req.params.guest_id });
 
   /*   if (!user) {
     res.status(401);

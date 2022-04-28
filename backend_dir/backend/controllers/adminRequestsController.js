@@ -15,15 +15,33 @@ const ScanPoint = require("../models/scanPointModel");
 // @route   GET /api/admin/users/
 // @access  Private
 const getAllUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({});
+  const users = await User.find(
+    {},
+    "first_name last_name email residence phone_number"
+  );
   if (!users) {
     res.status(404);
     throw new Error("No users found");
   } else res.json(users);
 });
 
+// @desc    Get user with guests
+// @route   GET /api/admin/user/:id
+// @access  Private
+const getUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(
+    req.params.id,
+    "-password -notifications -main_unique"
+  );
+  const userGuests = await Guest.find({ u_id: user._id });
+  if (!user || !userGuests) {
+    res.status(404);
+    throw new Error("No user found");
+  } else res.status(200).json({ ...user._doc, guests: userGuests });
+});
+
 // @desc    Get all users
-// @route   GET /api/admin/users/filter?=
+// @route   PUT /api/admin/users/filter?=
 // @access  Private
 const filterUsers = asyncHandler(async (req, res) => {
   User.paginate(
@@ -102,7 +120,7 @@ const queueUserTagRegistration = asyncHandler(async (req, res) => {
 });
 
 // @desc    From reader updates queue item with info from card if already registered otherwise proceed to ask name
-// @route   GET /api/admin/rfid/register/:tag_id
+// @route   GET /api/admin/rfid/register/:tag_uid
 // @access  Private
 const verifyTagStatus = asyncHandler(async (req, res) => {
   const firstInQueue = await ForRegistration.find()
@@ -115,13 +133,15 @@ const verifyTagStatus = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("No item in queue");
   }
-  const isRegistered = await RegisteredTag.findOne({ uid: req.params.tag_id });
+  const isRegistered = await RegisteredTag.findOne({ uid: req.params.tag_uid })
+    .populate("u_id", "first_name last_name")
+    .populate("g_id", "fname lname");
 
   await ForRegistration.findByIdAndUpdate(
     firstInQueue[0].id,
     isRegistered
-      ? { registered_tag: isRegistered.id }
-      : { available_tag: req.params.tag_id, continue: true }
+      ? { registered_tag: isRegistered }
+      : { tag_uid: req.params.tag_uid, continue: true }
   );
   res.sendStatus(isRegistered ? 202 : 200);
 });
@@ -142,10 +162,21 @@ const checkRegistrationStatus = asyncHandler(async (req, res) => {
     throw new Error("Not in queue");
   }
   if (inQueue.registered_tag && !inQueue.continue) {
+    const registered = await RegisteredTag.findById(inQueue.registered_tag)
+      .populate("u_id", "first_name last_name")
+      .populate("g_id", "fname lname");
+
+    const name = registered.g_id
+      ? registered.g_id.fname + " " + registered.g_id.lname
+      : registered.u_id.first_name + " " + registered.u_id.last_name;
+
     res.status(201).json({
       message: "Already registered",
-      tag: inQueue.registered_tag,
       queue_id: inQueue.id,
+      name: name,
+      tag_user_id: registered.g_id
+        ? inQueue.registered_tag.g_id
+        : inQueue.registered_tag.u_id,
     });
     return;
   }
@@ -153,7 +184,6 @@ const checkRegistrationStatus = asyncHandler(async (req, res) => {
     res.status(201).json({
       message: "Register user to tag",
       queue_id: inQueue.id,
-      available_tag: inQueue.available_tag,
     });
   } else {
     res.status(200).json({ message: "Waiting" });
@@ -182,7 +212,7 @@ const updateQueueItem = asyncHandler(async (req, res) => {
   } else {
     inQueue.continue = false;
     inQueue.registered_tag = null;
-    inQueue.available_tag = null;
+    inQueue.tag_uid = null;
     inQueue.save();
     res.json(inQueue);
   }
@@ -193,7 +223,7 @@ const updateQueueItem = asyncHandler(async (req, res) => {
 // @access  Private
 const tagRegistration = asyncHandler(async (req, res) => {
   const inQueue = await ForRegistration.findById(req.params.queue_id).populate(
-    "user"
+    "registered_tag"
   );
 
   if (!inQueue || inQueue.message) {
@@ -201,38 +231,49 @@ const tagRegistration = asyncHandler(async (req, res) => {
     throw new Error("Not in queue");
   }
 
-  if (!req.body.not_self) {
+  const tag_uid = inQueue.registered_tag
+    ? inQueue.registered_tag.uid
+    : inQueue.tag_uid;
+
+  if (!req.body.g_id) {
     const tag = await RegisteredTag.findOneAndUpdate(
-      { uid: req.body.id },
-      { uid: req.body.id, user_type: "User", used_by: inQueue.user.id },
+      { uid: tag_uid },
+      { uid: tag_uid, u_id: inQueue.user },
       { upsert: true, new: true }
     );
-
+    if (inQueue.registered_tag) {
+      await Guest.findByIdAndUpdate(inQueue.registered_tag._id, {
+        rf: null,
+      });
+    }
     await ForRegistration.deleteOne({ _id: req.params.queue_id });
 
     res.json({ message: "User tag registered", tag: tag });
   } else {
-    const guest = await Guest.findOneAndUpdate(
-      { id: req.body.not_self },
+    const guest = await Guest.findByIdAndUpdate(
+      req.body.g_id,
       {
-        patron: req.user.id,
-        id: req.body.not_self,
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        phone_number: req.body.phone_number,
-        address: inQueue.user.address,
+        u_id: inQueue.user,
+        /*   fname: req.body.first_name,
+        lname: req.body.last_name,
+        contact: req.body.phone_number,
+        addr: req.body.address, */
         active: true,
+      },
+      { new: true }
+    );
+
+    const tag = await RegisteredTag.findOneAndUpdate(
+      { uid: tag_uid },
+      {
+        uid: tag_uid,
+        u_id: inQueue.user,
+        g_id: guest.id,
       },
       { upsert: true, new: true }
     );
 
-    const tag = await RegisteredTag.findOneAndUpdate(
-      { uid: req.body.id },
-      { uid: req.body.id, user_type: "Guest", used_by: inQueue.user.id },
-      { upsert: true, new: true }
-    );
-
-    guest.rfid = tag.id;
+    guest.rf = tag.id;
     guest.save();
 
     await ForRegistration.deleteOne({ _id: req.params.queue_id });
@@ -282,12 +323,19 @@ const addScanPoint = asyncHandler(async (req, res) => {
     res.status(201).json(newScanPoint);
   }
 });
+// @desc    Get guests
+// @route   GET /api/admin/guests?
+// @access  Private
+const filterGuests = asyncHandler(async (req, res) => {
+  const guests = await Guest.find(req.query, "-updatedAt");
+  res.json(guests);
+});
 // @desc    Get devices
 // @route   GET /api/admin/rfid/devices
 // @access  Private
 const getRFIDDevices = asyncHandler(async (req, res) => {
   const devices = await RFIDDevice.find();
-  res.status(200).json(devices);
+  res.json(devices);
 });
 // @desc    Register an rfid device
 // @route   POST /api/admin/rfid/devices
@@ -334,33 +382,41 @@ const updateRFIDDevice = asyncHandler(async (req, res) => {
 // @access  Private
 const checkRFIDTag = asyncHandler(async (req, res) => {
   const tag = await RegisteredTag.findOne({ uid: req.params.id }).populate(
-    "used_by",
-    "_id first_name"
+    "g_id",
+    "fname"
   );
   const scanner = await RFIDDevice.findOne({
     device_key: req.params.key,
-  });
+  }).populate("scan_point", "label");
 
   if (!tag || !scanner) {
     res.status(401);
     throw new Error("Unauthorized");
   }
 
-  const log = await ScanLog.create({
-    access_type: "RegisteredTag",
-    by_account: scanner.user,
-    by_reader: scanner.id,
-    scan_point: scanner.scan_point,
-    access_obj: tag.id,
-  });
+  const logObj = {
+    type: "rf",
+    by: scanner.user,
+    node: scanner.id,
+    loc: scanner.scan_point,
+    u_id: tag.u_id,
+    //  g_id: !tag.g_id ?  : null,
+  };
+  if (tag.g_id) {
+    logObj.g_id = tag.g_id;
+  }
+
+  const log = await ScanLog.create(logObj);
 
   const notify = await createNotif(
     {
       title: "RFID Tag scanned",
       category: notifTypes.Entry_tag,
-      text: tag.used_by.first_name + " has arrived!",
+      text: !tag.g_id
+        ? "Your card has been scanned! at " + scanner.scan_point.label
+        : tag.g_id.fname + " has arrived at " + scanner.scan_point.label,
     },
-    { id: tag.used_by._id }
+    { id: tag.u_id }
   );
 
   if (!log || !notify) {
@@ -416,6 +472,8 @@ const filterScanLogs = asyncHandler(async (req, res) => {
 
 module.exports = {
   getAllUsers,
+  getUser,
+  filterGuests,
   filterUsers,
   getUsersByRole,
   deleteUser,

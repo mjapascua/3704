@@ -2,31 +2,36 @@ const mongoose = require("mongoose");
 
 const ScanLogSchema = mongoose.Schema(
   {
-    access_type: {
+    type: {
       type: String,
       required: true,
-      enum: ["RegisteredTag", "AccessString"],
+      enum: ["rf", "qr"],
     },
 
-    access_obj: {
-      type: mongoose.Schema.Types.ObjectId,
-      refPath: "access_type",
-      required: true,
-    },
-
-    scan_point: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "ScanPoint",
-      required: true,
-    },
-
-    by_account: {
+    u_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
-    by_reader: {
+    g_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Guest",
+    },
+
+    loc: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ScanPoint",
+      required: true,
+    },
+
+    by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    node: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "RFIDDevice",
     },
@@ -59,19 +64,17 @@ ScanLogSchema.statics.paginate = async function (
   }
 
   this.find(checkFilter)
-    .populate("by_account", "_id first_name last_name")
-    .populate("scan_point", "_id label")
-    .populate({
-      path: "access_obj",
-      select: "user_type -_id ",
-      populate: { path: "used_by", select: "_id first_name last_name" },
-    })
+    .lean()
+    .populate("by", "first_name last_name")
+    .populate("loc", "label")
+    .populate("u_id", "first_name last_name")
+    .populate("g_id", "fname lname")
     .sort({ createdAt: body.order || -1 })
     .skip(skip)
     .limit(limit)
     .exec(function (err, docs) {
       if (err) {
-        return callback("Error in query", null);
+        return callback(err, null);
       } else {
         return callback(null, {
           total_count: totalCount,

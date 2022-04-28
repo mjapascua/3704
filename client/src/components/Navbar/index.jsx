@@ -75,7 +75,7 @@ export const Navbar = React.memo(() => {
               onClick={() =>
                 navigate("/login", { replace: true, state: { from: location } })
               }
-              classes=" ml-1 text-white bg-meadow-600 transition-color"
+              className=" ml-1 text-white bg-violet-600 transition-color"
             >
               Login
             </Button>
@@ -112,8 +112,8 @@ export const Navbar = React.memo(() => {
             </span>
 
             {notif.show && (
-              <div className="absolute rounded-sm py-1 font-display right-14 shadow-sprd bg-white">
-                <span className="px-4 py-1 font-head font-semibold block">
+              <div className="absolute rounded py-1 font-display right-14 border shadow-sprd bg-white">
+                <span className="px-4 py-1 text-meadow-700 font-head font-semibold block">
                   NOTIFICATIONS
                 </span>
                 <div className="block overflow-scroll h-96">
@@ -160,7 +160,9 @@ export const Navbar = React.memo(() => {
                         }
                       >
                         <span className="pt-2 block pb-3 border-b border-slate-200">
-                          <b className=" text-slate-800">{item.title}</b>
+                          <span className=" text-slate-800 font-semibold">
+                            {item.title}
+                          </span>
                           <span className=" block text-slate-700 font-display">
                             {item.text}
                           </span>

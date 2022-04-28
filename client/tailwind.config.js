@@ -51,7 +51,8 @@ module.exports = {
         3: "3px",
       },
       height: {
-        120: "30rem",
+        112: "28rem",
+        144: "36rem",
         "scrn-8": "80vh",
         "scrn-9": "90vh",
       },

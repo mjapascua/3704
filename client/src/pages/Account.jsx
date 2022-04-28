@@ -54,11 +54,11 @@ const Account = () => {
         </div>
       ) : (
         <div className="flex h-full">
-          <span className=" w-80 block p-4 h-64 md:h-full bg-meadow-800">
+          <span className=" w-80 block p-4 h-64 md:h-full border-r">
             <Button
               primary
               onClick={() => navigate("/account")}
-              classes={"mb-5"}
+              className="w-full"
             >
               My account
               <span className="material-icons-sharp text-3xl">
@@ -68,7 +68,7 @@ const Account = () => {
             <Button
               primary
               onClick={() => navigate("generate-qr-pass")}
-              classes={"mb-5"}
+              className="w-full"
             >
               Create visitor pass
               <span className="material-icons-sharp text-3xl">qr_code</span>
@@ -85,7 +85,7 @@ const Account = () => {
             <Button
               primary
               onClick={() => navigate("calendar")}
-              classes={"mb-5"}
+              className="w-full"
             >
               Calendar
               <span className="material-icons-sharp text-3xl">
@@ -96,7 +96,7 @@ const Account = () => {
               <Button
                 primary
                 onClick={() => navigate("/dashboard")}
-                classes={"mb-5"}
+                className="w-full"
               >
                 Admin dashboard
                 <span className="material-icons-sharp text-3xl">
@@ -110,7 +110,7 @@ const Account = () => {
                 dispatch(logout());
                 navigate("/", { replace: true });
               }}
-              classes={"mb-5"}
+              className="w-full"
             >
               Logout
               <span className="material-icons-sharp text-3xl">logout</span>
@@ -285,7 +285,7 @@ const UserAccount = ({ authConfig }) => {
                       {guests.map((el, index) => {
                         return (
                           <span key={index} className="block ">
-                            {el.first_name + " " + el.last_name}
+                            {el.fname + " " + el.lname}
                             <Button onClick={() => requestGuestQR(el.qr)}>
                               show qr
                             </Button>
@@ -293,7 +293,7 @@ const UserAccount = ({ authConfig }) => {
                               onClick={() =>
                                 removeGuest({
                                   gId: el._id,
-                                  name: el.first_name,
+                                  name: el.fname,
                                 })
                               }
                             >

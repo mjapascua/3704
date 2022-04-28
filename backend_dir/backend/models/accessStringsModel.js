@@ -2,13 +2,18 @@ const mongoose = require("mongoose");
 
 const accessStringSchema = mongoose.Schema(
   {
-    user_type: {
+    /*   user_type: {
       type: String,
       enum: ["User", "Guest"],
-    },
-    used_by: {
+    }, */
+    u_id: {
       type: mongoose.Schema.Types.ObjectId,
-      refPath: "user_type",
+      ref: "User",
+      required: true,
+    },
+    g_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Guest",
     },
     hash: {
       type: String,

@@ -3,6 +3,8 @@ const router = express.Router();
 const { ROLES } = require("../config/roles");
 const {
   deleteUser,
+  filterGuests,
+  getUser,
   filterUsers,
   getAllUsers,
   getUsersByRole,
@@ -29,7 +31,9 @@ router.post("/rfid/register", queueUserTagRegistration);
 
 router.get("/users/filter", filterUsers);
 router.route("/scans").get(getScanLogsFilters).put(filterScanLogs);
+router.route("/guests").put(filterGuests);
 
+//router.route("/guests").get(protect, filterGuests);
 router
   .route("/locations")
   .get(protect, getScanPoints)
@@ -41,7 +45,7 @@ router
   .post(protect, registerRFIDDevice)
   .put(protect, updateRFIDDevice);
 
-router.get("/rfid/register/:tag_id", verifyTagStatus);
+router.get("/rfid/register/:tag_uid", verifyTagStatus);
 
 router.post("/scan", protect, authAllow([ROLES.ADMIN, ROLES.EDITOR]), checkQR);
 
@@ -52,14 +56,17 @@ router
   .put(updateQueueItem)
   .delete(removeFromQueue);
 
+router.get("/users/:role", protect, authAllow([ROLES.ADMIN]), getUsersByRole);
+
+router
+  .route("/user/:id")
+  .get(protect, getUser)
+  .delete(protect, authAllow([ROLES.ADMIN]), deleteUser);
+
 router.get(
   "/users",
   protect,
   authAllow([ROLES.ADMIN, ROLES.EDITOR]),
   getAllUsers
 );
-
-router.get("/users/:role", protect, authAllow([ROLES.ADMIN]), getUsersByRole);
-
-router.delete("/users/:id", protect, authAllow([ROLES.ADMIN]), deleteUser);
 module.exports = router;

@@ -28,27 +28,26 @@ const requestGuestQR = asyncHandler(async (req, res) => {
   }
 
   const guestExists = await Guest.findOne({
-    first_name,
-    last_name,
-    phone_number,
-    patron: req.user.id,
+    fname: first_name,
+    lname: last_name,
+    contaact: phone_number,
+    uid: req.user.id,
   }).populate("qr");
 
   if (!guestExists) {
     const hash = generateMd5Hash(req.user.id + first_name + phone_number);
     const guest = await Guest.create({
-      first_name,
-      last_name,
-      phone_number,
-      address,
-      patron: req.user.id,
+      fname: first_name,
+      lname: last_name,
+      contact: phone_number,
+      addr: address,
+      u_id: req.user.id,
     });
 
     const guestAccess = await AccessString.create({
-      user_type: "Guest",
       hash,
-      patron: req.user.id,
-      used_by: guest.id,
+      u_id: req.user.id,
+      g_id: guest.id,
     });
 
     if (!guest || !guestAccess) {
@@ -96,10 +95,9 @@ const requestGuestQR = asyncHandler(async (req, res) => {
   if (!guestExists.active) {
     const hash = generateMd5Hash(req.user.id + first_name + phone_number);
     const guestAccess = await AccessString.create({
-      user_type: "Guest",
       hash,
-      patron: req.user.id,
-      used_by: guestExists.id,
+      u_id: req.user.id,
+      g_id: guestExists.id,
     });
 
     guestExists.active = true;
@@ -151,58 +149,63 @@ const guestQR = asyncHandler(async (req, res) => {
 
 const checkQR = asyncHandler(async (req, res) => {
   const entry = await AccessString.findOne({ hash: req.body.hash }).populate(
-    "used_by",
-    "first_name"
+    "g_id",
+    "fname"
   );
-  //const loc = await ScanPoint.findById(req.body.locID);
 
   if (!entry || entry.message) {
     res.status(401);
     throw new Error("No Entry");
   }
 
-  const log = await ScanLog.create({
-    access_type: "AccessString",
-    by_account: req.user.id,
-    scan_point: "6266777e8eba44af778c1912" /* loc */,
-    access_obj: entry.id,
-  });
+  const loc = await ScanPoint.findById(req.body.locID);
+
+  const logObj = {
+    type: "qr",
+    by: req.user.id,
+    loc: req.body.locID,
+    u_id: entry.u_id,
+  };
+
+  if (entry.g_id) {
+    logObj.g_id = entry.g_id;
+  }
+
+  const log = await ScanLog.create(logObj);
 
   if (!log) {
     res.status(400);
     throw new Error("Not recorded");
   }
 
-  const notify = await createNotif(
+  await createNotif(
     {
       title: "QR scanned",
       category: notifTypes.Entry_guest,
-      text: entry.used_by
-        ? entry.used_by.first_name + " has arrived!"
-        : "Your QR has been scanned!",
+      text: !entry.g_id
+        ? "Your QR has been scanned at " + loc.label
+        : entry.g_id.fname + " has arrived! at " + loc.label,
     },
-    { id: entry.patron }
+    { id: entry.u_id }
   );
 
   res.status(200).json({
     message: "Allow",
-    information: notify,
-    user: entry,
   });
 });
 
 const generateMd5Hash = (string) => {
-  let hashed = md5(string).toString();
-  let splitHash =
+  return md5(string).toString();
+  /*   let splitHash =
     hashed.slice(0, 4) +
     "-" +
     hashed.slice(4, 10) +
     "-" +
     hashed.slice(10, 20) +
     "-" +
-    hashed.slice(20);
+    hashed.slice(20); */
 
-  return splitHash;
+  //  return hashed;
 };
 
 const validateLink = asyncHandler(async (req, res, next) => {

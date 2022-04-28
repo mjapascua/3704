@@ -125,8 +125,6 @@ const ManageDevices = ({ authConfig }) => {
             <select name="locID" value={info.locID} onChange={handleChange}>
               <option value="">none</option>
               {locations.map((loc, index) => {
-                console.log(loc);
-
                 return (
                   <option key={index} value={loc._id}>
                     {loc.label}

@@ -2,22 +2,22 @@ const mongoose = require("mongoose");
 
 const guestSchema = mongoose.Schema(
   {
-    patron: {
+    u_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
 
-    first_name: {
+    fname: {
       type: String,
       required: [true, "Please add your given name"],
     },
 
-    last_name: {
+    lname: {
       type: String,
       required: [true, "Please add your surname"],
     },
 
-    phone_number: {
+    contact: {
       type: String,
       match: /^[0-9]*$/,
       minLength: 10,
@@ -25,7 +25,7 @@ const guestSchema = mongoose.Schema(
       required: [true, "Please add a phone number"],
     },
 
-    address: {
+    addr: {
       type: String,
       required: [true, "Please add your residence"],
     },
@@ -36,7 +36,7 @@ const guestSchema = mongoose.Schema(
       default: null,
     },
 
-    rfid: {
+    rf: {
       type: mongoose.Schema.Types.ObjectId,
       refPath: "RegisteredTag",
       default: null,

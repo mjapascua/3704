@@ -16,16 +16,17 @@ import Loading from "../components/Loading/Loading";
 import authService from "../utils/authService";
 import ManageDevices from "./Admin/ManageDevices";
 import ManageScanLogs from "./Admin/ManageScanLogs";
+import AccountPage from "./Admin/AccountPage";
 
 const navStyle =
   "w-full flex items-center font-display cursor-pointer md:rounded-tl-md md:rounded-bl-md justify-center md:justify-start mb-3 px-8";
-const activeStyle = "text-slate-50 bg-violet-700 py-6 " + navStyle;
-const defStyle = "text-gray-500 text-sm py-4 " + navStyle;
+const activeStyle = "text-slate-50 bg-violet-700 py-7 " + navStyle;
+const defStyle = "text-gray-500 text-sm py-5 " + navStyle;
 const sideMenuStyle =
   "bg-neutral-900 z-20 left-0 w-max box-border block h-screen md:pl-5";
 
 const routes = [
-  { to: "/dashboard", label: "Dashboard", icon: "home" },
+  { to: "/dashboard", label: "Dashboard", icon: "home", end: true },
   { to: "/dashboard/bulletin", label: "Manage Bulletin", icon: "feed" },
   { to: "/dashboard/qr-scanner", label: "QR Scanner", icon: "qr_code_scanner" },
   { to: "/dashboard/scan-logs", label: "Scan Records", icon: "history" },
@@ -94,7 +95,7 @@ const Dashboard = () => {
     setLabel(
       routes.find((route) => {
         return route.to === location.pathname;
-      }).label
+      })?.label || ""
     );
   };
 
@@ -133,6 +134,10 @@ const Dashboard = () => {
                   <div className="w-full flex h-screen fixed z-10 bg-slate-700 opacity-50 "></div>
                 )}
                 <Routes>
+                  <Route
+                    path={"/accounts/:id"}
+                    element={<AccountPage authConfig={authConfig} />}
+                  />
                   <Route
                     path={"/accounts"}
                     element={<ManageAccounts authConfig={authConfig} />}
@@ -195,7 +200,7 @@ export const Sidemenu = ({ style, handleMenuClick }) => {
       {routes.map((route) => {
         return (
           <NavLink
-            end
+            end={route.end || false}
             key={route.to}
             to={route.to}
             className={({ isActive }) => (isActive ? activeStyle : defStyle)}

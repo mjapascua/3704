@@ -13,7 +13,7 @@ const forRegistrationSchema = mongoose.Schema({
     ref: "RegisteredTag",
     default: null,
   },
-  available_tag: {
+  tag_uid: {
     type: String,
     default: null,
   },
