@@ -11,7 +11,7 @@ int failLedPin = 16;
 const int RST_PIN = 22; // Reset pin
 const int SS_PIN = 21; // Slave select pin
 
-const char* deviceKey = "123TEST";
+const char* deviceKey = "124TEST";
 const char* ssid = "---";
 const char* password =  "Asmodeus2731";
 const char* requestPath = "http://192.168.55.101:5000/api/admin/rfid/scan/";

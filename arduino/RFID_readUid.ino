@@ -5,6 +5,8 @@
 #include <Arduino_JSON.h>
 
 int ledPin = 2;
+int passLedPin = 17;
+int failLedPin = 16;
 const int RST_PIN = 22; // Reset pin
 const int SS_PIN = 21; // Slave select pin
 
@@ -19,6 +21,8 @@ void setup() {
 
   WiFi.begin(ssid, password);
   pinMode(ledPin, OUTPUT);
+  pinMode(passLedPin, OUTPUT);
+  pinMode(failLedPin, OUTPUT);
 
   while (!Serial); // Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4)
 
@@ -49,7 +53,7 @@ void loop() {
 
     MFRC522::StatusCode status;
     String uid;
-
+   
     Serial.println("\n<< Tag detected >>");
     digitalWrite(ledPin, HIGH);
 

@@ -171,16 +171,13 @@ const ManageScanLogs = ({ authConfig }) => {
   return (
     <div className="mx-10" style={{ width: "1100px" }}>
       <span className="w-full flex justify-between py-1 cursor-pointer font-semibold text-sm">
-        <button onClick={getLogs}>
-          <span
-            className={
-              "material-icons-outlined border rounded-sm bg-white px-2 py-.5"
-            }
-          >
-            refresh
-          </span>
+        <button
+          onClick={getLogs}
+          className="border border-gray-300 bg-white material-icons-outlined rounded-sm px-2 py-.5"
+        >
+          refresh
         </button>
-        <label className="ml-6">
+        <label>
           Type
           <select
             name="type"
@@ -193,7 +190,7 @@ const ManageScanLogs = ({ authConfig }) => {
             <option value={accessTypes[1]}>RFID</option>
           </select>
         </label>
-        <label className="ml-6">
+        <label>
           Location
           <select
             name="loc"
@@ -229,7 +226,7 @@ const ManageScanLogs = ({ authConfig }) => {
             })}
           </select>
         </label>
-        <label className="ml-6">
+        <label>
           Device
           <select
             name="node"
@@ -248,7 +245,7 @@ const ManageScanLogs = ({ authConfig }) => {
           </select>
         </label>
         {/*  <span>
-          <label className="ml-6">
+          <label>
             First
             <input
               name="first"
@@ -257,7 +254,7 @@ const ManageScanLogs = ({ authConfig }) => {
               className="ml-2 p-1"
             />
           </label>
-          <label className="ml-6">
+          <label>
             Last
             <input
               name="last"
@@ -554,12 +551,15 @@ const DateSelector = ({ handleChangeFilter }) => {
     <span className="relative select-none">
       <span
         onClick={toggleDRange}
-        className="border bg-white inline-block ml-8 text-xs px-4 py-1 "
+        className="border bg-white inline-flex border-gray-300 pys-0.5 items-center justify-between pl-2 w-36 rounded-sm text-xs"
       >
         Date range
+        <span className="material-icons-sharp">
+          {dateRange.show ? "arrow_drop_up" : "arrow_drop_down"}
+        </span>
       </span>
       {dateRange.show && (
-        <div className=" absolute top-8 w-64 flex flex-col bg-white px-3 border right-0 z-10 shadow-sprd rounded py-2">
+        <div className=" absolute top-7 w-64 flex flex-col bg-white px-3 border right-0 z-10 shadow-sprd rounded py-2">
           <label>
             from
             <input
@@ -582,7 +582,10 @@ const DateSelector = ({ handleChangeFilter }) => {
               className="block"
             />
           </label>
-          <Button onClick={handleApply} className="p-1 font-display border">
+          <Button
+            onClick={handleApply}
+            className="p-1 mt-2 font-display bg-teal-600 text-white"
+          >
             Apply
           </Button>
         </div>
