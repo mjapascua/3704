@@ -287,7 +287,6 @@ const UserSelector = ({ handleChangeFilter }) => {
   });
   const [toggle, setToggle] = useState(false);
   const [data, setData] = useState([]);
-  const [reqID, setReqID] = useState(null);
   const findByName = useCallback(() => {
     apiClient
       .get(`admin/name/match?fname=${query.fname}&lname=${query.lname}`)
@@ -317,68 +316,83 @@ const UserSelector = ({ handleChangeFilter }) => {
   }, [findByName]);
 
   return (
-    <div className="flex flex-col relative z-10">
+    <div className="flex flex-col select-none relative z-20">
       <span
         onClick={() => setToggle(!toggle)}
-        className="border bg-white inline-flex border-gray-300 pys-0.5 items-center justify-between pl-2 w-36 rounded-sm text-xs"
+        className="border bg-white inline-flex border-gray-300 items-center justify-between pl-2 w-36 rounded-sm text-xs"
       >
-        Name Finder
+        Name finder
         <span className="material-icons-sharp">
           {toggle ? "arrow_drop_up" : "arrow_drop_down"}
         </span>
       </span>
       {toggle && (
-        <div className="absolute top-7 w-min pb-1 flex flex-col bg-white border right-0 z-10 shadow-sprd rounded">
-          <span className="flex mx-2 mt-2 border-b pb-2">
-            <label>
-              First Name
-              <input
-                type="text"
-                name="fname"
-                value={query.fname}
-                onChange={handleChange}
-                className="px-1 mr-2"
-              />
-            </label>
-            <label>
-              Last Name
-              <input
-                type="text"
-                name="lname"
-                value={query.lname}
-                onChange={handleChange}
-                className="px-1"
-              />
-            </label>
-          </span>
-          <div className="flex-col flex">
-            {data.map((el, ind) => {
-              return (
-                <span
-                  onClick={() => {
-                    setQuery({
-                      fname: el.fname,
-                      lname: el.lname,
-                    });
-                    changeUserByID({ registered: !!el.role, id: el._id });
-                  }}
-                  className="w-full flex p-2 even:bg-gray-100"
-                  key={ind}
-                >
+        <>
+          <span className="absolute block h-2.5 -bottom-1.5 border-x z-10 border-gray-300 bg-white w-36"></span>
+          <div className="absolute top-7 right-0 w-min pb-2 flex flex-col border-gray-300 bg-white border shadow-sprd rounded">
+            <span className="flex mx-3 mt-2 border-b pb-2">
+              <label>
+                First Name
+                <input
+                  type="text"
+                  name="fname"
+                  value={query.fname}
+                  onChange={handleChange}
+                  className="mr-2 p-1"
+                />
+              </label>
+              <label>
+                Last Name
+                <input
+                  type="text"
+                  name="lname"
+                  value={query.lname}
+                  onChange={handleChange}
+                  className="p-1"
+                />
+              </label>
+              <span
+                onClick={() => {
+                  setQuery({ fname: "", lname: "" });
+                  handleChangeFilter({
+                    target: { name: "g_id", value: null },
+                  });
+                  handleChangeFilter({ target: { name: "u_id", value: null } });
+                }}
+                className="material-icons-sharp text-rose-700 mt-4 mx-2"
+              >
+                block
+              </span>
+            </span>
+            <div className="flex-col flex">
+              {data.map((el, ind) => {
+                return (
                   <span
-                    className={
-                      "material-icons-outlined pr-4 " +
-                      (!el.role ? "text-purple-600" : "text-green-500")
-                    }
+                    onClick={() => {
+                      setQuery({
+                        fname: el.fname,
+                        lname: el.lname,
+                      });
+                      changeUserByID({ registered: !!el.role, id: el._id });
+                    }}
+                    className="w-full flex p-2.5 items-center even:bg-gray-100"
+                    key={ind}
                   >
-                    {!el.role ? "supervised_user_circle" : "verified_user"}
+                    <span
+                      className={
+                        "material-icons-outlined pr-4 " +
+                        (!el.role ? "text-purple-600" : "text-green-500")
+                      }
+                    >
+                      {!el.role ? "supervised_user_circle" : "verified_user"}
+                    </span>
+                    {el.fname + " " + el.lname}
                   </span>
-                  {el.fname + " " + el.lname}
-                </span>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
@@ -405,10 +419,10 @@ const DateSelector = ({ handleChangeFilter }) => {
   const toggleDRange = () => setDRange({ ...dateRange, show: !dateRange.show });
 
   return (
-    <span className="relative select-none">
+    <span className="relative select-none z-10">
       <span
         onClick={toggleDRange}
-        className="border bg-white inline-flex border-gray-300 pys-0.5 items-center justify-between pl-2 w-36 rounded-sm text-xs"
+        className="border bg-white inline-flex border-gray-300 items-center justify-between pl-2 w-36 rounded-sm text-xs"
       >
         Date range
         <span className="material-icons-sharp">
@@ -416,36 +430,39 @@ const DateSelector = ({ handleChangeFilter }) => {
         </span>
       </span>
       {dateRange.show && (
-        <div className=" absolute top-7 w-64 flex flex-col bg-white px-3 border right-0 z-10 shadow-sprd rounded py-2">
-          <label>
-            from
-            <input
-              type="datetime-local"
-              name="from"
-              value={dateRange.from}
-              onChange={handleDateRange}
-              max={dateRange.to}
-              className="block"
-            />
-          </label>
-          <label>
-            to
-            <input
-              type="datetime-local"
-              name="to"
-              value={dateRange.to}
-              onChange={handleDateRange}
-              min={dateRange.from}
-              className="block"
-            />
-          </label>
-          <Button
-            onClick={handleApply}
-            className="p-1 mt-2 font-display bg-teal-600 text-white"
-          >
-            Apply
-          </Button>
-        </div>
+        <>
+          <span className="absolute block h-2 -bottom-1 z-10 border-x border-gray-300 bg-white w-36"></span>
+          <div className="absolute top-7 right-0 w-64 flex flex-col border-gray-300 bg-white px-3 py-2 border shadow-sprd rounded">
+            <label>
+              From
+              <input
+                type="datetime-local"
+                name="from"
+                value={dateRange.from}
+                onChange={handleDateRange}
+                max={dateRange.to}
+                className="block mb-1.5"
+              />
+            </label>
+            <label>
+              To
+              <input
+                type="datetime-local"
+                name="to"
+                value={dateRange.to}
+                onChange={handleDateRange}
+                min={dateRange.from}
+                className="block"
+              />
+            </label>
+            <Button
+              onClick={handleApply}
+              className="p-1 mt-2 font-display bg-teal-600 text-white"
+            >
+              Apply
+            </Button>
+          </div>
+        </>
       )}
     </span>
   );

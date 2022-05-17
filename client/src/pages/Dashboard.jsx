@@ -23,7 +23,7 @@ const navStyle =
 const activeStyle = "text-slate-50 bg-violet-700 py-7 " + navStyle;
 const defStyle = "text-gray-500 text-sm py-5 " + navStyle;
 const sideMenuStyle =
-  "bg-neutral-900 z-20 left-0 w-max box-border block h-screen md:pl-5";
+  "bg-neutral-900 z-30 left-0 w-max box-border block h-screen md:pl-5";
 
 const routes = [
   { to: "/dashboard", label: "Dashboard", icon: "home", end: true },
@@ -131,7 +131,7 @@ const Dashboard = () => {
                 onClick={() => open && handleMenuClick()}
               >
                 {open && (
-                  <div className="w-full flex h-screen fixed z-10 bg-slate-700 opacity-50 "></div>
+                  <div className="w-full flex h-screen fixed z-30 bg-slate-700 opacity-50 "></div>
                 )}
                 <Routes>
                   <Route
