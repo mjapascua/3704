@@ -28,7 +28,7 @@ const QRFormPage = ({ authConfig }) => {
           toast.success("QR generated!");
           setQR({
             url: res.data.url,
-            name: data.first_name + " " + data.last_name,
+            name: data.fname + " " + data.lname,
           });
         }
         toast.error(res.data.message);

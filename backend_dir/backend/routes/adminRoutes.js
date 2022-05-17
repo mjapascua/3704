@@ -21,6 +21,7 @@ const {
   updateRFIDDevice,
   checkRFIDTag,
   filterScanLogs,
+  findByName,
   getScanLogsFilters,
 } = require("../controllers/adminRequestsController");
 const { checkQR } = require("../controllers/qrController");
@@ -29,7 +30,13 @@ const { protect, authAllow } = require("../middleware/authMiddleware");
 router.get("/rfid/scan/:key/:id", checkRFIDTag);
 router.post("/rfid/register", queueUserTagRegistration);
 
-router.get("/users/filter", filterUsers);
+router.get(
+  "/users",
+  filterUsers,
+  protect,
+  authAllow([ROLES.ADMIN, ROLES.EDITOR])
+);
+router.get("/name/match", findByName);
 router.route("/scans").get(getScanLogsFilters).put(filterScanLogs);
 router.route("/guests").put(filterGuests);
 
@@ -63,10 +70,10 @@ router
   .get(protect, getUser)
   .delete(protect, authAllow([ROLES.ADMIN]), deleteUser);
 
-router.get(
+/* router.get(
   "/users",
   protect,
   authAllow([ROLES.ADMIN, ROLES.EDITOR]),
   getAllUsers
-);
+); */
 module.exports = router;

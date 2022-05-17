@@ -17,29 +17,29 @@ const qrOptions = { scale: 8 };
 // @route   GET /api/users/:id/:guest_id
 // @access  Private
 const requestGuestQR = asyncHandler(async (req, res) => {
-  const { first_name, last_name, phone_number, address } = req.body;
-  if (!first_name || !last_name || !phone_number || !address) {
+  const { fname, lname, contact, address } = req.body;
+  if (!fname || !lname || !contact || !address) {
     res.status(400);
     throw new Error("Please add all fields");
   }
-  if (!phoneRegex.test(phone_number) || !phone_number.startsWith("9")) {
+  if (!phoneRegex.test(contact) || !contact.startsWith("9")) {
     res.status(400);
     throw new Error("Invalid phone number");
   }
 
   const guestExists = await Guest.findOne({
-    fname: first_name,
-    lname: last_name,
-    contaact: phone_number,
+    fname: fname,
+    lname: lname,
+    contaact: contact,
     uid: req.user.id,
   }).populate("qr");
 
   if (!guestExists) {
-    const hash = generateMd5Hash(req.user.id + first_name + phone_number);
+    const hash = generateMd5Hash(req.user.id + fname + contact);
     const guest = await Guest.create({
-      fname: first_name,
-      lname: last_name,
-      contact: phone_number,
+      fname: fname,
+      lname: lname,
+      contact: contact,
       addr: address,
       u_id: req.user.id,
     });
@@ -93,7 +93,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
   }
 
   if (!guestExists.active) {
-    const hash = generateMd5Hash(req.user.id + first_name + phone_number);
+    const hash = generateMd5Hash(req.user.id + fname + contact);
     const guestAccess = await AccessString.create({
       hash,
       u_id: req.user.id,
@@ -129,7 +129,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
 
 const userQR = asyncHandler(async (req, res) => {
   try {
-    const url = await qrCode.toDataURL(req.user.main_unique, qrOptions);
+    const url = await qrCode.toDataURL(req.user.qr.hash, qrOptions);
     res.json(url);
   } catch (error) {
     res.status(404);
@@ -138,7 +138,7 @@ const userQR = asyncHandler(async (req, res) => {
 });
 
 const guestQR = asyncHandler(async (req, res) => {
-  const access = await AccessString.findById(req.params.id);
+  const access = await AccessString.findById(req.params.id).lean();
   if (!access) {
     res.status(404);
     throw new Error("Not found!");
@@ -148,17 +148,16 @@ const guestQR = asyncHandler(async (req, res) => {
 });
 
 const checkQR = asyncHandler(async (req, res) => {
-  const entry = await AccessString.findOne({ hash: req.body.hash }).populate(
-    "g_id",
-    "fname"
-  );
+  const entry = await AccessString.findOne({ hash: req.body.hash })
+    .lean()
+    .populate("g_id", "fname");
 
   if (!entry || entry.message) {
     res.status(401);
     throw new Error("No Entry");
   }
 
-  const loc = await ScanPoint.findById(req.body.locID);
+  const loc = await ScanPoint.findById(req.body.locID).lean();
 
   const logObj = {
     type: "qr",
@@ -209,12 +208,12 @@ const generateMd5Hash = (string) => {
 };
 
 const validateLink = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.params.id).lean();
   if (!user) {
     res.status(401);
   }
 
-  const active = await TempLink.findOne({ unique: req.params.uniq });
+  const active = await TempLink.findOne({ unique: req.params.uniq }).lean();
 
   if (!active) {
     res.status(404);

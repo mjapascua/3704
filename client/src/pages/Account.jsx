@@ -140,10 +140,10 @@ const Account = () => {
 
 const defUserState = {
   id: null,
-  first_name: null,
-  last_name: null,
+  fname: null,
+  lname: null,
   email: null,
-  phone_number: null,
+  contact: null,
   residence: null,
   guests: [],
 };
@@ -151,8 +151,7 @@ const UserAccount = ({ authConfig }) => {
   const [userData, setUserData] = useState(defUserState);
   const [qr, setQr] = useState(null);
 
-  const { id, first_name, last_name, email, phone_number, residence, guests } =
-    userData;
+  const { id, fname, lname, email, contact, residence, guests } = userData;
 
   const [edit, setEdit] = useState(false);
   const [item, setItem] = useState(null);
@@ -245,10 +244,10 @@ const UserAccount = ({ authConfig }) => {
             onClick={() => {
               setEdit((prev) => !prev);
               setItem({
-                first_name,
-                last_name,
+                fname,
+                lname,
                 email,
-                phone_number,
+                contact,
                 residence,
               });
             }}
@@ -261,15 +260,15 @@ const UserAccount = ({ authConfig }) => {
               <div>
                 <span className="block ">
                   <b>First name:</b>
-                  {first_name}
+                  {fname}
                 </span>
                 <span className="block ">
                   <b>Last name:</b>
-                  {last_name}
+                  {lname}
                 </span>
                 <span className="block ">
                   <b>Phone number:</b>
-                  {phone_number}
+                  {contact}
                 </span>
                 <span className="block ">
                   <b>Address:</b>
@@ -330,8 +329,8 @@ const UserAccount = ({ authConfig }) => {
                 <label>
                   <input
                     type="text"
-                    value={item.first_name}
-                    name="first_name"
+                    value={item.fname}
+                    name="fname"
                     className="form-input !w-40"
                     onChange={handleChange}
                   />
@@ -339,8 +338,8 @@ const UserAccount = ({ authConfig }) => {
                 <label>
                   <input
                     type="text"
-                    value={item.last_name}
-                    name="last_name"
+                    value={item.lname}
+                    name="lname"
                     className="form-input !w-40"
                     onChange={handleChange}
                   />
@@ -352,9 +351,9 @@ const UserAccount = ({ authConfig }) => {
                     </span>
                     <input
                       type="text"
-                      name="phone_number"
+                      name="contact"
                       onChange={handleChange}
-                      value={item.phone_number}
+                      value={item.contact}
                       className="form-input !inline-block !w-40"
                       placeholder="9*********"
                       required
@@ -394,7 +393,7 @@ export default Account;
                   {userData[key].map((el, index) => {
                     return (
                       <span key={index} className="block ">
-                        {el.first_name + " " + el.last_name}
+                        {el.fname + " " + el.lname}
                         <Button onClick={() => removeGuest(el._id)}>
                           remove
                         </Button>

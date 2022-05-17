@@ -32,13 +32,13 @@ const guestSchema = mongoose.Schema(
 
     qr: {
       type: mongoose.Schema.Types.ObjectId,
-      refPath: "AccessString",
+      ref: "AccessString",
       default: null,
     },
 
     rf: {
       type: mongoose.Schema.Types.ObjectId,
-      refPath: "RegisteredTag",
+      ref: "RegisteredTag",
       default: null,
     },
 

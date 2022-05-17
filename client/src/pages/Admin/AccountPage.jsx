@@ -46,6 +46,7 @@ const AccountPage = ({ authConfig }) => {
   const getUser = useCallback(() => {
     apiClient.get("admin/user/" + param.id, authConfig).then((res) => {
       if (res.status === 200) {
+        console.log(res.data);
         setUser(res.data);
         setLoading(false);
       }
@@ -56,7 +57,7 @@ const AccountPage = ({ authConfig }) => {
     e.preventDefault();
     apiClient.put(`user/${user._id}`, user, authConfig).then((res) => {
       if (res.status === 200) {
-        toast.success(`User ${res.data.first_name} has been updated`);
+        toast.success(`User ${res.data.fname} has been updated`);
       }
     });
   };
@@ -213,8 +214,8 @@ const AccountPage = ({ authConfig }) => {
               <label>
                 <input
                   type="text"
-                  value={user.first_name}
-                  name="first_name"
+                  value={user.fname}
+                  name="fname"
                   className="form-input !w-40"
                   onChange={handleEdit}
                 />
@@ -222,8 +223,8 @@ const AccountPage = ({ authConfig }) => {
               <label>
                 <input
                   type="text"
-                  value={user.last_name}
-                  name="last_name"
+                  value={user.lname}
+                  name="lname"
                   className="form-input !w-40"
                   onChange={handleEdit}
                 />
@@ -235,9 +236,9 @@ const AccountPage = ({ authConfig }) => {
                   </span>
                   <input
                     type="text"
-                    name="phone_number"
+                    name="contact"
                     onChange={handleEdit}
-                    value={user.phone_number}
+                    value={user.contact}
                     className="form-input !inline-block !w-40"
                     placeholder="9*********"
                     required

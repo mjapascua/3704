@@ -20,19 +20,19 @@ const createNotif = async (body, scope) => {
           notifications: newNotif,
         },
       }
-    );
+    ).lean();
   } else if (scope.id) {
     user = await User.findByIdAndUpdate(scope.id, {
       $push: {
         notifications: newNotif,
       },
-    });
+    }).lean();
   } else {
     user = await User.updateMany(scope, {
       $push: {
         notifications: newNotif,
       },
-    });
+    }).lean();
   }
 
   if (!user) {
@@ -59,7 +59,7 @@ const readNotifs = asyncHandler(async (req, res) => {
       $set: { "notifications.$[el].read_status": true },
     },
     { arrayFilters: [{ "el.read_status": false }] }
-  );
+  ).lean();
 
   res.json({
     notifications: notifications.slice(-10).reverse(),

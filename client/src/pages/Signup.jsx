@@ -13,10 +13,10 @@ export const phoneRegex = /^([0-9]{10})$/;
 function SignUp() {
   const [credentials, setCredentials] = useState({
     email: "",
-    first_name: "",
-    last_name: "",
+    fname: "",
+    lname: "",
     residence: "",
-    phone_number: "",
+    contact: "",
     password: "",
     password_confirm: "",
     role: authService.ROLES.BASIC,
@@ -175,9 +175,9 @@ function SignUp() {
                       First Name
                       <input
                         type="text"
-                        name="first_name"
+                        name="fname"
                         onChange={handleChange}
-                        value={credentials.first_name}
+                        value={credentials.fname}
                         className="form-input"
                         placeholder="Enter first name"
                         required
@@ -188,9 +188,9 @@ function SignUp() {
                       <span className="flex">
                         <input
                           type="text"
-                          name="last_name"
+                          name="lname"
                           onChange={handleChange}
-                          value={credentials.last_name}
+                          value={credentials.lname}
                           className="form-input"
                           placeholder="Enter last name"
                           required
@@ -248,7 +248,7 @@ function SignUp() {
                           </span>
                           <input
                             type="text"
-                            name="phone_number"
+                            name="contact"
                             onChange={(e) => {
                               handleChange(e);
                               handlePhoneNumberCheck(
@@ -265,7 +265,7 @@ function SignUp() {
                                   })
                               );
                             }}
-                            value={credentials.phone_number}
+                            value={credentials.contact}
                             className="form-input !inline-block"
                             placeholder="9*********"
                             required
@@ -329,8 +329,8 @@ function SignUp() {
                     </span>
                   )}
                   {progress === 1 &&
-                    credentials.first_name &&
-                    credentials.last_name &&
+                    credentials.fname &&
+                    credentials.lname &&
                     credentials.residence && (
                       <span
                         className="cursor-pointer absolute right-0 underline  underline-offset-1"
@@ -341,7 +341,7 @@ function SignUp() {
                     )}
                   {progress === 2 &&
                     credentials.email &&
-                    handlePhoneNumberCheck(credentials.phone_number) && (
+                    handlePhoneNumberCheck(credentials.contact) && (
                       <span
                         className="cursor-pointer absolute right-0 underline  underline-offset-1"
                         onClick={() => setProgress(progress + 1)}

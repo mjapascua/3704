@@ -4,12 +4,12 @@ const { ROLES } = require("../config/roles");
 
 const userSchema = mongoose.Schema(
   {
-    first_name: {
+    fname: {
       type: String,
       required: [true, "Please add your given name"],
     },
 
-    last_name: {
+    lname: {
       type: String,
       required: [true, "Please add your surname"],
     },
@@ -26,7 +26,7 @@ const userSchema = mongoose.Schema(
       unique: [true, "Email is already taken"],
     },
 
-    phone_number: {
+    contact: {
       type: String,
       match: /^[0-9]*$/,
       minLength: 10,
@@ -34,8 +34,9 @@ const userSchema = mongoose.Schema(
       required: [true, "Please add a phone number"],
     },
 
-    main_unique: {
-      type: String,
+    qr: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AccessString",
       required: true,
     },
 
@@ -77,21 +78,21 @@ const userSchema = mongoose.Schema(
   }
 );
 
-userSchema.statics.paginate = function (pageNo, limit, filter, callback) {
-  const skip = limit * (pageNo - 1);
+userSchema.statics.paginate = async function (pageNo, limit, filter, callback) {
+  const skip = limit * pageNo;
   let totalCount;
   let totalPages;
 
-  this.count({}, function (err, count) {
-    totalCount = err ? 0 : count;
-    totalPages = err ? 0 : Math.ceil(count / limit);
-  });
+  const checkFilter = typeof filter !== undefined && filter ? filter : {};
+
+  const count = await this.count(checkFilter);
+
+  totalCount = !count ? 0 : count;
+  totalPages = !count ? 1 : Math.ceil(count / limit);
 
   if (totalCount === 0) {
-    return callback("No entries found", null);
+    return callback(null, { data: [] });
   }
-
-  const checkFilter = typeof filter !== undefined && filter ? filter : {};
 
   this.find(checkFilter)
     .skip(skip)

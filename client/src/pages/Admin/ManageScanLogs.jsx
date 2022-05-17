@@ -1,8 +1,7 @@
 import axios from "axios";
 import { useCallback, useState, useEffect, useMemo, useRef } from "react";
-import { usePagination, useTable } from "react-table";
 import { Button } from "../../components/Buttons/Main";
-import Loading from "../../components/Loading/Loading";
+import Table from "../../components/Table/Table";
 import { apiClient } from "../../utils/requests";
 const dateOptions = {
   dateStyle: "medium",
@@ -15,6 +14,7 @@ const ManageScanLogs = ({ authConfig }) => {
     data: [],
     total_count: 1,
     total_pages: 1,
+    page_size: 20,
   });
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState(-1);
@@ -33,6 +33,7 @@ const ManageScanLogs = ({ authConfig }) => {
   //const [nameMatch, setNMatch] = useState({ first: "", last: "" });
 
   const fetchIdRef = useRef(0);
+  const refreshRef = useRef();
 
   const columns = useMemo(() => [
     {
@@ -83,11 +84,9 @@ const ManageScanLogs = ({ authConfig }) => {
     },
     {
       Header: "Registered account",
-      //  className: " !bg-teal-600 !text-center ",
-      // id: "Registered",
       columns: [
-        { Header: "First name", accessor: "u_id.first_name" },
-        { Header: "Last name", accessor: "u_id.last_name" },
+        { Header: "First name", accessor: "u_id.fname" },
+        { Header: "Last name", accessor: "u_id.lname" },
       ],
     },
 
@@ -99,7 +98,7 @@ const ManageScanLogs = ({ authConfig }) => {
       ],
     },
 
-    { Header: "Scanned by", accessor: "by.first_name" },
+    { Header: "Scanned by", accessor: "by.fname" },
   ]);
 
   const getLogs = useCallback(
@@ -116,13 +115,12 @@ const ManageScanLogs = ({ authConfig }) => {
 
         apiClient
           .put(`/admin/scans?limit=${pageSize}&page=${pageIndex}`, {
-            filter: cleanFilter,
-            order: order,
+            filter: { ...cleanFilter, order: order },
             //    nq: cleanName,
           })
           .then((res) => {
             if (res.status === 200) {
-              setPaginate(res.data);
+              setPaginate({ ...res.data, page_size: paginate.page_size });
             }
           })
           .finally(() => {
@@ -144,6 +142,10 @@ const ManageScanLogs = ({ authConfig }) => {
       return { ...prev, [target.name]: target.value };
     });
   }; */
+
+  /*   const setPageSize = ({target})=>{
+    setPaginate(prev=>{return {...prev, page_size:target.value}})
+  } */
 
   const getIntOpts = useCallback(() => {
     const adminReq = apiClient.get("admin/users/ADMIN", authConfig);
@@ -172,7 +174,7 @@ const ManageScanLogs = ({ authConfig }) => {
     <div className="mx-10" style={{ width: "1100px" }}>
       <span className="w-full flex justify-between py-1 cursor-pointer font-semibold text-sm">
         <button
-          onClick={getLogs}
+          ref={refreshRef}
           className="border border-gray-300 bg-white material-icons-outlined rounded-sm px-2 py-.5"
         >
           refresh
@@ -220,7 +222,7 @@ const ManageScanLogs = ({ authConfig }) => {
             {options.users.map((u, index) => {
               return (
                 <option key={index} value={u._id}>
-                  {u.first_name + " " + u.last_name}
+                  {u.fname + " " + u.lname}
                 </option>
               );
             })}
@@ -264,6 +266,7 @@ const ManageScanLogs = ({ authConfig }) => {
             />
           </label>
         </span> */}
+        <UserSelector handleChangeFilter={handleChangeFilter} />
         <DateSelector handleChangeFilter={handleChangeFilter} />
       </span>
       <Table
@@ -271,258 +274,112 @@ const ManageScanLogs = ({ authConfig }) => {
         paginate={paginate}
         fetchData={getLogs}
         loading={loading}
+        refreshRef={refreshRef}
       />
     </div>
   );
 };
 
 const UserSelector = ({ handleChangeFilter }) => {
-  const [guest, setGuest] = useState({
-    id: null,
+  const [query, setQuery] = useState({
     fname: "",
     lname: "",
   });
+  const [toggle, setToggle] = useState(false);
+  const [data, setData] = useState([]);
   const [reqID, setReqID] = useState(null);
-  const [user, setUser] = useState({
-    id: null,
-    fname: "",
-    lname: "",
-    guests: [],
-  });
+  const findByName = useCallback(() => {
+    apiClient
+      .get(`admin/name/match?fname=${query.fname}&lname=${query.lname}`)
+      .then((res) => {
+        setData(res.data);
+      });
+  }, [query]);
 
-  const changeUseByID = () => {
-    const target = { name: "used_by", value: reqID };
+  const changeUserByID = ({ registered, id }) => {
+    if (registered) {
+      handleChangeFilter({ target: { name: "g_id", value: null } });
+    }
+    const target = { name: registered ? "u_id" : "g_id", value: id };
     handleChangeFilter({ target });
+
+    setToggle(false);
   };
 
-  return (
-    <span className="relative select-none">
-      <span className="border bg-white inline-block ml-8 text-xs px-4 py-1 "></span>
-      <div className=" top-8 w-64 flex flex-col bg-white px-3 border right-0 z-10 shadow-sprd rounded py-2">
-        <span>
-          Find by user
-          <label>
-            First Name
-            <input
-              type="text"
-              name="from"
-              value={user.fname}
-              onChange={(e) => setUser({ ...user, fname: e.target.value })}
-            />
-          </label>
-          <label>
-            Last Name
-            <input
-              type="text"
-              name="to"
-              value={user.last_name}
-              onChange={(e) => setUser({ ...user, lname: e.target.value })}
-            />
-          </label>
-          <Button className="p-1 font-display border">
-            Find user's guests
-          </Button>
-          {user.guests.length && (
-            <select
-              name="guest"
-              value={guest.id}
-              onChange={(e) => setReqID(e.target.value)}
-            >
-              {user.guests.map((g, ind) => {
-                return (
-                  <option key={ind} value={g._id}>
-                    {g.fname + " " + g.lname}
-                  </option>
-                );
-              })}
-            </select>
-          )}
-        </span>
-        <span>
-          Find by guest
-          <label>
-            First Name
-            <input
-              type="text"
-              name="from"
-              value={user.fname}
-              onChange={(e) => setGuest({ ...guest, fname: e.target.value })}
-            />
-          </label>
-          <label>
-            Last Name
-            <input
-              type="text"
-              name="to"
-              value={user.lname}
-              onChange={(e) => setGuest({ ...guest, lname: e.target.value })}
-            />
-          </label>
-        </span>
-        {/*   <Button onClick={} className="p-1 font-display border">
-          Find
-        </Button> */}
-      </div>
-    </span>
-  );
-};
-
-const Table = ({ columns, paginate, fetchData, loading }) => {
-  const tableInstance = useTable(
-    {
-      columns,
-      data: paginate.data,
-      initialState: {
-        pageIndex: 0,
-        pageSize: 20,
-      },
-      manualPagination: true,
-      pageCount: paginate.total_pages,
-    },
-    usePagination
-  );
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    page,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    pageCount,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-    state: { pageIndex, pageSize },
-  } = tableInstance;
+  const handleChange = ({ target }) => {
+    setQuery((prev) => {
+      return { ...prev, [target.name]: target.value };
+    });
+  };
 
   useEffect(() => {
-    fetchData({ pageIndex, pageSize });
-  }, [fetchData, pageIndex, pageSize]);
+    findByName();
+  }, [findByName]);
 
   return (
-    <div>
-      <div className="h-144 block border-b border-teal-700 overflow-scroll ">
-        <table
-          {...getTableProps()}
-          className=" table-spacing table-auto  w-full text-sm"
-        >
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()} className="text-left">
-                {headerGroup.headers.map((column) => {
-                  return (
-                    <th
-                      {...column.getHeaderProps()}
-                      className="sticky bg-teal-700 text-white top-0 py-1.5 pl-4"
-                    >
-                      {column.render("Header")}
-                    </th>
-                  );
-                })}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {loading ? (
-              <tr>
-                <td colSpan={10000}>
-                  <Loading />
-                </td>
-              </tr>
-            ) : (
-              <>
-                {page.map((row) => {
-                  prepareRow(row);
-                  return (
-                    <tr
-                      {...row.getRowProps()}
-                      className="rounded-tl-sm rounded-bl-sm rounded-tr-sm even:bg-gray-100 rounded-br-sm"
-                    >
-                      {row.cells.map((cell) => {
-                        return (
-                          <td
-                            {...cell.getCellProps({
-                              style: {
-                                minWidth: cell.column.minWidth,
-                                width: cell.column.width,
-                              },
-                            })}
-                            className="border-t border-b border-gray-200 pl-4 py-2"
-                          >
-                            {cell.render("Cell")}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex justify-between px-2 py-1">
-        {loading ? (
-          <span>Loading...</span>
-        ) : (
-          <>
-            <span>{paginate.total_count || 0} results</span>
-            <span>
-              {pageSize * pageIndex + 1} -{pageSize * pageIndex + page.length}
-            </span>
-            <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-              {"<<"}
-            </button>
-            <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-              prev
-            </button>
-            <button onClick={() => nextPage()} disabled={!canNextPage}>
-              next
-            </button>
-            <button
-              onClick={() => gotoPage(pageCount - 1)}
-              disabled={!canNextPage}
-            >
-              {">>"}
-            </button>
-            <span>
-              Page{" "}
-              <strong>
-                {pageIndex + 1} of {pageOptions.length || 1}
-              </strong>{" "}
-            </span>
-            <span>
-              Go to page:{" "}
+    <div className="flex flex-col relative z-10">
+      <span
+        onClick={() => setToggle(!toggle)}
+        className="border bg-white inline-flex border-gray-300 pys-0.5 items-center justify-between pl-2 w-36 rounded-sm text-xs"
+      >
+        Name Finder
+        <span className="material-icons-sharp">
+          {toggle ? "arrow_drop_up" : "arrow_drop_down"}
+        </span>
+      </span>
+      {toggle && (
+        <div className="absolute top-7 w-min pb-1 flex flex-col bg-white border right-0 z-10 shadow-sprd rounded">
+          <span className="flex mx-2 mt-2 border-b pb-2">
+            <label>
+              First Name
               <input
-                type="number"
-                defaultValue={pageIndex + 1}
-                onChange={(e) => {
-                  const page = e.target.value ? Number(e.target.value) - 1 : 1;
-                  gotoPage(page);
-                }}
-                style={{ width: "100px" }}
+                type="text"
+                name="fname"
+                value={query.fname}
+                onChange={handleChange}
+                className="px-1 mr-2"
               />
-            </span>{" "}
-            <select
-              value={pageSize}
-              onChange={(e) => {
-                setPageSize(Number(e.target.value));
-              }}
-            >
-              {[20, 30, 40, 50, 100].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
-              ))}
-            </select>
-          </>
-        )}
-      </div>
+            </label>
+            <label>
+              Last Name
+              <input
+                type="text"
+                name="lname"
+                value={query.lname}
+                onChange={handleChange}
+                className="px-1"
+              />
+            </label>
+          </span>
+          <div className="flex-col flex">
+            {data.map((el, ind) => {
+              return (
+                <span
+                  onClick={() => {
+                    setQuery({
+                      fname: el.fname,
+                      lname: el.lname,
+                    });
+                    changeUserByID({ registered: !!el.role, id: el._id });
+                  }}
+                  className="w-full flex p-2 even:bg-gray-100"
+                  key={ind}
+                >
+                  <span
+                    className={
+                      "material-icons-outlined pr-4 " +
+                      (!el.role ? "text-purple-600" : "text-green-500")
+                    }
+                  >
+                    {!el.role ? "supervised_user_circle" : "verified_user"}
+                  </span>
+                  {el.fname + " " + el.lname}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

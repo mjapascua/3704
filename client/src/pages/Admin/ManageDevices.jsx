@@ -114,7 +114,7 @@ const ManageDevices = ({ authConfig }) => {
               {admins.map((user, index) => {
                 return (
                   <option key={index} value={user._id}>
-                    {user.first_name + " " + user.last_name}
+                    {user.fname + " " + user.lname}
                   </option>
                 );
               })}

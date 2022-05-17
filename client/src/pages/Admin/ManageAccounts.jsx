@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { apiClient } from "../../utils/requests";
 import { useTable } from "react-table";
 import { Link } from "react-router-dom";
+import Table from "../../components/Table/Table";
 
 const ManageAccounts = ({ authConfig }) => {
   return (
@@ -13,36 +14,38 @@ const ManageAccounts = ({ authConfig }) => {
 };
 
 const AccountsTable = ({ authConfig }) => {
-  const [users, setUsers] = useState([]);
   const columns = React.useMemo(() => [
     {
       Header: "First Name",
-      accessor: "first_name",
+      accessor: "fname",
     },
     {
       Header: "Last Name",
-      accessor: "last_name",
+      accessor: "lname",
     },
     {
       Header: "Residence",
       accessor: "residence",
+      width: "120",
     },
     {
       Header: "Email",
       accessor: "email",
+      width: "100",
     },
     {
       Header: "Contact",
-      accessor: "phone_number",
+      accessor: "contact",
     },
     {
-      Header: "Page",
+      Header: " ",
+      width: "40",
       Cell: ({ row }) => {
         return (
           <Link to={row.original._id}>
             <span
               //            onClick={() => handleSelect(row.original)}
-              className="text-meadow-600 material-icons-outlined cursor-pointer"
+              className="text-meadow-600 material-icons-outlined cursor-pointer mx-3"
             >
               arrow_circle_right
             </span>
@@ -51,23 +54,34 @@ const AccountsTable = ({ authConfig }) => {
       },
     },
   ]);
+  const [paginate, setPaginate] = useState({
+    data: [],
+    total_count: 1,
+    total_pages: 1,
+    page_size: 20,
+  });
+  const [loading, setLoading] = useState(false);
 
-  const fetchUsers = useCallback(() => {
-    apiClient.get("admin/users", authConfig).then((res) => {
-      if (res.status === 200) {
-        const data = res.data;
-        setUsers(data);
-      } else toast.error("User fetch fail!");
-    });
+  const fetchUsers = useCallback(({ pageIndex, pageSize }) => {
+    apiClient
+      .get(`admin/users?limit=${pageSize}&page=${pageIndex}`, authConfig)
+      .then((res) => {
+        if (res.status === 200) {
+          setPaginate({ ...res.data, page_size: paginate.page_size });
+        } else toast.error("User fetch fail!");
+      });
   }, []);
 
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
-
-  return <Table columns={columns} data={users} />;
+  return (
+    <Table
+      columns={columns}
+      paginate={paginate}
+      fetchData={fetchUsers}
+      loading={loading}
+    />
+  );
 };
-
+/* 
 const Table = ({ columns, data }) => {
   const tableInstance = useTable({ columns, data });
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -115,7 +129,7 @@ const Table = ({ columns, data }) => {
       </table>
     </div>
   );
-};
+}; */
 
 export default ManageAccounts;
 

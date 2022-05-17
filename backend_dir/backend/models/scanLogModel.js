@@ -44,15 +44,14 @@ const ScanLogSchema = mongoose.Schema(
 ScanLogSchema.statics.paginate = async function (
   pageNo,
   limit,
-  body,
+  filter,
   callback
 ) {
   const skip = limit * pageNo;
   let totalCount;
   let totalPages;
 
-  const checkFilter =
-    typeof body.filter !== undefined && body.filter ? body.filter : {};
+  const checkFilter = typeof filter !== undefined && filter ? filter : {};
 
   const count = await this.count(checkFilter);
 
@@ -65,11 +64,11 @@ ScanLogSchema.statics.paginate = async function (
 
   this.find(checkFilter)
     .lean()
-    .populate("by", "first_name last_name")
+    .populate("by", "fname lname")
     .populate("loc", "label")
-    .populate("u_id", "first_name last_name")
+    .populate("u_id", "fname lname")
     .populate("g_id", "fname lname")
-    .sort({ createdAt: body.order || -1 })
+    .sort({ createdAt: checkFilter.order || -1 })
     .skip(skip)
     .limit(limit)
     .exec(function (err, docs) {

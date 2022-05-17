@@ -12,9 +12,9 @@ const CreateQRForm = ({ handleQRRequest }) => {
   });
 
   const [data, setData] = useState({
-    first_name: "",
-    last_name: "",
-    phone_number: "",
+    fname: "",
+    lname: "",
+    contact: "",
     address: "",
   });
 
@@ -26,9 +26,8 @@ const CreateQRForm = ({ handleQRRequest }) => {
 
   const handlePhoneNumCheck = useCallback(() => {
     if (
-      data.phone_number &&
-      (!phoneRegex.test(data.phone_number) ||
-        !data.phone_number.startsWith("9"))
+      data.contact &&
+      (!phoneRegex.test(data.contact) || !data.contact.startsWith("9"))
     ) {
       setStatus({
         active: true,
@@ -59,9 +58,9 @@ const CreateQRForm = ({ handleQRRequest }) => {
               First Name
               <input
                 type="text"
-                name="first_name"
+                name="fname"
                 className="form-input"
-                value={data.first_name}
+                value={data.fname}
                 onChange={handleChange}
                 placeholder="Enter first name"
                 required
@@ -71,8 +70,8 @@ const CreateQRForm = ({ handleQRRequest }) => {
               Last Name
               <input
                 type="text"
-                name="last_name"
-                value={data.last_name}
+                name="lname"
+                value={data.lname}
                 className="form-input"
                 onChange={handleChange}
                 placeholder="Enter last name"
@@ -88,9 +87,9 @@ const CreateQRForm = ({ handleQRRequest }) => {
                   </span>
                   <input
                     type="text"
-                    name="phone_number"
+                    name="contact"
                     onChange={handleChange}
-                    value={data.phone_number}
+                    value={data.contact}
                     className="form-input !inline-block"
                     placeholder="9*********"
                     required
@@ -118,9 +117,9 @@ const CreateQRForm = ({ handleQRRequest }) => {
             disabled={
               !(
                 !status.active &&
-                data.first_name &&
-                data.last_name &&
-                data.phone_number &&
+                data.fname &&
+                data.lname &&
+                data.contact &&
                 data.address
               )
             }

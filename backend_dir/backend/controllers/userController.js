@@ -14,21 +14,13 @@ const { generateMd5Hash } = require("./qrController");
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const {
-    first_name,
-    last_name,
-    email,
-    phone_number,
-    residence,
-    password,
-    role,
-  } = req.body;
+  const { fname, lname, email, contact, residence, password, role } = req.body;
 
   if (
-    !first_name ||
-    !last_name ||
+    !fname ||
+    !lname ||
     !email ||
-    !phone_number ||
+    !contact ||
     !role ||
     !residence ||
     !password
@@ -38,7 +30,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // Check if user exists
-  const userExists = await User.findOne({ email });
+  const userExists = await User.findOne({ email }).lean();
 
   if (userExists) {
     res.status(400);
@@ -48,24 +40,25 @@ const registerUser = asyncHandler(async (req, res) => {
   // Hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
-  const main_unique = generateMd5Hash(first_name + email + residence);
-
-  // Create user
-  const user = await User.create({
-    first_name,
-    last_name,
-    role,
-    email,
-    phone_number,
-    residence,
-    main_unique,
-    password: hashedPassword,
-  });
+  const main_unique = generateMd5Hash(fname + email + residence);
 
   const access = await AccessString.create({
     hash: main_unique,
-    u_id: user._id,
   });
+  // Create user
+  const user = await User.create({
+    fname,
+    lname,
+    role,
+    email,
+    contact,
+    residence,
+    qr: access._id,
+    password: hashedPassword,
+  });
+
+  access.u_id = user._id;
+  access.save();
 
   if (user.message || !user || !access || access.message) {
     res.status(400);
@@ -87,7 +80,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const { email, password, remember } = req.body;
 
   // Check for user email
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).lean();
 
   if (user && (await bcrypt.compare(password, user.password))) {
     const token = generateToken(user._id);
@@ -107,8 +100,9 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users/me
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
-  const { _id, first_name, last_name, email, residence, phone_number } =
-    await User.findById(req.user.id);
+  const { _id, fname, lname, email, residence, contact } = await User.findById(
+    req.user.id
+  ).lean();
   const guests = await Guest.find({ u_id: req.user.id });
 
   if (!_id) {
@@ -119,10 +113,10 @@ const getMe = asyncHandler(async (req, res) => {
   res.json({
     id: _id,
     residence,
-    first_name,
-    last_name,
+    fname,
+    lname,
     email,
-    phone_number,
+    contact,
     guests,
   });
 });
@@ -157,7 +151,7 @@ const deleteGuests = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  await AccessString.findOneAndDelete({ g_id: req.params.guest_id });
+  AccessString.findOneAndDelete({ g_id: req.params.guest_id });
 
   /*   if (!user) {
     res.status(401);
@@ -174,11 +168,14 @@ const deleteGuests = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/:id
 // @access  Private
 const updateUser = asyncHandler(async (req, res) => {
-  const userToUpdate = await User.findByIdAndUpdate(req.params.id, req.body);
+  const userToUpdate = await User.findByIdAndUpdate(
+    req.params.id,
+    req.body
+  ).lean();
   if (!userToUpdate) {
     res.status(404);
     throw new Error("Unable to find and update the user");
-  } else return res.json({ first_name: userToUpdate.first_name });
+  } else return res.json({ fname: userToUpdate.fname });
 });
 
 const requestQRFormLink = asyncHandler(async (req, res) => {
