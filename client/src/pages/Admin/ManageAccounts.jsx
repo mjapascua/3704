@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import { apiClient } from "../../utils/requests";
-import { useTable } from "react-table";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table/Table";
 

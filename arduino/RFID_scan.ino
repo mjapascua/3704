@@ -4,27 +4,31 @@
 #include <HTTPClient.h>
 #include <Arduino_JSON.h>
 
-int ledPin = 2;
-int passLedPin = 17;
-int failLedPin = 16;
+#define ledPin 2
+#define dirPin 4 
+#define stepPin 5
+#define trigPin 16
+#define echoPin 15
+#define stepsPerRevolution 100
 
 const int RST_PIN = 22; // Reset pin
 const int SS_PIN = 21; // Slave select pin
 
 const char* deviceKey = "124TEST";
-const char* ssid = "---";
-const char* password =  "Asmodeus2731";
-const char* requestPath = "http://192.168.55.101:5000/api/admin/rfid/scan/";
+const char* ssid = "SKYFiber_MESH_1A10";
+const char* password =  "531055085";
+const char* requestPath = "http://192.168.55.107:5000/api/admin/rfid/scan/";
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance
 
 void setup() {
   Serial.begin(115200);
-
   WiFi.begin(ssid, password);
   pinMode(ledPin, OUTPUT);
-  pinMode(passLedPin, OUTPUT);
-  pinMode(failLedPin, OUTPUT);
+  pinMode(stepPin, OUTPUT);
+  pinMode(dirPin, OUTPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
 
   while (!Serial); // Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4)
 
@@ -50,8 +54,6 @@ void loop() {
 
     if ( ! mfrc522.PICC_IsNewCardPresent() || ! mfrc522.PICC_ReadCardSerial()) {
       digitalWrite(ledPin, LOW);
-      digitalWrite(failLedPin, LOW);
-      digitalWrite(passLedPin, LOW);
       return;
     }
 
@@ -59,7 +61,6 @@ void loop() {
     String uid;
 
     Serial.println("\n<< Tag detected >>");
-    digitalWrite(ledPin, HIGH);
 
     Serial.print(F("Tag UID:"));
     for (byte i = 0; i < mfrc522.uid.size; i++) {
@@ -72,7 +73,6 @@ void loop() {
 
     delay(500);
 
-
     Serial.println("\n - - - Watching for tags - - -");
 
     mfrc522.PICC_HaltA(); // Halt PICC
@@ -81,13 +81,14 @@ void loop() {
   else {
     Serial.println("Connection lost");
   }
-
+  
   Serial.println(" ");
   delay(500);
 }
 
 void httpGETRequest(String path) {
   HTTPClient http;
+  Serial.println(path);
 
   http.begin(path);
   int httpResponseCode = http.GET();
@@ -95,11 +96,42 @@ void httpGETRequest(String path) {
   Serial.println("\nRequesting to server...");
 
   if (httpResponseCode == 200) {
-    digitalWrite(passLedPin, HIGH);
+    digitalWrite(ledPin, HIGH);
     Serial.println("RFID scan recorded");
+    digitalWrite(dirPin, HIGH);
+    for (int i = 0; i < stepsPerRevolution; i++) {
+      digitalWrite(stepPin, HIGH);
+      delayMicroseconds(4000);
+      digitalWrite(stepPin, LOW);
+      delayMicroseconds(4000); 
+    }
+   // float distance = 0;
+   // long duration; 
+    
+  //  while(distance < 25){
+  //    digitalWrite(trigPin, LOW);
+  //    delayMicroseconds(2);
+  //    digitalWrite(trigPin, HIGH);
+  //    delayMicroseconds(10);
+  //    digitalWrite(trigPin, LOW);
+  //    duration = pulseIn(echoPin, HIGH);
+  //    distance = duration * 0.034 / 2;
+  //    Serial.print("Distance: ");
+  //    Serial.println(distance);
+  //    delay(250);
+  //  }
+    delay(2000);
+    digitalWrite(dirPin, LOW);
+    for (int i = 0; i < stepsPerRevolution; i++) {
+      digitalWrite(stepPin, HIGH);
+      delayMicroseconds(4000);
+      digitalWrite(stepPin, LOW);
+      delayMicroseconds(4000); 
+    }
+    digitalWrite(ledPin, LOW);
+
   }
   else {
-    digitalWrite(failLedPin, HIGH);
     Serial.print("Response code: ");
     Serial.println(httpResponseCode);
   }

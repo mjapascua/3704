@@ -3,7 +3,7 @@ module.exports = {
   theme: {
     fontFamily: {
       display: "Poppins",
-      head: "Poppins",
+      head: "Montserrat",
     },
     extend: {
       colors: {

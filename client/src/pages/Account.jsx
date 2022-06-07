@@ -84,10 +84,10 @@ const Account = () => {
           </Button> */}
             <Button
               primary
-              onClick={() => navigate("calendar")}
+              onClick={() => navigate("events")}
               className="w-full"
             >
-              Calendar
+              Events
               <span className="material-icons-sharp text-3xl">
                 calendar_month
               </span>
@@ -127,7 +127,7 @@ const Account = () => {
                 element={<QRFormPage authConfig={authConfig} />}
               />
               <Route
-                path="/calendar"
+                path="/events"
                 element={<EventsCalendar authConfig={authConfig} />}
               />
             </Routes>

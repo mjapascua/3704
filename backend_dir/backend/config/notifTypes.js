@@ -1,11 +1,11 @@
 const notifTypes = {
-  New_event: "New event",
-  Up_event: "Upcoming event",
-  Reg_guest: "Guest registration",
-  Entry_guest: "Guest scanned",
-  Entry_tag: "Tag scanned",
-  Admin_message: "Administrator message",
-  Remind_due: "Due reminder",
+  new_event: "New event",
+  up_event: "Upcoming event",
+  reg_guest: "Guest registration",
+  entry_guest: "Guest scanned",
+  entry_tag: "Tag scanned",
+  admin_message: "Administrator message",
+  remind_due: "Due reminder",
 };
 
 module.exports = {

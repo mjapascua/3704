@@ -141,7 +141,7 @@ const verifyTagStatus = asyncHandler(async (req, res) => {
     .populate("g_id", "fname lname");
 
   await ForRegistration.findByIdAndUpdate(
-    firstInQueue[0].id,
+    firstInQueue[0]._id,
     isRegistered
       ? { registered_tag: isRegistered }
       : { tag_uid: req.params.tag_uid, continue: true }
@@ -176,7 +176,7 @@ const checkRegistrationStatus = asyncHandler(async (req, res) => {
 
     res.status(201).json({
       message: "Already registered",
-      queue_id: inQueue.id,
+      queue_id: inQueue._id,
       name: name,
       tag_user_id: registered.g_id
         ? inQueue.registered_tag.g_id
@@ -187,7 +187,7 @@ const checkRegistrationStatus = asyncHandler(async (req, res) => {
   if (inQueue.continue) {
     res.status(201).json({
       message: "Register user to tag",
-      queue_id: inQueue.id,
+      queue_id: inQueue._id,
     });
   } else {
     res.status(200).json({ message: "Waiting" });

@@ -10,9 +10,9 @@ int failLedPin = 16;
 const int RST_PIN = 22; // Reset pin
 const int SS_PIN = 21; // Slave select pin
 
-const char* ssid = "---";
-const char* password =  "Asmodeus2731";
-const char* requestPath = "http://192.168.55.101:5000/api/admin/rfid/register/";
+const char* ssid = "SKYFiber_MESH_1A10";
+const char* password =  "531055085";
+const char* requestPath = "http://192.168.55.107:5000/api/admin/rfid/register/";
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance
 
@@ -53,7 +53,7 @@ void loop() {
 
     MFRC522::StatusCode status;
     String uid;
-   
+    
     Serial.println("\n<< Tag detected >>");
     digitalWrite(ledPin, HIGH);
 

@@ -17,15 +17,70 @@ const hr = 3600;
 
 export const Navbar = React.memo(() => {
   const [notif, setNotifs] = useState({ show: false, data: [], unread: 0 });
-  const navigate = useNavigate();
-  let location = useLocation();
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const authConfig = {
     headers: {
       Authorization: "Bearer " + user?.token,
     },
+  };
+
+  const displayNotif = (item) => {
+    const date = new Date(item.created_at).getTime();
+    const elapedSince = (Date.now() - date) / 1000;
+    let text;
+    console.log(elapedSince);
+
+    switch (true) {
+      case elapedSince < min:
+        text = "Just now";
+        break;
+      case elapedSince >= min && elapedSince < 2 * min:
+        text = "A minute ago";
+        break;
+      case elapedSince >= 2 * min && elapedSince < hr:
+        text = Math.floor(elapedSince / 60) + " minutes ago";
+        break;
+      case elapedSince >= hr && elapedSince < 2 * hr:
+        text = "An hour ago";
+        break;
+      case elapedSince >= 2 * hr && elapedSince < 24 * hr:
+        text = Math.floor(elapedSince / hr) + " hours ago";
+        break;
+      case elapedSince >= 24 * hr && elapedSince < 48 * hr:
+        text = "A day ago";
+        break;
+      case elapedSince >= 48 * hr && elapedSince <= 7 * 24 * hr:
+        text = Math.floor(elapedSince / (24 * hr)) + " days ago";
+        break;
+      case elapedSince > 7 * 24 * hr:
+        text = Math.floor(elapedSince / (24 * 7 * hr)) + " weeks ago";
+        break;
+      default:
+        text = "";
+        break;
+    }
+
+    return (
+      <span
+        key={item._id}
+        className={
+          "block w-80 pl-5 pr-7 cursor-pointer hover:bg-slate-100 " +
+          (!item.read_status ? "bg-slate-200" : "bg-white")
+        }
+      >
+        <span className="pt-2 block pb-3 border-b border-slate-200">
+          <span className=" text-slate-800 font-semibold">{item.title}</span>
+          <span className=" block text-slate-700 font-display">
+            {item.text}
+          </span>
+          <span className=" text-slate-400 text-sm font-display">{text}</span>
+        </span>
+      </span>
+    );
   };
 
   useEffect(() => {
@@ -117,62 +172,7 @@ export const Navbar = React.memo(() => {
                   NOTIFICATIONS
                 </span>
                 <div className="block overflow-scroll h-96">
-                  {notif.data.map((item) => {
-                    const date = new Date(item.created_at).getTime();
-                    const elapedSince = (Date.now() - date) / 1000;
-                    let text;
-
-                    switch (true) {
-                      case elapedSince < min:
-                        text = "Just now";
-                        break;
-                      case elapedSince >= min && elapedSince < 2 * min:
-                        text = "A minute ago";
-                        break;
-                      case elapedSince >= 2 * min && elapedSince < hr:
-                        text = Math.floor(elapedSince / 60) + " minutes ago";
-                        break;
-                      case elapedSince >= hr && elapedSince < 2 * hr:
-                        text = "An hour ago";
-                        break;
-                      case elapedSince >= 2 * hr && elapedSince < 24 * hr:
-                        text = Math.floor(elapedSince / hr) + " hours ago";
-                        break;
-                      case elapedSince >= 24 * hr && elapedSince < 48 * hr:
-                        text = "A day ago";
-                        break;
-                      case elapedSince >= 48 * hr && elapedSince <= 7 * 24 * hr:
-                        text =
-                          Math.floor(elapedSince / (7 * 24 * hr)) +
-                          " weeks ago";
-                        break;
-                      default:
-                        text = "";
-                        break;
-                    }
-
-                    return (
-                      <span
-                        key={item._id}
-                        className={
-                          "block w-80 pl-5 pr-7 cursor-pointer hover:bg-slate-100 " +
-                          (!item.read_status ? "bg-slate-200" : "bg-white")
-                        }
-                      >
-                        <span className="pt-2 block pb-3 border-b border-slate-200">
-                          <span className=" text-slate-800 font-semibold">
-                            {item.title}
-                          </span>
-                          <span className=" block text-slate-700 font-display">
-                            {item.text}
-                          </span>
-                          <span className=" text-slate-400 text-sm font-display">
-                            {text}
-                          </span>
-                        </span>
-                      </span>
-                    );
-                  })}
+                  {notif.data.map(displayNotif)}
                 </div>
               </div>
             )}

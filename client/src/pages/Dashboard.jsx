@@ -27,7 +27,7 @@ const sideMenuStyle =
 
 const routes = [
   { to: "/dashboard", label: "Dashboard", icon: "home", end: true },
-  { to: "/dashboard/bulletin", label: "Manage Bulletin", icon: "feed" },
+  { to: "/dashboard/bulletin", label: "Bulletin", icon: "feed" },
   { to: "/dashboard/qr-scanner", label: "QR Scanner", icon: "qr_code_scanner" },
   { to: "/dashboard/scan-logs", label: "Scan Records", icon: "history" },
   { to: "/dashboard/accounts", label: "Accounts", icon: "manage_accounts" },
@@ -142,7 +142,10 @@ const Dashboard = () => {
                     path={"/accounts"}
                     element={<ManageAccounts authConfig={authConfig} />}
                   />
-                  <Route path={"/bulletin"} element={<ManageBulletin />} />
+                  <Route
+                    path={"/bulletin"}
+                    element={<ManageBulletin authConfig={authConfig} />}
+                  />
                   <Route
                     path={"/qr-scanner"}
                     element={<AdminScanner authConfig={authConfig} />}

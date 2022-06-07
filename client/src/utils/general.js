@@ -4,3 +4,26 @@ export const swalCustomClass = {
   confirmButton: "font-semibold font-display p-4 text-sm rounded-sm",
   cancelButton: "font-semibold font-display p-4 text-sm rounded-sm",
 };
+
+export const postCategories = {
+  event: {
+    text: "Event",
+    color: "bg-indigo-500",
+  },
+  news: {
+    text: "News",
+    color: "bg-emerald-600",
+  },
+  report: {
+    text: "Report",
+    color: "bg-rose-600",
+  },
+  inquiry: {
+    text: "Inquiry",
+    color: "bg-cyan-600",
+  },
+  announcement: {
+    text: "Announcement",
+    color: "bg-fuchsia-600",
+  },
+};

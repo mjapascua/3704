@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const articleSchema = mongoose.Schema(
+const eventSchema = mongoose.Schema(
   {
     author: {
       type: mongoose.Schema.Types.ObjectId,
@@ -11,28 +11,13 @@ const articleSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    text: {
+    description: {
       type: String,
+      required: true,
     },
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    tags: [
-      {
-        type: String,
-        enum: ["event", "news", "report", "inquiry", "announcement"],
-      },
-    ],
-
-    header_image: {
-      url: String,
-      text: String,
-    },
-    image_urls: {
-      type: Array,
+    date: {
+      type: Date,
+      required: true,
     },
   },
   {
@@ -40,7 +25,7 @@ const articleSchema = mongoose.Schema(
   }
 );
 
-articleSchema.statics.paginate = async function (
+eventSchema.statics.paginate = async function (
   pageNo,
   limit,
   filter,
@@ -83,4 +68,4 @@ articleSchema.statics.paginate = async function (
     });
 };
 
-module.exports = mongoose.model("Article", articleSchema);
+module.exports = mongoose.model("Event", eventSchema);

@@ -17,6 +17,7 @@ import Account from "./pages/Account";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import VisitorForm from "./pages/VistorForm";
+import Article from "./pages/Article";
 
 function App() {
   return (
@@ -38,6 +39,16 @@ function App() {
             <>
               <Navbar />
               <About />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="bulletin/post/:id"
+          element={
+            <>
+              <Navbar />
+              <Article />
               <Footer />
             </>
           }

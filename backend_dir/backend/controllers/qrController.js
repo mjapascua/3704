@@ -7,9 +7,9 @@ const AccessString = require("../models/accessStringsModel");
 const TempLink = require("../models/tempLinkModel");
 const Guest = require("../models/guestModel");
 const ScanLog = require("../models/scanLogModel");
-const { notifTypes } = require("../config/notifTypes");
 const { createNotif } = require("./notificationController");
 const ScanPoint = require("../models/scanPointModel");
+const { notifTypes } = require("../config/notifTypes");
 const phoneRegex = /^([0-9]{10})$/;
 const qrOptions = { scale: 8 };
 
@@ -180,7 +180,7 @@ const checkQR = asyncHandler(async (req, res) => {
   await createNotif(
     {
       title: "QR scanned",
-      category: notifTypes.Entry_guest,
+      type: notifTypes.entry_guest,
       text: !entry.g_id
         ? "Your QR has been scanned at " + loc.label
         : entry.g_id.fname + " has arrived! at " + loc.label,

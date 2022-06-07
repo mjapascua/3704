@@ -24,7 +24,7 @@ app.use("/api/user", require("./routes/userRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/public", require("./routes/publicRoutes"));
 
-app.use('/api/bulletin-news', require('./routes/bulletinNewsRoutes'))
+app.use("/api/bulletin", require("./routes/bulletinRoutes"));
 
 app.use(errorHandler);
 
