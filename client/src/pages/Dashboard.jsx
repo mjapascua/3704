@@ -27,7 +27,7 @@ const sideMenuStyle =
 
 const routes = [
   { to: "/dashboard", label: "Dashboard", icon: "home", end: true },
-  { to: "/dashboard/bulletin", label: "Bulletin", icon: "feed" },
+  { to: "/dashboard/bulletin", label: "Bulletin Manager", icon: "feed" },
   { to: "/dashboard/qr-scanner", label: "QR Scanner", icon: "qr_code_scanner" },
   { to: "/dashboard/scan-logs", label: "Scan Records", icon: "history" },
   { to: "/dashboard/accounts", label: "Accounts", icon: "manage_accounts" },
