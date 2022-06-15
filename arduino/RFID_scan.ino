@@ -1,16 +1,25 @@
 #include <SPI.h>
 #include <MFRC522.h>
+#include <MD_Parola.h>
+#include <MD_MAX72xx.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <Arduino_JSON.h>
 
+#define HARDWARE_TYPE MD_MAX72XX::FC16_HW
+#define MAX_DEVICES 4
 #define ledPin 2
 #define failPin 4
-#define dirPin 26 
-#define stepPin 27
+#define dirPin 32 
+#define stepPin 33
 #define trigPin 5
 #define echoPin 16
 #define stepsPerRevolution 100
+#define csPin 12
+#define dPin 13
+#define clkPin 14
+
+MD_Parola P = MD_Parola(HARDWARE_TYPE, dPin, clkPin, csPin, MAX_DEVICES);
 
 const int RST_PIN = 22; // Reset pin
 const int SS_PIN = 21; // Slave select pin
@@ -38,6 +47,7 @@ void setup() {
   SPI.begin(); // Init SPI bus
   mfrc522.PCD_Init(); // Init MFRC522
   mfrc522.PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader details
+  P.begin();
 
   Serial.print("Connecting");
   while (WiFi.status() != WL_CONNECTED) {
@@ -47,14 +57,17 @@ void setup() {
   Serial.println("\nConnected to network");
   Serial.println("<-- SCAN TAG -->");
   Serial.println("\n - - - Watching for tags - - -");
+  P.print("S T O P");
 }
 
 void loop() {
-  bool result = !mfrc522.PCD_PerformSelfTest();
-  if(result){
+  bool result = mfrc522.PCD_PerformSelfTest();
+  if(!result){
     digitalWrite(failPin,HIGH);
-    delay(400);
+    delay(500);
     digitalWrite(failPin,LOW);
+    delay(500);
+    return;
   }
 
 
@@ -90,6 +103,7 @@ void loop() {
   
     if (httpResponseCode == 200) {
       digitalWrite(ledPin, HIGH);
+      P.print("P A S S");
       Serial.println("RFID scan recorded");
       
       digitalWrite(dirPin, HIGH);
@@ -121,7 +135,7 @@ void loop() {
         delay(500);
       }
       
-      delay(1000);
+      delay(200);
 
       while(distance < 40){
         digitalWrite(trigPin, LOW);
@@ -136,7 +150,9 @@ void loop() {
         delay(500);
       }
       
-      delay(3000);
+      delay(1000);
+      P.print("S T O P");
+      delay(2000);
       
       digitalWrite(dirPin, LOW);
       for (int i = 0; i < stepsPerRevolution; i++) {
@@ -146,11 +162,11 @@ void loop() {
         delayMicroseconds(4000); 
       }
       digitalWrite(ledPin, LOW);
-  
     }
     else {
       Serial.print("Response code: ");
       Serial.println(httpResponseCode);
+      P.print("S T O P");
     }
     
     http.end();

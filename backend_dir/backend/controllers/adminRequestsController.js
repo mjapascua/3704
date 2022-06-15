@@ -418,7 +418,7 @@ const checkRFIDTag = asyncHandler(async (req, res) => {
   const notify = await createNotif(
     {
       title: "RFID Tag scanned",
-      category: notifTypes.Entry_tag,
+      category: notifTypes.entry_tag,
       text: !tag.g_id
         ? "Your card has been scanned! at " + scanner.scan_point.label
         : tag.g_id.fname + " has arrived at " + scanner.scan_point.label,
@@ -429,7 +429,10 @@ const checkRFIDTag = asyncHandler(async (req, res) => {
   if (!log || !notify) {
     res.status(400);
     throw new Error("Not recorded");
-  } else res.sendStatus(200);
+  } else {
+    //console.log(req.params.id);
+    res.sendStatus(200);
+  }
 });
 
 // @desc    Get filter options
