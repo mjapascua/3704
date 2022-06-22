@@ -6,10 +6,12 @@ const ForRegistration = require("../models/forRegistrationQueueModel");
 const RegisteredTag = require("../models/registeredTagModel");
 const RFIDDevice = require("../models/rfidDeviceModel");
 const ScanLog = require("../models/scanLogModel");
+const UnverifiedAcc = require("../models/unverifiedAccModel");
 const { notifTypes } = require("../config/notifTypes");
 const { createNotif } = require("./notificationController");
 const Guest = require("../models/guestModel");
 const ScanPoint = require("../models/scanPointModel");
+const mailer = require("./mail");
 
 // @desc    Get all users
 // @route   GET /api/admin/users/
@@ -67,13 +69,6 @@ const getUsersByRole = asyncHandler(async (req, res) => {
     "fname lname"
   ).lean();
 
-  /* const users = filter.map((user) => {
-    return {
-      _id: user.id,
-      name: user.fname + " " + user.lname,
-    };
-  }); */
-
   if (!users) {
     res.status(404);
     throw new Error("No users found");
@@ -99,6 +94,62 @@ const deleteUser = asyncHandler(async (req, res) => {
   res.json({
     message: "User was successfully deleted",
   });
+});
+
+// @desc    Get all users
+// @route   GET /api/admin/unverified
+// @access  Private
+const getAllUnverfied = asyncHandler(async (req, res) => {
+  const accounts = await UnverifiedAcc.find({}).lean();
+  if (!accounts) {
+    res.status(404);
+    throw new Error("No accounts found");
+  } else res.json(accounts);
+});
+
+// @desc    set role and verify
+// @route   PUT /api/admin/verify/:id
+// @access  Private
+const verifyUser = asyncHandler(async (req, res) => {
+  const account = await UnverifiedAcc.findByIdAndUpdate(
+    req.params.id,
+    {
+      role: req.body.role,
+      verified: true,
+    },
+    { new: true }
+  );
+
+  if (!account || account.message) {
+    res.status(400);
+    throw new Error(unverified.message || "Uknown Error");
+  }
+
+  const mailOptions = {
+    from: '"Community thesis app" <community4704@outlook.com>', // sender address
+    to: account.email, // list of receivers
+    subject: "Account confirmation", // Subject line
+    html: `<div> <b>Your account has been verified please click the button below to create your password</b> <button><a href=http://localhost:3000/verification/${account.id} rel='external' target='_blank'>Create password</a></button> </div>`, // html body
+  };
+  await mailer.outlookTransporter
+    .sendMail(mailOptions)
+    .then((stat) => {
+      if (stat.accepted.length > 0)
+        res.json({ account, message: "Email sent via outlook" });
+    })
+    .catch(() => {
+      mailOptions.from = '"Community thesis app" <community4704@gmail.com>';
+      mailer.gmailTransporter
+        .sendMail(mailOptions)
+        .then((stat) => {
+          if (stat.accepted.length > 0)
+            res.json({ account, message: "Email sent via gmail" });
+        })
+        .catch(() => {
+          res.status(400);
+          throw new Error("Email not sent");
+        });
+    });
 });
 
 // @desc    First declare an account and create a queue item for registration
@@ -516,6 +567,8 @@ module.exports = {
   filterUsers,
   getUsersByRole,
   deleteUser,
+  getAllUnverfied,
+  verifyUser,
   queueUserTagRegistration,
   verifyTagStatus,
   tagRegistration,

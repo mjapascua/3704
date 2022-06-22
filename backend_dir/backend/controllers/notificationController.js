@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const { notifTypes } = require("../config/notifTypes");
 
 const createNotif = async (body, scope) => {
+  console.log(body, scope);
   if (!Object.values(notifTypes).includes(body.type)) {
     return new Error("Invalid classification");
   }

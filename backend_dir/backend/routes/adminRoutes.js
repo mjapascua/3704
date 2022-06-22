@@ -6,7 +6,8 @@ const {
   filterGuests,
   getUser,
   filterUsers,
-  getAllUsers,
+  getAllUnverfied,
+  verifyUser,
   getUsersByRole,
   queueUserTagRegistration,
   verifyTagStatus,
@@ -38,6 +39,8 @@ router.get(
 );
 router.get("/name/match", findByName);
 router.route("/scans").get(getScanLogsFilters).put(filterScanLogs);
+router.get("/unverified", protect, getAllUnverfied);
+router.put("/verify/:id", protect, verifyUser);
 router.route("/guests").put(filterGuests);
 
 //router.route("/guests").get(protect, filterGuests);

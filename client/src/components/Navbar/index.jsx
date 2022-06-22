@@ -32,7 +32,6 @@ export const Navbar = React.memo(() => {
     const date = new Date(item.created_at).getTime();
     const elapedSince = (Date.now() - date) / 1000;
     let text;
-    console.log(elapedSince);
 
     switch (true) {
       case elapedSince < min:

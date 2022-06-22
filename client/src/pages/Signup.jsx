@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/Buttons/Main";
@@ -6,10 +6,13 @@ import { ReturnButton } from "../components/Buttons/Return";
 import Loading from "../components/Loading/Loading";
 import StatusMessage from "../components/StatusMessage";
 import authService from "../utils/authService";
-import { register, reset } from "../utils/authSlice";
+import { reset } from "../utils/authSlice";
+import Swal from "sweetalert2";
+import { apiClient } from "../utils/requests";
 import { redirect } from "./Login";
-const emailUnavailableMessage = "Email is already taken";
+import { toast } from "react-toastify";
 export const phoneRegex = /^([0-9]{10})$/;
+
 function SignUp() {
   const [credentials, setCredentials] = useState({
     email: "",
@@ -17,9 +20,6 @@ function SignUp() {
     lname: "",
     residence: "",
     contact: "",
-    password: "",
-    password_confirm: "",
-    role: authService.ROLES.BASIC,
   });
   const [progress, setProgress] = useState(1);
   const [status, setStatus] = useState({
@@ -34,7 +34,6 @@ function SignUp() {
   const { user, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   );
-  const signUpBtn = useRef();
 
   let from = location.state?.from?.pathname
     ? location.state?.from?.pathname
@@ -61,55 +60,37 @@ function SignUp() {
       return { ...prev, [target.name]: target.value };
     });
   };
+
   const handleSignUpRequest = (e) => {
     e.preventDefault();
-    dispatch(register({ ...credentials }))
-      .unwrap()
-      .catch((errMess) => {
+    apiClient
+      .post("user/", credentials)
+      .then((res) => {
+        if (res.status === 201) {
+          Swal.fire({
+            title: "Success!",
+            text: "Your account is being verified please wait for confirmation via email",
+            confirmButtonText: "Back to home page",
+            allowOutsideClick: false,
+          }).then(({ isConfirmed }) => {
+            if (isConfirmed) {
+              navigate("/", { replace: true });
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        const text = err.response.data.message;
         setStatus({
-          text: errMess,
+          text: text,
           status: 400,
         });
-        if (errMess === emailUnavailableMessage) {
-          setProgress(2);
-        }
+        if (text.includes("Email"))
+          toast.error("Please use a different email", {
+            position: toast.POSITION.BOTTOM_LEFT,
+          });
       });
   };
-
-  const handlePasswordCheck = useCallback(() => {
-    if (credentials.password && credentials.password.length < 8) {
-      setStatus({
-        text: "Password must be atleast 8 characters long",
-        status: 400,
-      });
-    } else {
-      setStatus({ text: "" });
-    }
-
-    if (
-      credentials.password &&
-      credentials.password_confirm &&
-      credentials.password !== credentials.password_confirm
-    ) {
-      setStatus({
-        text: "Password does not match",
-        status: 400,
-      });
-    }
-    if (
-      !credentials.password_confirm ||
-      !credentials.password ||
-      credentials.password !== credentials.password_confirm
-    ) {
-      signUpBtn.current.disabled = true;
-    } else {
-      setStatus({
-        text: "",
-        status: 200,
-      });
-      signUpBtn.current.disabled = false;
-    }
-  }, [credentials.password, credentials.password_confirm]);
 
   const handlePhoneNumberCheck = (
     phoneNumber,
@@ -126,11 +107,9 @@ function SignUp() {
   };
 
   useEffect(() => {
-    if (progress === 3) handlePasswordCheck();
-  }, [handlePasswordCheck, progress]);
-  useEffect(() => {
     document.title = "Login or Sign up";
   }, []);
+
   return (
     <main className="w-screen h-screen flex">
       {redir ? (
@@ -165,10 +144,12 @@ function SignUp() {
                 onSubmit={handleSignUpRequest}
                 className="px-2 lg:px-4 w-96 block  overflow-hidden "
               >
-                <span className="my-auto text-lg text-violet-600 block pb-3 font-bold">
+                <span className="my-auto text-lg text-violet-600 block font-bold">
                   Sign up
                 </span>
-
+                <span className="text-md block pb-4 pt-1">
+                  Please fill up information and we will come back to you.
+                </span>
                 {progress === 1 && (
                   <div className=" animate-slideToR h-60 bg-white">
                     <label>
@@ -210,18 +191,6 @@ function SignUp() {
                           required
                         />
                       </span>
-                    </label>
-                    <label className=" text-gray-400">
-                      * Temporary for testing only!
-                      <select
-                        name="role"
-                        value={credentials.role}
-                        onChange={handleChange}
-                        className="mx-4"
-                      >
-                        <option value={authService.ROLES.BASIC}>USER</option>
-                        <option value={authService.ROLES.ADMIN}>ADMIN</option>
-                      </select>
                     </label>
                   </div>
                 )}
@@ -275,49 +244,23 @@ function SignUp() {
                     </div>
                   </div>
                 )}
-                {progress === 3 && (
-                  <div className=" animate-slideToR h-60 bg-white">
-                    <label className="md:mr-1 md:w-44">
-                      Password
-                      <input
-                        type="password"
-                        name="password"
-                        onChange={handleChange}
-                        value={credentials.password}
-                        autoComplete="current-password"
-                        className="form-input"
-                        placeholder="Atleast 8 characters"
-                        minLength="8"
-                        required
-                      />
-                    </label>
 
-                    <label className="md:ml-1 md:w-44">
-                      Confirm password
-                      <input
-                        type="password"
-                        name="password_confirm"
-                        onChange={handleChange}
-                        value={credentials.password_confirm}
-                        autoComplete="current-password"
-                        className="form-input"
-                        placeholder="Passwords must match"
-                        minLength="8"
-                        required
-                      />
-                    </label>
-                    <Button
-                      type={"submit"}
-                      primary
-                      ref={signUpBtn}
-                      className="w-full"
-                    >
-                      SIGN UP
-                    </Button>
-                  </div>
-                )}
+                <Button
+                  type={"submit"}
+                  primary
+                  disabled={
+                    !handlePhoneNumberCheck(credentials.contact) ||
+                    !credentials.email ||
+                    !credentials.fname ||
+                    !credentials.lname ||
+                    !credentials.residence
+                  }
+                  className="w-full"
+                >
+                  SIGN UP
+                </Button>
                 <StatusMessage {...status} />
-                <span className="w-full mt-1 inline-block h-6 select-none relative text-lg text-meadow-600">
+                <span className="w-full mt-3 inline-block h-6 select-none relative text-lg text-meadow-600">
                   {progress > 1 && (
                     <span
                       className="cursor-pointer absolute left-0 underline underline-offset-1"
@@ -339,17 +282,6 @@ function SignUp() {
                         Next
                       </span>
                     )}
-                  {progress === 2 &&
-                    credentials.email &&
-                    handlePhoneNumberCheck(credentials.contact) && (
-                      <span
-                        className="cursor-pointer absolute right-0 underline  underline-offset-1"
-                        onClick={() => setProgress(progress + 1)}
-                      >
-                        Next
-                      </span>
-                    )}
-                  {}
                 </span>
                 <span className="block text-center border-b border-gray-300 py-3 mb-4 w-full">
                   {[1, 2, 3].map((num) => {

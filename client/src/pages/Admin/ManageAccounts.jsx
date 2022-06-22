@@ -1,13 +1,157 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { apiClient } from "../../utils/requests";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table/Table";
+import Loading from "../../components/Loading/Loading";
+import { Button } from "../../components/Buttons/Main";
+import authService from "../../utils/authService";
 
 const ManageAccounts = ({ authConfig }) => {
   return (
     <div className="w-full mx-12">
+      <AwaitingVerification authConfig={authConfig} />
       <AccountsTable authConfig={authConfig} />
+    </div>
+  );
+};
+
+const UnverifiedCard = ({ account, authConfig }) => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState(account);
+
+  const verifyAccount = () => {
+    const toastId = 1;
+    setLoading(true);
+    if (!data.verified) {
+      try {
+        toast.info("Sending email confirmation", {
+          toastId: toastId,
+          autoClose: false,
+        });
+        apiClient
+          .put("admin/verify/" + data._id, { role: data.role }, authConfig)
+          .then((res) => {
+            if (res.status === 200) {
+              setData(res.data.account);
+              toast.update(toastId, {
+                type: toast.TYPE.SUCCESS,
+                render: res.data.message,
+                autoClose: 2000,
+              });
+            }
+          });
+      } catch (error) {
+        toast.update(toastId, {
+          type: toast.TYPE.ERROR,
+          render: error.response.message,
+          autoClose: 2000,
+        });
+      }
+      setLoading(false);
+    }
+  };
+
+  const handleSetRole = (e) => {
+    setData((prev) => {
+      return { ...prev, role: e.target.value };
+    });
+  };
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
+  const showRoleType = () => {
+    switch (data.role) {
+      case authService.ROLES.BASIC:
+        return <span>Role : Resident</span>;
+      case authService.ROLES.EDITOR:
+        return <span>Role : Employee</span>;
+      case authService.ROLES.ADMIN:
+        return <span>Role : Admin</span>;
+      default:
+        break;
+    }
+  };
+
+  return (
+    <div className="p-3 border rounded-sm bg-white mr-5">
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="flex flex-col justify-between">
+          <span>Name : {data.fname + " " + data.lname}</span>
+          <span>Residence : {data.residence}</span>
+          <span>Email : {data.email}</span>
+          <span>Contact : {data.contact}</span>
+          {data.verified ? (
+            showRoleType()
+          ) : (
+            <label>
+              <select
+                name="role"
+                value={data.role || ""}
+                onChange={handleSetRole}
+                className="mx-4"
+              >
+                <option value={""}>NOT SET</option>
+                <option value={authService.ROLES.BASIC}>Resident</option>
+                <option value={authService.ROLES.EDITOR}>Employee</option>
+                <option value={authService.ROLES.ADMIN}>Admin</option>
+              </select>
+            </label>
+          )}
+          <span>
+            Status :
+            <b className={!data.verified ? "text-rose-500" : "text-violet-700"}>
+              {!data.verified
+                ? "Not yet verified"
+                : "Awaiting email confirmation"}
+            </b>
+          </span>
+          {!data.verified && (
+            <Button onClick={verifyAccount} disabled={!data.role} primary>
+              Verify
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const AwaitingVerification = ({ authConfig }) => {
+  const [loading, setLoading] = useState(false);
+  const [accounts, setAccounts] = useState([]);
+
+  const fetchAccounts = useCallback(() => {
+    setLoading(true);
+    apiClient.get("admin/unverified", authConfig).then((res) => {
+      if (res.status === 200) {
+        setAccounts(res.data);
+      } else toast.error("Account fetch fail!");
+    });
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchAccounts();
+  }, [fetchAccounts]);
+
+  return (
+    <div className="flex w-full py-2 overflow-x-scroll">
+      {loading ? (
+        <Loading />
+      ) : (
+        accounts.map((acc, i) => {
+          return (
+            <React.Fragment key={i}>
+              <UnverifiedCard account={acc} authConfig={authConfig} />
+            </React.Fragment>
+          );
+        })
+      )}
     </div>
   );
 };

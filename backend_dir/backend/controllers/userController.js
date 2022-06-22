@@ -7,41 +7,67 @@ const User = require("../models/userModel");
 const Guest = require("../models/guestModel");
 const TempLink = require("../models/tempLinkModel");
 const AccessString = require("../models/accessStringsModel");
-const RegisteredTag = require("../models/registeredTagModel");
+const UnverifiedAcc = require("../models/unverifiedAccModel");
 
 const { generateMd5Hash } = require("./qrController");
-// @desc    Register new user
+
+// @desc    Register new account
 // @route   POST /api/users
 // @access  Public
-const registerUser = asyncHandler(async (req, res) => {
-  const { fname, lname, email, contact, residence, password, role } = req.body;
-
-  if (
-    !fname ||
-    !lname ||
-    !email ||
-    !contact ||
-    !role ||
-    !residence ||
-    !password
-  ) {
+const regForVerification = asyncHandler(async (req, res) => {
+  const { fname, lname, email, contact, residence } = req.body;
+  if (!fname || !lname || !email || !contact || !residence) {
     res.status(400);
     throw new Error("Please add all fields");
   }
-
-  // Check if user exists
   const userExists = await User.findOne({ email }).lean();
+  const inVerification = await UnverifiedAcc.findOne({ email }).lean();
 
-  if (userExists) {
+  if (userExists || inVerification) {
     res.status(400);
     throw new Error("Email is already taken");
   }
 
+  const unverified = await UnverifiedAcc.create({
+    fname,
+    lname,
+    email,
+    contact,
+    residence,
+  });
+
+  if (unverified.message || !unverified) {
+    res.status(400);
+    throw new Error(unverified.message || "Invalid data");
+  } else {
+    res.sendStatus(201);
+  }
+});
+
+// @desc    Get unverified details
+// @route   GET /api/users/verify/:id
+// @access  Public
+const unverifiedDetails = asyncHandler(async (req, res) => {
+  const details = await UnverifiedAcc.findById(
+    req.params.id,
+    "-id -createdAt -residence -contact"
+  ).lean();
+  res.json(details);
+});
+
+// @desc    Complete account activation
+// @route   POST /api/users/verify/:id
+// @access  Public
+const confirmViaEmail = asyncHandler(async (req, res) => {
+  const account = await UnverifiedAcc.findById(req.params.id);
+  const { fname, lname, email, contact, residence, role } = account;
+  const password = req.body.password;
   // Hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
   const main_unique = generateMd5Hash(fname + email + residence);
 
+  // Create qr hash
   const access = await AccessString.create({
     hash: main_unique,
   });
@@ -56,6 +82,8 @@ const registerUser = asyncHandler(async (req, res) => {
     qr: access._id,
     password: hashedPassword,
   });
+
+  await UnverifiedAcc.findByIdAndDelete(req.params.id);
 
   access.u_id = user._id;
   access.save();
@@ -216,8 +244,10 @@ const generateRandomString = (len) => {
 };
 
 module.exports = {
+  regForVerification,
+  unverifiedDetails,
   updateUser,
-  registerUser,
+  confirmViaEmail,
   loginUser,
   getMe,
   deleteGuests,

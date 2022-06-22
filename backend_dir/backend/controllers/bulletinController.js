@@ -123,6 +123,12 @@ const createBulletinPost = asyncHandler(async (req, res) => {
     tags: req.body.tags,
   });
 
+  await createNotif({
+    title: "New post",
+    type: notifTypes.new_event,
+    text: req.body.title,
+  });
+
   if (!bulletinPost) {
     res.status(400);
     throw new Error("Creation failed");

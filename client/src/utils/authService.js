@@ -6,8 +6,11 @@ export const userFromCookie = {
   role: Cookies.get("_ar"),
 };
 
-const register = async (userData) => {
-  const response = await apiClient.post("user/", userData);
+const register = async (credentials) => {
+  const response = await apiClient.post(
+    "user/verify/" + credentials.id,
+    credentials
+  );
   return response.data;
 };
 

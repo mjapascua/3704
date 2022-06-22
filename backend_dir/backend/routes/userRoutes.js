@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const {
-  registerUser,
+  regForVerification,
+  unverifiedDetails,
+  confirmViaEmail,
   loginUser,
   getMe,
   deleteGuests,
@@ -19,7 +21,9 @@ const {
   readNotifs,
 } = require("../controllers/notificationController");
 
-router.post("/", registerUser);
+router.post("/", regForVerification);
+router.route("/verify/:id").get(unverifiedDetails).post(confirmViaEmail);
+
 router.post("/login", loginUser);
 
 router.route("/:id").put(protect, updateUser);

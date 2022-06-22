@@ -18,6 +18,7 @@ import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import VisitorForm from "./pages/VistorForm";
 import Article from "./pages/Article";
+import CompleteVerification from "./pages/CompleteVerification";
 
 function App() {
   return (
@@ -104,6 +105,14 @@ function App() {
           element={
             <>
               <VisitorForm />
+            </>
+          }
+        />
+        <Route
+          path="verification/:id"
+          element={
+            <>
+              <CompleteVerification />
             </>
           }
         />

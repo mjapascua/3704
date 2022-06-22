@@ -1,5 +1,5 @@
 import React, { Children } from "react";
-const primaryClass = " mb-5 min-h-11 bg-violet-700 text-white ";
+const primaryClass = " mb-3 min-h-11 bg-violet-700 text-white ";
 const secondaryClass = " min-h-11 border border-violet-700 text-violet-600 ";
 export const Button = React.forwardRef((props, ref) => {
   return (
