@@ -43,7 +43,6 @@ router.get("/unverified", protect, getAllUnverfied);
 router.put("/verify/:id", protect, verifyUser);
 router.route("/guests").put(filterGuests);
 
-//router.route("/guests").get(protect, filterGuests);
 router
   .route("/locations")
   .get(protect, getScanPoints)

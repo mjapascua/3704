@@ -73,10 +73,18 @@ module.exports = {
           "100%": { transform: "translateX(-100%)" },
           "0%": { transform: "0px" },
         },
+        "light-pulse": {
+          "30%": { opacity: "20%" },
+        },
+        "heavy-pulse": {
+          "30%": { opacity: "60%" },
+        },
       },
       animation: {
         slideToR: "slideToR .25s ease-out",
         slideToL: "slideToL .25s ease-out",
+        "light-pulse": "light-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "heavy-pulse": "heavy-pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
     },
   },

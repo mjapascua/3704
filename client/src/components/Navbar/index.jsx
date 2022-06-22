@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { apiClient } from "../../utils/requests";
 import { logout } from "../../utils/authSlice";
 import { Button } from "../Buttons/Main";
 import { NavItem } from "./NavItem";
+import { useCallback } from "react";
 const routes = [
   { to: "/", label: "home" },
   { to: "/bulletin", label: "bulletin" },
@@ -15,12 +16,30 @@ const routes = [
 const min = 60;
 const hr = 3600;
 
+const useOutsideClick = (ref) => {
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (!ref.current?.contains(e.target)) {
+        console.log("clicked outside");
+      }
+    };
+
+    document.addEventListener("mousedown", handleClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+    };
+  }, [ref]);
+};
+
 export const Navbar = React.memo(() => {
-  const [notif, setNotifs] = useState({ show: false, data: [], unread: 0 });
+  const [notif, setNotifs] = useState({ data: [], unread: 0 });
+  const [toggle, setToggle] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const wrapper = useRef(null);
 
   const authConfig = {
     headers: {
@@ -82,23 +101,39 @@ export const Navbar = React.memo(() => {
     );
   };
 
-  useEffect(() => {
-    if (user)
-      apiClient
-        .get("user/notifs", authConfig)
-        .then((res) => {
-          setNotifs((prev) => {
-            return {
-              ...prev,
-              data: res.data.notifications,
-              unread: res.data.unreadCount,
-            };
-          });
-        })
-        .catch(() => {
-          dispatch(logout());
+  const fetchNotifs = useCallback(() => {
+    apiClient
+      .get("user/notifs", authConfig)
+      .then((res) => {
+        setNotifs((prev) => {
+          return {
+            ...prev,
+            data: res.data.notifications,
+            unread: res.data.unreadCount,
+          };
         });
+      })
+      .catch(() => {
+        dispatch(logout());
+      });
   }, []);
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (!wrapper.current?.contains(e.target)) {
+        setToggle(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+    };
+  }, [wrapper]);
+  useEffect(() => {
+    fetchNotifs();
+  }, [fetchNotifs]);
 
   return (
     <div className="px-7 py-3 sticky h-16 top-0 z-30 bg-white shadow-sm select-none flex justify-between">
@@ -139,7 +174,7 @@ export const Navbar = React.memo(() => {
             <span className="relative  mr-5">
               <span
                 onClick={() => {
-                  if (!notif.show && notif.unread > 0) {
+                  if (!toggle && notif.unread > 0) {
                     apiClient
                       .get("user/read_notifs", authConfig)
                       .then((res) => {
@@ -147,14 +182,11 @@ export const Navbar = React.memo(() => {
                           setNotifs({
                             data: res.data.notifications,
                             unread: 0,
-                            show: true,
                           });
                         }
                       });
                   }
-                  setNotifs((prev) => {
-                    return { ...prev, show: !prev.show };
-                  });
+                  setToggle(!toggle);
                 }}
                 className="material-icons-sharp text-gray-400 text-3xl cursor-pointer"
               >
@@ -165,8 +197,11 @@ export const Navbar = React.memo(() => {
               )}
             </span>
 
-            {notif.show && (
-              <div className="absolute rounded py-1 font-display right-14 border shadow-sprd bg-white">
+            {toggle && (
+              <div
+                ref={wrapper}
+                className="absolute rounded py-1 font-display right-14 border shadow-sprd bg-white"
+              >
                 <span className="px-4 py-1 text-meadow-700 font-head font-semibold block">
                   NOTIFICATIONS
                 </span>

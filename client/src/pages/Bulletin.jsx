@@ -1,26 +1,20 @@
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useRef, Suspense } from "react";
 import { WidePreview } from "../components/ArticlePreviews/WidePreview";
+import Loading from "../components/Loading/Loading";
 import { apiClient } from "../utils/requests";
 
+const ArticleList = React.lazy(() =>
+  import("../components/ArticlePreviews/ArticleList")
+);
+
 function Bulletin() {
-  const [articles, setArticles] = useState([]);
-
-  const getArticles = useCallback(() => {
-    apiClient.get("bulletin").then((res) => {
-      setArticles(res.data.data);
-    });
-  }, []);
-
   useEffect(() => {
-    getArticles();
-  }, [getArticles]);
-
+    document.title = "Bulletin | " + process.env.REACT_APP_NAME;
+  }, []);
   return (
-    <div className="w-5/6 md:w-3/4 mx-auto">
-      {articles.map((item) => (
-        <WidePreview article={item} key={item._id} />
-      ))}
-    </div>
+    <Suspense fallback={<Loading />}>
+      <ArticleList />
+    </Suspense>
   );
 }
 

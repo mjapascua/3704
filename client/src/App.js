@@ -17,12 +17,13 @@ import Account from "./pages/Account";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import VisitorForm from "./pages/VistorForm";
-import Article from "./pages/Article";
 import CompleteVerification from "./pages/CompleteVerification";
+import Loading from "./components/Loading/Loading";
+const Article = React.lazy(() => import("./pages/Article"));
 
 function App() {
   return (
-    <div className="relative w-full">
+    <React.Suspense fallback={<Loading />}>
       <Routes>
         <Route
           path="/"
@@ -80,7 +81,6 @@ function App() {
             <>
               <Navbar />
               <Bulletin />
-              <Footer />
             </>
           }
         />
@@ -118,7 +118,7 @@ function App() {
         />
       </Routes>
       <ToastContainer theme="colored" hideProgressBar />
-    </div>
+    </React.Suspense>
   );
 }
 

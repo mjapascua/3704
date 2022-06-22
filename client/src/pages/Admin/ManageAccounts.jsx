@@ -58,10 +58,6 @@ const UnverifiedCard = ({ account, authConfig }) => {
     });
   };
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
   const showRoleType = () => {
     switch (data.role) {
       case authService.ROLES.BASIC:

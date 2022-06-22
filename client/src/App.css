@@ -34,3 +34,25 @@
   fill: invert(100%) sepia(0%) saturate(4310%) hue-rotate(35deg)
     brightness(102%) contrast(100%);
 }
+.qr-vid-container {
+  width: 100%;
+  position: relative;
+}
+.qr-error-popup,
+.qr-success-popup {
+  border: 3px solid white !important;
+  color: white !important;
+}
+.qr-error-popup {
+  background-color: #e11d48 !important;
+}
+.qr-error-popup h2 {
+  font-weight: 700 !important;
+}
+
+.qr-success-popup {
+  background-color: #22c55e !important;
+}
+.qr-success-popup h2 {
+  font-weight: 700 !important;
+}

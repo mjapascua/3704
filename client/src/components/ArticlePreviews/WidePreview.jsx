@@ -5,7 +5,7 @@ import { ProceedButton } from "../Buttons/Proceed";
 
 export const WidePreview = (props) => {
   return (
-    <div className=" group mb-8 mt-5 flex-col md:flex-row hover:shadow-sprd shadow flex bg-slate-50 rounded ">
+    <div className=" group mb-8 mt-5 flex-col md:flex-row hover:shadow-sprd shadow border border-slate-200 flex bg-white rounded ">
       <img
         className="w-full md:w-2/5 object-cover"
         src={props.article.header_image.url}
