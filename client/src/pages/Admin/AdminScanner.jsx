@@ -2,16 +2,21 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { QrReader } from "react-qr-reader";
 import Swal from "sweetalert2";
 import { Button } from "../../components/Buttons/Main";
+import { useAuthHeader } from "../../utils/authService";
+import { useIsMounted } from "../../utils/general";
 import { apiClient } from "../../utils/requests";
 
-const AdminScanner = ({ authConfig }) => {
+const AdminScanner = () => {
   const [locations, setLocations] = useState([]);
   const [location, setLocation] = useState("");
+  const authConfig = useAuthHeader();
+  const isMounted = useIsMounted();
+
   const getLoc = useCallback(() => {
     apiClient
       .get("admin/locations", authConfig)
       .then((res) => {
-        if (res.status === 200) {
+        if (res.status === 200 && isMounted) {
           setLocations(res.data);
           setLocation(res.data[0]._id);
         }
@@ -26,16 +31,16 @@ const AdminScanner = ({ authConfig }) => {
   }, [getLoc]);
 
   return (
-    <div className="w-screen flex pt-16 md:pt-10 items-center h-full flex-col">
-      <label className="ml-6">
-        Location
+    <div className="w-full flex bg-slate-50 shadow-lg p-4 items-center h-full flex-col">
+      <label className="p-2">
+        <b>Location</b>
         <select
           name="scan_point"
           value={location}
           onChange={(e) => {
-            setLocation(e.target.value);
+            if (isMounted) setLocation(e.target.value);
           }}
-          className="ml-2"
+          className="ml-3"
         >
           {locations.map((l, index) => {
             return (
@@ -58,6 +63,7 @@ const AdminScanner = ({ authConfig }) => {
 export const QRScanner = ({ location, openOnRender, authConfig }) => {
   const [scanner, setScanner] = useState(openOnRender);
   const [lastHash, setLastHash] = useState("");
+  const isMounted = useIsMounted();
   let expireHash;
 
   const handleScanSuccess = useCallback(() => {
@@ -93,7 +99,7 @@ export const QRScanner = ({ location, openOnRender, authConfig }) => {
         });
       });
     expireHash = setTimeout(() => {
-      setLastHash("");
+      if (isMounted) setLastHash("");
     }, 8000);
   }, [lastHash]);
 
@@ -116,27 +122,32 @@ export const QRScanner = ({ location, openOnRender, authConfig }) => {
       >
         {!scanner ? "Open scanner" : "Close"}
       </Button>
-
-      <div className=" w-96 mt-5 block md:py-9 py-7 px-3 md:px-5 rounded-lg ">
-        {!scanner ? (
-          <span className="w-full h-60 block">
-            Please allow to access device's camera
-          </span>
-        ) : (
-          <QrReader
-            ViewFinder={() => (
-              <div className="block absolute top-0 h-4/5 m-9 w-4/5 p-5 border-4 z-20 border-red-500"></div>
-            )}
-            className={"qr-vid-container"}
-            onResult={(result, error) => {
-              if (!!result && lastHash !== result?.text) {
-                setLastHash(result.text);
-              }
-            }}
-            style={{ width: "40%" }}
-            constraints={{ facingMode: "environment", height: 100, width: 100 }}
-          />
-        )}
+      <div className="mt-4 bg-black p-10">
+        <div className=" w-96 h-96 text-center  block">
+          {!scanner ? (
+            <span className="h-full text-white block">
+              Please allow to access device's camera
+            </span>
+          ) : (
+            <QrReader
+              ViewFinder={() => (
+                <div className="block absolute top-0 h-4/5 m-9 w-4/5 p-5 border-4 rounded-xl z-20 border-violet-600"></div>
+              )}
+              className={"qr-vid-container"}
+              onResult={(result, error) => {
+                if (!!result && lastHash !== result?.text) {
+                  setLastHash(result.text);
+                }
+              }}
+              style={{ width: "40%" }}
+              constraints={{
+                facingMode: "environment",
+                height: 100,
+                width: 100,
+              }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

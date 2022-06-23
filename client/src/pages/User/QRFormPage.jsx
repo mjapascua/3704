@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "../../components/Buttons/Main";
+import { ReturnButton } from "../../components/Buttons/Return";
 import { apiClient } from "../../utils/requests";
 import CreateQRForm from "./CreateQRForm";
 import RenderQRCode from "./RenderQRCode";
@@ -40,20 +41,18 @@ const QRFormPage = ({ authConfig }) => {
   return (
     <div>
       {!qr.url ? (
-        <>
-          <Button primary onClick={requestShareable}>
+        <div className="w-full">
+          <CreateQRForm handleQRRequest={handleQRRequest} />
+          <Button primary className="w-2/5" onClick={requestShareable}>
             Share link
             <span className="material-icons-sharp md:mr-5">share</span>
           </Button>
-          <CreateQRForm handleQRRequest={handleQRRequest} />
-        </>
+        </div>
       ) : (
         <div className=" w-80 block px-3 md:px-5 relative">
-          <RenderQRCode
-            url={qr.url}
-            name={qr.name}
-            callback={() => setQR({ url: null })}
-          />
+          <ReturnButton callback={() => setQR({ url: null })} />
+          <br />
+          <RenderQRCode url={qr.url} name={qr.name} />
         </div>
       )}
     </div>

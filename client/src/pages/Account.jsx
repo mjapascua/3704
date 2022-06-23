@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, useNavigate, NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Button } from "../components/Buttons/Main";
 import Loading from "../components/Loading/Loading";
@@ -13,14 +13,28 @@ import QRFormPage from "./User/QRFormPage";
 import swal from "sweetalert2";
 import { swalCustomClass } from "../utils/general";
 import { redirect } from "./Login";
+import { navStyle } from "./Dashboard";
+import RenderQRCode from "./User/RenderQRCode";
+const activeStyle =
+  "border-cyan-600 text-cyan-600 hover:bg-cyan-600 hover:border-cyan-700 " +
+  navStyle;
+const defStyle =
+  "text-gray-500 border-slate-50 hover:bg-cyan-600 hover:border-cyan-700 " +
+  navStyle;
+const routes = [
+  { to: "/account", label: "My account", icon: "manage_accounts", end: true },
+  {
+    to: "/account/generate-qr-pass",
+    label: "Create visitor pass",
+    icon: "qr_code",
+  },
+];
 
 const Account = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [redir, setRedir] = useState(false);
-  const { user, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.auth
-  );
+  const { user, isError, message } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (isError) {
@@ -53,68 +67,55 @@ const Account = () => {
           <Loading text={"Unauthorized, redirecting"} />
         </div>
       ) : (
-        <div className="flex h-full">
-          <span className=" w-80 block p-4 h-64 md:h-full border-r">
-            <Button
-              primary
-              onClick={() => navigate("/account")}
-              className="w-full"
-            >
-              My account
-              <span className="material-icons-sharp text-3xl">
-                manage_accounts
-              </span>
-            </Button>
-            <Button
-              primary
-              onClick={() => navigate("generate-qr-pass")}
-              className="w-full"
-            >
-              Create visitor pass
-              <span className="material-icons-sharp text-3xl">qr_code</span>
-            </Button>
+        <div className="flex h-full relative">
+          <span className=" w-80 md:pl-3 block bg-slate-50 h-64 md:h-full ">
+            {routes.map((route) => {
+              return (
+                <NavLink
+                  end={route.end || false}
+                  key={route.to}
+                  to={route.to}
+                  className={({ isActive }) =>
+                    isActive ? activeStyle : defStyle
+                  }
+                >
+                  <span className="material-icons-sharp md:mr-5 inline-block">
+                    {route.icon}
+                  </span>
+                  <span className="md:w-max h-fit font-semibold md:block hidden">
+                    {route.label}
+                  </span>
+                </NavLink>
+              );
+            })}
 
-            {/*  <Button primary classes={"mb-5"}>
-            Dues
-            <span className="material-icons-sharp text-3xl">payment</span>
-          </Button>
-          <Button primary classes={"mb-5"}>
-            Message
-            <span className="material-icons-sharp text-3xl">forum</span>
-          </Button> */}
-            <Button
-              primary
-              onClick={() => navigate("events")}
-              className="w-full"
-            >
-              Events
-              <span className="material-icons-sharp text-3xl">
-                calendar_month
-              </span>
-            </Button>
             {user?.role === authService.ROLES.ADMIN && (
-              <Button
-                primary
-                onClick={() => navigate("/dashboard")}
-                className="w-full"
+              <NavLink
+                to={"/dashboard/qr-scanner"}
+                className={({ isActive }) =>
+                  isActive ? activeStyle : defStyle
+                }
               >
-                Admin dashboard
-                <span className="material-icons-sharp text-3xl">
+                <span className="material-icons-sharp md:mr-5 inline-block">
                   admin_panel_settings
                 </span>
-              </Button>
+                <span className="md:w-max h-fit font-semibold md:block hidden">
+                  Admin dashboard
+                </span>
+              </NavLink>
             )}
-            <Button
-              primary
+            <span
               onClick={() => {
                 dispatch(logout());
                 navigate("/", { replace: true });
               }}
-              className="w-full"
+              className={defStyle}
             >
-              Logout
-              <span className="material-icons-sharp text-3xl">logout</span>
-            </Button>
+              <span className="material-icons-sharp md:mr-5">logout</span>
+              <span className="md:w-max md:block font-semibold hidden">
+                Logout
+              </span>
+            </span>
           </span>
           <div className="bg-white w-full px-10 py-5">
             <Routes>
@@ -150,8 +151,10 @@ const defUserState = {
 const UserAccount = ({ authConfig }) => {
   const [userData, setUserData] = useState(defUserState);
   const [qr, setQr] = useState(null);
+  const [modal, setModal] = useState(false);
 
-  const { id, fname, lname, email, contact, residence, guests } = userData;
+  const { id, fname, lname, email, contact, residence, guests, tags } =
+    userData;
 
   const [edit, setEdit] = useState(false);
   const [item, setItem] = useState(null);
@@ -212,7 +215,8 @@ const UserAccount = ({ authConfig }) => {
       .get("user/qr", authConfig)
       .then((res) => {
         if (res.status === 200 && !res.data.message) {
-          setQr({ url: res.data });
+          setQr({ url: res.data, name: fname + " " + lname, resident: true });
+          setModal(true);
         } else toast.error(res.response.message);
       })
       .catch((error) => {
@@ -224,7 +228,8 @@ const UserAccount = ({ authConfig }) => {
       .get("user/guest_qr/" + id, authConfig)
       .then((res) => {
         if (res.status === 200 && !res.data.message) {
-          setQr({ url: res.data });
+          setQr({ url: res.data.url, name: res.data.name });
+          setModal(true);
         } else toast.error(res.response.message);
       })
       .catch((error) => {
@@ -233,93 +238,104 @@ const UserAccount = ({ authConfig }) => {
   };
 
   return (
-    <div>
+    <>
       {!userData.id ? (
         <Loading />
       ) : (
         <>
-          <Button onClick={requestUserQR}>Show my QR code</Button>
-          {qr?.url && <img src={qr.url} className="w-64 mb-4" />}
-          <span
-            onClick={() => {
-              setEdit((prev) => !prev);
-              setItem({
-                fname,
-                lname,
-                email,
-                contact,
-                residence,
-              });
-            }}
-            className="material-icons-sharp text-gray-400 cursor-pointer"
-          >
-            edit
-          </span>
+          {modal && (
+            <div
+              onClick={() => setModal(!modal)}
+              className=" bg-slate-900 bg-opacity-30 z-40 pb-10 flex justify-center items-center fixed w-screen h-screen left-0 top-0"
+            >
+              <RenderQRCode
+                name={qr.name}
+                url={qr.url}
+                resident={qr.resident}
+              />
+            </div>
+          )}
           {userData && !edit && (
             <div>
               <div>
-                <span className="block ">
-                  <b>First name:</b>
-                  {fname}
+                <span className="text-cyan-600 font-semibold">Welcome</span>
+                <span className="block mb-6 text-2xl">
+                  <b>{fname + " " + lname}</b>
+                  <Button
+                    onClick={() => {
+                      setEdit((prev) => !prev);
+                      setItem({
+                        fname,
+                        lname,
+                        email,
+                        contact,
+                        residence,
+                      });
+                    }}
+                  >
+                    <span className="material-icons-sharp text-base ">
+                      edit
+                    </span>
+                  </Button>
                 </span>
-                <span className="block ">
-                  <b>Last name:</b>
-                  {lname}
-                </span>
-                <span className="block ">
-                  <b>Phone number:</b>
-                  {contact}
-                </span>
-                <span className="block ">
-                  <b>Address:</b>
-                  {residence}
-                </span>
+                <Button primary onClick={requestUserQR}>
+                  Show my QR code
+                </Button>
                 {guests.length > 0 && (
                   <>
-                    <span className="block ">
-                      <b>Guests:</b>
+                    <span className="block mb-3">
+                      <b>My guests</b>
                     </span>
 
                     <span className=" block overflow-auto">
                       {guests.map((el, index) => {
                         return (
-                          <span key={index} className="block ">
+                          <span
+                            key={index}
+                            className="flex items-center w-3/5 h-14 justify-between my-2 rounded bg-white shadow border px-3 py-2 "
+                          >
                             {el.fname + " " + el.lname}
-                            <Button onClick={() => requestGuestQR(el.qr)}>
-                              show qr
-                            </Button>
-                            <Button
-                              onClick={() =>
-                                removeGuest({
-                                  gId: el._id,
-                                  name: el.fname,
-                                })
-                              }
-                            >
-                              remove
-                            </Button>
+                            <span>
+                              <Button onClick={() => requestGuestQR(el.qr)}>
+                                show qr
+                              </Button>
+                              <Button
+                                className="text-rose-500"
+                                onClick={() =>
+                                  removeGuest({
+                                    gId: el._id,
+                                    name: el.fname,
+                                  })
+                                }
+                              >
+                                remove
+                              </Button>
+                            </span>
                           </span>
                         );
                       })}
                     </span>
                   </>
                 )}
-                {/*                 {user_tags.length > 0 && (
+                {tags.length > 0 && (
                   <>
-                    <span className="block ">
-                      <b>Your Cards:</b>
+                    <span className="block mt-6 mb-3">
+                      <b>RFIDs under me</b>
                     </span>
                     <span className="h-80 block overflow-auto">
-                      {user_tags.map((el, index) => {
+                      {tags.map((el, index) => {
                         return (
-                          <span key={index} className="block ">
-                            {el.used_by}
+                          <span
+                            key={index}
+                            className="flex items-center w-3/5 h-14 justify-between my-2 rounded bg-white shadow border px-3 py-3"
+                          >
+                            {el.g_id?.fname || fname + " " + lname}
                           </span>
                         );
                       })}
                     </span>
                   </>
-                )} */}
+                )}
               </div>
             </div>
           )}
@@ -370,15 +386,15 @@ const UserAccount = ({ authConfig }) => {
                   />
                 </label>
               </span>
-
-              <Button className="w-40" type={"submit"}>
+              <br />
+              <Button primary className="w-56" type={"submit"}>
                 Save
               </Button>
             </form>
           )}
         </>
       )}
-    </div>
+    </>
   );
 };
 export default Account;

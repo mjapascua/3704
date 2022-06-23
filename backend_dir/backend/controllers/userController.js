@@ -10,6 +10,7 @@ const AccessString = require("../models/accessStringsModel");
 const UnverifiedAcc = require("../models/unverifiedAccModel");
 
 const { generateMd5Hash } = require("./qrController");
+const RegisteredTag = require("../models/registeredTagModel");
 
 // @desc    Register new account
 // @route   POST /api/users
@@ -131,6 +132,7 @@ const getMe = asyncHandler(async (req, res) => {
     req.user.id
   ).lean();
   const guests = await Guest.find({ u_id: req.user.id });
+  const tags = await RegisteredTag.find({ u_id: req.user.id }).populate("g_id");
 
   if (!_id) {
     res.status(404);
@@ -145,6 +147,7 @@ const getMe = asyncHandler(async (req, res) => {
     email,
     contact,
     guests,
+    tags,
   });
 });
 

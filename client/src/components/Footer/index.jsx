@@ -11,7 +11,7 @@ export const Footer = () => {
       </span>
       <span>
         <span className=" text-xs">powered by </span>
-        <b>ResPass</b>
+        <b>{process.env.REACT_APP_NAME}</b>
       </span>
     </footer>
   );

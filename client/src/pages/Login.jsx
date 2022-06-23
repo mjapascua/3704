@@ -34,7 +34,7 @@ function Login() {
   let from = location.state?.from?.pathname
     ? location.state?.from?.pathname
     : user?.role === authService.ROLES.ADMIN
-    ? "/dashboard"
+    ? "/dashboard/qr-scanner"
     : "/account";
 
   useEffect(() => {
@@ -58,7 +58,7 @@ function Login() {
       .unwrap()
       .then((res) => {
         if (res.role === authService.ROLES.ADMIN) {
-          redirect(setRedir, navigate, "/dashboard");
+          redirect(setRedir, navigate, "/dashboard/qr-scanner");
         } else redirect(setRedir, navigate, "/account");
       });
   };

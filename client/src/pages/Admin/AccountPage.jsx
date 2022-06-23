@@ -6,16 +6,20 @@ import Swal from "sweetalert2";
 import Loading from "../../components/Loading/Loading";
 import { useParams } from "react-router-dom";
 import { ReturnButton } from "../../components/Buttons/Return";
+import { useAuthHeader } from "../../utils/authService";
+import { useIsMounted } from "../../utils/general";
 
 const steps = [1, 2, 3];
 
-const AccountPage = ({ authConfig }) => {
+const AccountPage = () => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   const [regData, setRegData] = useState({ guest: "" });
   const [queue_id, setQueue] = useState(null);
   const param = useParams();
   let timeout;
+  const authConfig = useAuthHeader();
+  const isMounted = useIsMounted();
 
   const Queue = Swal.mixin({
     progressSteps: steps,
@@ -45,7 +49,7 @@ const AccountPage = ({ authConfig }) => {
 
   const getUser = useCallback(() => {
     apiClient.get("admin/user/" + param.id, authConfig).then((res) => {
-      if (res.status === 200) {
+      if (res.status === 200 && isMounted) {
         console.log(res.data);
         setUser(res.data);
         setLoading(false);

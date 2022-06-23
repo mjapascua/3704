@@ -48,7 +48,7 @@ const Table = ({ columns, paginate, fetchData, loading, refreshRef }) => {
 
   return (
     <div>
-      <div className="h-144 block border-b border-teal-700 overflow-scroll ">
+      <div className="custom-table h-144 block overflow-y-scroll border bg-slate-50 border-slate-700">
         <table
           {...getTableProps()}
           className=" table-spacing table-auto w-full text-sm"
@@ -60,7 +60,7 @@ const Table = ({ columns, paginate, fetchData, loading, refreshRef }) => {
                   return (
                     <th
                       {...column.getHeaderProps()}
-                      className="sticky bg-teal-700 text-white top-0 py-1.5 pl-3"
+                      className="sticky bg-slate-700 text-white top-0 py-1.5 pl-3"
                     >
                       {column.render("Header")}
                     </th>
@@ -93,7 +93,7 @@ const Table = ({ columns, paginate, fetchData, loading, refreshRef }) => {
                       return (
                         <tr
                           {...row.getRowProps()}
-                          className="rounded-tl-sm rounded-bl-sm rounded-tr-sm even:bg-gray-100 rounded-br-sm"
+                          className="rounded-tl-sm rounded-bl-sm rounded-tr-sm even:bg-slate-200 odd:bg-slate-50 rounded-br-sm"
                         >
                           {row.cells.map((cell) => {
                             return (
@@ -121,7 +121,7 @@ const Table = ({ columns, paginate, fetchData, loading, refreshRef }) => {
         </table>
       </div>
 
-      <div className="flex justify-between px-2 py-1">
+      <div className="flex justify-between px-2 bg-slate-50 py-1">
         {loading ? (
           <span>Loading...</span>
         ) : (

@@ -358,8 +358,7 @@ const removeFromQueue = asyncHandler(async (req, res) => {
 // @route   GET /api/admin/locations
 // @access  Private
 const getScanPoints = asyncHandler(async (req, res) => {
-  const locations = await ScanPoint.find().lean();
-
+  const locations = await ScanPoint.find({}).lean();
   res.status(200).json(locations);
 });
 // @desc    Add a location
@@ -380,6 +379,20 @@ const addScanPoint = asyncHandler(async (req, res) => {
     res.status(201).json(newScanPoint);
   }
 });
+// @desc    Add a location
+// @route   DELETE /api/admin/locations
+// @access  Private
+const delScanPoint = asyncHandler(async (req, res) => {
+  const location = await ScanPoint.findByIdAndDelete(req.body.id).lean();
+  if (location.message || !location) {
+    res.status(400);
+    throw new Error("Remove failed");
+  } else {
+    const locations = await ScanPoint.find({}).lean();
+    res.json(locations);
+  }
+});
+
 // @desc    Get guests
 // @route   GET /api/admin/guests?
 // @access  Private
@@ -431,6 +444,20 @@ const updateRFIDDevice = asyncHandler(async (req, res) => {
     throw new Error("Update failed");
   } else {
     res.sendStatus(200);
+  }
+});
+
+// @desc    Delete an rfid device
+// @route   DELETE /api/admin/rfid/devices
+// @access  Private
+const delRFIDDevice = asyncHandler(async (req, res) => {
+  const device = await RFIDDevice.findByIdAndDelete(req.body.id).lean();
+  if (!device || device.message) {
+    res.status(400);
+    throw new Error("Update failed");
+  } else {
+    const device = await RFIDDevice.find({}).lean();
+    res.json(device);
   }
 });
 
@@ -577,9 +604,11 @@ module.exports = {
   removeFromQueue,
   getScanPoints,
   addScanPoint,
+  delScanPoint,
   getRFIDDevices,
   registerRFIDDevice,
   updateRFIDDevice,
+  delRFIDDevice,
   checkRFIDTag,
   findByName,
   filterScanLogs,

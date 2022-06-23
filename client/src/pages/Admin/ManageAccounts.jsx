@@ -5,11 +5,14 @@ import { Link } from "react-router-dom";
 import Table from "../../components/Table/Table";
 import Loading from "../../components/Loading/Loading";
 import { Button } from "../../components/Buttons/Main";
-import authService from "../../utils/authService";
+import authService, { useAuthHeader } from "../../utils/authService";
+import { useIsMounted } from "../../utils/general";
 
-const ManageAccounts = ({ authConfig }) => {
+const ManageAccounts = () => {
+  const authConfig = useAuthHeader();
+
   return (
-    <div className="w-full mx-12">
+    <div>
       <AwaitingVerification authConfig={authConfig} />
       <AccountsTable authConfig={authConfig} />
     </div>
@@ -120,14 +123,18 @@ const UnverifiedCard = ({ account, authConfig }) => {
 const AwaitingVerification = ({ authConfig }) => {
   const [loading, setLoading] = useState(false);
   const [accounts, setAccounts] = useState([]);
+  const isMounted = useIsMounted();
 
   const fetchAccounts = useCallback(() => {
     setLoading(true);
-    apiClient.get("admin/unverified", authConfig).then((res) => {
-      if (res.status === 200) {
-        setAccounts(res.data);
-      } else toast.error("Account fetch fail!");
-    });
+    apiClient
+      .get("admin/unverified", authConfig)
+      .then((res) => {
+        if (res.status === 200 && isMounted) {
+          setAccounts(res.data);
+        }
+      })
+      .catch(() => toast.error("Account fetch fail!"));
     setLoading(false);
   }, []);
 
@@ -153,6 +160,8 @@ const AwaitingVerification = ({ authConfig }) => {
 };
 
 const AccountsTable = ({ authConfig }) => {
+  const isMounted = useIsMounted();
+
   const columns = React.useMemo(() => [
     {
       Header: "First Name",
@@ -202,13 +211,16 @@ const AccountsTable = ({ authConfig }) => {
   const [loading, setLoading] = useState(false);
 
   const fetchUsers = useCallback(({ pageIndex, pageSize }) => {
+    setLoading(true);
     apiClient
       .get(`admin/users?limit=${pageSize}&page=${pageIndex}`, authConfig)
       .then((res) => {
-        if (res.status === 200) {
+        if (res.status === 200 && isMounted) {
           setPaginate({ ...res.data, page_size: paginate.page_size });
-        } else toast.error("User fetch fail!");
-      });
+        }
+      })
+      .catch(() => toast.error("User fetch fail!"))
+      .finally(() => setLoading(false));
   }, []);
 
   return (

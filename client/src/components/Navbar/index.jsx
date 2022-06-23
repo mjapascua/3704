@@ -140,7 +140,9 @@ export const Navbar = React.memo(() => {
       <span className="material-icons-sharp md:hidden my-auto text-3xl">
         menu
       </span>
-      <span className="my-auto px-4  font-bold">LOGO</span>
+      <span className="font-bold block text-xl my-1.5 text-center text-slate-800 pb-5">
+        {process.env.REACT_APP_NAME}
+      </span>
       <span className="flex items-center">
         <span className="w-fit mr-8 justify-center hidden md:inline-flex">
           {routes.map((route) => (
@@ -164,7 +166,7 @@ export const Navbar = React.memo(() => {
               onClick={() =>
                 navigate("/login", { replace: true, state: { from: location } })
               }
-              className=" ml-1 text-white bg-violet-600 transition-color"
+              className=" ml-1 text-white bg-cyan-600 transition-color"
             >
               Login
             </Button>
@@ -202,7 +204,7 @@ export const Navbar = React.memo(() => {
                 ref={wrapper}
                 className="absolute rounded py-1 font-display right-14 border shadow-sprd bg-white"
               >
-                <span className="px-4 py-1 text-meadow-700 font-head font-semibold block">
+                <span className="px-4 py-1 text-cyan-700 font-head font-semibold block">
                   NOTIFICATIONS
                 </span>
                 <div className="block overflow-scroll h-96">
@@ -213,7 +215,7 @@ export const Navbar = React.memo(() => {
 
             <span
               onClick={() => navigate("/account")}
-              className="material-icons-sharp text-meadow-600 text-4xl cursor-pointer"
+              className="material-icons-sharp text-cyan-600 text-4xl cursor-pointer"
             >
               account_circle
             </span>

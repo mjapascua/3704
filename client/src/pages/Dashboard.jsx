@@ -6,30 +6,33 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-import ManageAccounts from "./Admin/ManageAccounts";
-import ManageBulletin from "./Admin/ManageBulletin";
-import AdminScanner from "./Admin/AdminScanner";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, reset } from "../utils/authSlice";
 import { redirect } from "./Login";
 import Loading from "../components/Loading/Loading";
 import authService from "../utils/authService";
-import ManageDevices from "./Admin/ManageDevices";
-import ManageScanLogs from "./Admin/ManageScanLogs";
-import AccountPage from "./Admin/AccountPage";
 
-const navStyle =
-  "w-full flex items-center font-display cursor-pointer md:rounded-tl-md md:rounded-bl-md justify-center md:justify-start mb-3 px-8";
-const activeStyle = "text-slate-50 bg-violet-700 py-7 " + navStyle;
-const defStyle = "text-gray-500 text-sm py-5 " + navStyle;
+const ManageAccounts = React.lazy(() => import("./Admin/ManageAccounts"));
+const ManageDevices = React.lazy(() => import("./Admin/ManageDevices"));
+const ManageBulletin = React.lazy(() => import("./Admin/ManageBulletin"));
+const ManageScanLogs = React.lazy(() => import("./Admin/ManageScanLogs"));
+const AdminScanner = React.lazy(() => import("./Admin/AdminScanner"));
+const AccountPage = React.lazy(() => import("./Admin/AccountPage"));
+export const navStyle =
+  "w-full flex items-center font-display py-4 text-sm cursor-pointer border-r-4 transition-all hover:text-slate-50 justify-center md:justify-start my-5 px-6";
+const activeStyle =
+  "border-sky-600 text-sky-600 hover:bg-sky-600 hover:border-sky-700 " +
+  navStyle;
+const defStyle =
+  "text-gray-500 border-slate-50 hover:bg-sky-600 hover:border-sky-700 " +
+  navStyle;
 const sideMenuStyle =
-  "bg-neutral-900 z-30 left-0 w-max box-border block h-screen md:pl-5";
+  "left-0 fixed border-box md:w-64 w-16 bg-slate-50 pt-5 z-40 h-full md:pl-3";
 
 const routes = [
-  { to: "/dashboard", label: "Dashboard", icon: "home", end: true },
-  { to: "/dashboard/bulletin", label: "Bulletin Manager", icon: "feed" },
   { to: "/dashboard/qr-scanner", label: "QR Scanner", icon: "qr_code_scanner" },
   { to: "/dashboard/scan-logs", label: "Scan Records", icon: "history" },
+  { to: "/dashboard/bulletin", label: "Bulletin Manager", icon: "feed" },
   { to: "/dashboard/accounts", label: "Accounts", icon: "manage_accounts" },
   {
     to: "/dashboard/rfid-devices",
@@ -39,8 +42,6 @@ const routes = [
 ];
 
 const Dashboard = () => {
-  const [open, setOpen] = useState(false);
-  const [style, setStyle] = useState("hidden " + sideMenuStyle);
   const [pageLabel, setLabel] = useState(false);
   const [redir, setRedir] = useState(false);
   const navigate = useNavigate();
@@ -78,19 +79,6 @@ const Dashboard = () => {
     },
   };
 
-  const handleMenuClick = () => {
-    if (open) {
-      setOpen(false);
-      setStyle("animate-slideToL " + sideMenuStyle);
-      setTimeout(() => {
-        setStyle("hidden " + sideMenuStyle);
-      }, 200);
-    } else {
-      setOpen(true);
-      setStyle("animate-slideToR " + sideMenuStyle);
-    }
-  };
-
   const setHeader = () => {
     setLabel(
       routes.find((route) => {
@@ -114,92 +102,55 @@ const Dashboard = () => {
           <Loading text={"Unauthorized, redirecting"} />
         </div>
       ) : (
-        <>
-          <DashboardNav
-            handleMenuClick={handleMenuClick}
-            pageLabel={pageLabel}
-            open={open}
-          />
-          <div className="pt-14 z-40 fixed">
-            <Sidemenu style={style} handleMenuClick={handleMenuClick} />
-          </div>
+        <div className="flex md:ml-64 bg-white ml-16 min-h-screen">
+          <Sidemenu />
 
-          <div className="absolute">
-            <div className="pt-14 relative w-full flex h-screen box-border">
-              <div
-                className="w-full flex overflow-scroll"
-                onClick={() => open && handleMenuClick()}
-              >
-                {open && (
-                  <div className="w-full flex h-screen fixed z-30 bg-slate-700 opacity-50 "></div>
-                )}
-                <Routes>
-                  <Route
-                    path={"/accounts/:id"}
-                    element={<AccountPage authConfig={authConfig} />}
-                  />
-                  <Route
-                    path={"/accounts"}
-                    element={<ManageAccounts authConfig={authConfig} />}
-                  />
-                  <Route
-                    path={"/bulletin"}
-                    element={<ManageBulletin authConfig={authConfig} />}
-                  />
-                  <Route
-                    path={"/qr-scanner"}
-                    element={<AdminScanner authConfig={authConfig} />}
-                  />
-                  <Route
-                    path={"/scan-logs"}
-                    element={<ManageScanLogs authConfig={authConfig} />}
-                  />
-                  <Route
-                    path={"/rfid-devices"}
-                    element={<ManageDevices authConfig={authConfig} />}
-                  />
-                </Routes>
-              </div>
+          <div className="flex flex-col w-full">
+            <DashboardNav pageLabel={pageLabel} />
+            <div className="w-full p-5">
+              <React.Suspense fallback={<Loading />}>
+                <div className="relative w-full flex box-border">
+                  <div className="w-full flex overflow-scroll">
+                    <Routes>
+                      <Route path={"/accounts/:id"} element={<AccountPage />} />
+                      <Route path={"/accounts"} element={<ManageAccounts />} />
+                      <Route path={"/bulletin"} element={<ManageBulletin />} />
+                      <Route path={"/qr-scanner"} element={<AdminScanner />} />
+                      <Route path={"/scan-logs"} element={<ManageScanLogs />} />
+                      <Route
+                        path={"/rfid-devices"}
+                        element={<ManageDevices />}
+                      />
+                    </Routes>
+                  </div>
+                </div>
+              </React.Suspense>
             </div>
           </div>
-        </>
+        </div>
       )}
     </>
   );
 };
 
-export const DashboardNav = ({ handleMenuClick, pageLabel, open }) => {
+export const DashboardNav = ({ pageLabel }) => {
   return (
-    <div className=" bg-neutral-900 z-50 absolute flex select-none top-0 h-14 w-full text-gray-50">
-      {!open ? (
-        <span
-          onClick={handleMenuClick}
-          className="material-icons-sharp w-14 cursor-pointer text-center my-auto text-3xl"
-        >
-          menu
-        </span>
-      ) : (
-        <span
-          onClick={handleMenuClick}
-          className={
-            "material-icons-sharp cursor-pointer text-gray-50 w-14 px-5 block my-auto text-left"
-          }
-        >
-          arrow_back
-        </span>
-      )}
-      <span className="text-center my-auto">
-        <b>{pageLabel}</b>
+    <div className="pl-5 py-3 z-50 mx-2 mt-2 rounded-sm  select-none max-h-16 ">
+      <span className="font-bold block text-xl text-slate-600">
+        {pageLabel}
       </span>
     </div>
   );
 };
 
-export const Sidemenu = ({ style, handleMenuClick }) => {
+export const Sidemenu = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   return (
-    <div className={style}>
+    <div className={sideMenuStyle}>
+      <span className="font-bold block text-2xl text-center -ml-3 text-slate-800 pb-5">
+        {process.env.REACT_APP_NAME}
+      </span>
       {routes.map((route) => {
         return (
           <NavLink
@@ -207,7 +158,6 @@ export const Sidemenu = ({ style, handleMenuClick }) => {
             key={route.to}
             to={route.to}
             className={({ isActive }) => (isActive ? activeStyle : defStyle)}
-            onClick={handleMenuClick}
           >
             <span className="material-icons-sharp md:mr-5 inline-block">
               {route.icon}

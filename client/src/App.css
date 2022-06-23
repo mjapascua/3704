@@ -12,7 +12,25 @@
   background-position: bottom left;
   animation: expand-bgImg 0.15s linear;
 }
+/* width */
+.custom-table::-webkit-scrollbar {
+  width: 8px;
+}
 
+/* Track */
+.custom-table::-webkit-scrollbar-track {
+  background: #e2e8f0;
+}
+
+/* Handle */
+.custom-table::-webkit-scrollbar-thumb {
+  background: #06b6d4;
+}
+
+/* Handle on hover */
+.custom-table::-webkit-scrollbar-thumb:hover {
+  background: #06b6d4;
+}
 @keyframes expand-bgImg {
   0% {
     background-size: 10% 3px;

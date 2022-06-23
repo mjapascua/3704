@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ReturnButton } from "../components/Buttons/Return";
 import Loading from "../components/Loading/Loading";
 import { apiClient } from "../utils/requests";
 import CreateQRForm from "./User/CreateQRForm";
@@ -63,11 +64,8 @@ const VisitorForm = () => {
       )}
       {qr.url && status.valid && (
         <div className=" w-80 block px-3 md:px-5 relative">
-          <RenderQRCode
-            url={qr.url}
-            name={qr.name}
-            callback={() => setQR({ url: null })}
-          />
+          <ReturnButton callback={() => setQR({ url: null })} />
+          <RenderQRCode url={qr.url} name={qr.name} />
         </div>
       )}
     </div>

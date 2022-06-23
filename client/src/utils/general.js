@@ -1,8 +1,19 @@
+import { useEffect, useRef } from "react";
+
 export const swalCustomClass = {
   text: "text-lg !font-bold",
   popup: "mb-56",
   confirmButton: "font-semibold font-display p-4 text-sm rounded-sm",
   cancelButton: "font-semibold font-display p-4 text-sm rounded-sm",
+};
+
+export const useIsMounted = () => {
+  const mounted = useRef(false);
+  useEffect(() => {
+    mounted.current = true;
+    return () => (mounted.current = false);
+  }, []);
+  return mounted;
 };
 
 export const postCategories = {

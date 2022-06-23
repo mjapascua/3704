@@ -2,9 +2,10 @@ import React, { useState, useCallback, useRef } from "react";
 import { toast } from "react-toastify";
 import { Button } from "../../components/Buttons/Main";
 import Table from "../../components/Table/Table";
-import { postCategories } from "../../utils/general";
+import { useAuthHeader } from "../../utils/authService";
+import { postCategories, useIsMounted } from "../../utils/general";
 import { apiClient } from "../../utils/requests";
-const ManageBulletin = ({ authConfig }) => {
+const ManageBulletin = () => {
   const [data, setData] = useState({
     title: "",
     text: "",
@@ -14,6 +15,7 @@ const ManageBulletin = ({ authConfig }) => {
     tags: [],
   });
   const [fetchPosts, setFetchPosts] = useState(false);
+  const authConfig = useAuthHeader();
 
   const tagSelRef = useRef(null);
 
@@ -206,6 +208,8 @@ const EventManager = ({ authConfig }) => {
   );
 };
 const BulletinTable = ({ authConfig, fetchPosts }) => {
+  const isMounted = useIsMounted();
+
   const [paginate, setPaginate] = useState({
     data: [],
     total_count: 1,
@@ -230,7 +234,7 @@ const BulletinTable = ({ authConfig, fetchPosts }) => {
       apiClient
         .get(`bulletin?limit=${pageSize}&page=${pageIndex}`, authConfig)
         .then((res) => {
-          if (res.status === 200) {
+          if (res.status === 200 && isMounted) {
             setPaginate({ ...res.data, page_size: paginate.page_size });
           }
         })

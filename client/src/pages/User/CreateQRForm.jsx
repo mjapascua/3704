@@ -47,88 +47,87 @@ const CreateQRForm = ({ handleQRRequest }) => {
   }, [handlePhoneNumCheck]);
 
   return (
-    <div className="w-full">
-      <>
-        <span className="my-auto text-lg text-meadow-600 block pb-3 font-bold">
+    <div className="w-2/5 flex flex-col justify-center">
+      <form className="text-sm">
+        <span className="text-2xl text-cyan-600 block mb-6 font-bold">
           Create Visitor Pass
         </span>
-        <form className=" w-80 text-sm">
-          <div>
+        <div>
+          <label>
+            <b> First Name</b>
+            <input
+              type="text"
+              name="fname"
+              className="form-input"
+              value={data.fname}
+              onChange={handleChange}
+              placeholder="Enter first name"
+              required
+            />
+          </label>
+          <label>
+            <b> Last Name</b>
+            <input
+              type="text"
+              name="lname"
+              value={data.lname}
+              className="form-input"
+              onChange={handleChange}
+              placeholder="Enter last name"
+              required
+            />
+          </label>
+          <div className=" relative">
             <label>
-              First Name
-              <input
-                type="text"
-                name="fname"
-                className="form-input"
-                value={data.fname}
-                onChange={handleChange}
-                placeholder="Enter first name"
-                required
-              />
-            </label>
-            <label>
-              Last Name
-              <input
-                type="text"
-                name="lname"
-                value={data.lname}
-                className="form-input"
-                onChange={handleChange}
-                placeholder="Enter last name"
-                required
-              />
-            </label>
-            <div className=" relative">
-              <label>
-                Phone
-                <span className="flex">
-                  <span className="px-1 mr-2 py-4 text-base inline-block">
-                    <>+63</>
-                  </span>
-                  <input
-                    type="text"
-                    name="contact"
-                    onChange={handleChange}
-                    value={data.contact}
-                    className="form-input !inline-block"
-                    placeholder="9*********"
-                    required
-                  />
+              <b> Phone</b>
+              <span className="flex">
+                <span className="px-1 mr-2 py-4 text-base inline-block">
+                  <>+63</>
                 </span>
-              </label>
-            </div>
-            <label>
-              Address
-              <input
-                type="text"
-                name="address"
-                value={data.address}
-                className="form-input"
-                onChange={handleChange}
-                placeholder="Enter address"
-                required
-              />
+                <input
+                  type="text"
+                  name="contact"
+                  onChange={handleChange}
+                  value={data.contact}
+                  className="form-input !inline-block"
+                  placeholder="9*********"
+                  required
+                />
+              </span>
             </label>
           </div>
-          <StatusMessage {...status} />
-          <br />
-          <Button
-            primary
-            disabled={
-              !(
-                !status.active &&
-                data.fname &&
-                data.lname &&
-                data.contact &&
-                data.address
-              )
-            }
-            onClick={() => handleQRRequest(data)}
-          >
-            Create
-          </Button>
-        </form>
-      </>
+          <label>
+            <b> Address</b>
+            <input
+              type="text"
+              name="address"
+              value={data.address}
+              className="form-input"
+              onChange={handleChange}
+              placeholder="Enter address"
+              required
+            />
+          </label>
+        </div>
+        <StatusMessage {...status} />
+        <br />
+        <Button
+          primary
+          className="w-full"
+          disabled={
+            !(
+              !status.active &&
+              data.fname &&
+              data.lname &&
+              data.contact &&
+              data.address
+            )
+          }
+          onClick={() => handleQRRequest(data)}
+        >
+          Create
+        </Button>
+      </form>
     </div>
   );
 };

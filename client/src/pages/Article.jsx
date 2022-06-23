@@ -44,38 +44,39 @@ const Article = () => {
   }, [fetchArticle]);
 
   return (
-    <div className="bg-slate-50 flex flex-col items-center w-full">
-      <div className="z-10 w-4/5 flex justify-center items-center flex-col">
-        <div className=" w-full h-fit md:mt-44 px-10 py-7 text-center bg-gray-800 rounded-t-md bg-opacity-30 backdrop-blur-sm">
-          <h1 className=" text-4xl font-head mb-7 mx-auto w-fit px-2 text-white font-bold">
+    <div className="flex flex-col bg-slate-100 items-center w-full">
+      <div className="z-10 w-4/5 mt-5  items-center flex flex-col">
+        <div className=" w-full h-fit px-10 py-7 shadow-md rounded-sm bg-white mb-5s6">
+          <h1 className=" text-3xl font-head mb-6  w-fit text-slate-800 font-bold">
             {data?.title}
           </h1>
+
           {data?.tags?.map((tag) => {
             return (
               <span
                 key={tag}
                 className={
                   postCategories[tag].color +
-                  " text-white px-4 py-2 m-2 rounded-sm font-semibold"
+                  " text-white px-3 py-1 mr-1 rounded-sm font-semibold"
                 }
               >
                 {postCategories[tag].text}
               </span>
             );
           })}
+          <span className="w-full block border-t py-1 my-2">
+            <h4 className=" text-gray-400 text-lg">{datePub}</h4>
+            <h4 className=" text-gray-600 ">
+              {data?.author?.fname + " " + data?.author?.lname.charAt(0) + "."}
+            </h4>
+          </span>
         </div>
-
-        <div className="inline-block shadow-sprd w-full rounded-b-md bg-white mb-20 py-5 px-10 font-medium">
+        <div
+          className="w-full h-112 object-cover bg-no-repeat bg-cover"
+          style={{ backgroundImage: `url(${bgStr})` }}
+        ></div>
+        <div className="inline-block shadow-md w-full rounded-sm pb-20 bg-white mb-20 py-5 px-10 font-medium">
           <span className="flex justify-between pb-4 mb-8 border-b">
-            <span>
-              <h4 className=" text-gray-400 text-lg">{datePub}</h4>
-              <h4 className=" text-gray-600 ">
-                {data?.author?.fname +
-                  " " +
-                  data?.author?.lname.charAt(0) +
-                  "."}
-              </h4>
-            </span>
             <Button
               className={
                 "border-gray-200 border group disabled:!bg-white " +
@@ -113,11 +114,6 @@ const Article = () => {
           </p>
         </div>
       </div>
-
-      <div
-        className="w-full h-112 fixed object-cover -mt-10 bg-no-repeat bg-cover"
-        style={{ backgroundImage: `url(${bgStr})` }}
-      ></div>
     </div>
   );
 };

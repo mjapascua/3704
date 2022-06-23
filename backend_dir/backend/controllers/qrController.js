@@ -30,7 +30,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
   const guestExists = await Guest.findOne({
     fname: fname,
     lname: lname,
-    contaact: contact,
+    contact: contact,
     uid: req.user.id,
   }).populate("qr");
 
@@ -57,21 +57,6 @@ const requestGuestQR = asyncHandler(async (req, res) => {
 
     guest.qr = guestAccess.id;
     guest.save();
-    /* 
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      {
-        $push: {
-          guests: guest.id,
-        },
-      },
-      { new: true }
-    );
-
-    if (!user) {
-      res.status(400);
-      throw new Error("Guest registration failed");
-    } */
 
     try {
       const url = await qrCode.toDataURL(guestAccess.hash, qrOptions);
@@ -138,13 +123,15 @@ const userQR = asyncHandler(async (req, res) => {
 });
 
 const guestQR = asyncHandler(async (req, res) => {
-  const access = await AccessString.findById(req.params.id).lean();
+  const access = await AccessString.findById(req.params.id)
+    .lean()
+    .populate("g_id", "fname lname");
   if (!access) {
     res.status(404);
     throw new Error("Not found!");
   }
   const url = await qrCode.toDataURL(access.hash, qrOptions);
-  res.json(url);
+  res.json({ url: url, name: access.g_id.fname + " " + access.g_id.lname });
 });
 
 const checkQR = asyncHandler(async (req, res) => {

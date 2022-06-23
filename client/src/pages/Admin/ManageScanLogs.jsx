@@ -2,6 +2,8 @@ import axios from "axios";
 import { useCallback, useState, useEffect, useMemo, useRef } from "react";
 import { Button } from "../../components/Buttons/Main";
 import Table from "../../components/Table/Table";
+import { useAuthHeader } from "../../utils/authService";
+import { useIsMounted } from "../../utils/general";
 import { apiClient } from "../../utils/requests";
 const dateOptions = {
   dateStyle: "medium",
@@ -9,7 +11,7 @@ const dateOptions = {
 };
 const accessTypes = ["qr", "rf"];
 
-const ManageScanLogs = ({ authConfig }) => {
+const ManageScanLogs = () => {
   const [paginate, setPaginate] = useState({
     data: [],
     total_count: 1,
@@ -31,7 +33,8 @@ const ManageScanLogs = ({ authConfig }) => {
     createdAt: "",
   });
   //const [nameMatch, setNMatch] = useState({ first: "", last: "" });
-
+  const isMounted = useIsMounted();
+  const authConfig = useAuthHeader();
   const fetchIdRef = useRef(0);
   const refreshRef = useRef();
 
@@ -119,12 +122,12 @@ const ManageScanLogs = ({ authConfig }) => {
             //    nq: cleanName,
           })
           .then((res) => {
-            if (res.status === 200) {
+            if (res.status === 200 && isMounted) {
               setPaginate({ ...res.data, page_size: paginate.page_size });
             }
           })
           .finally(() => {
-            setLoading(false);
+            if (isMounted) setLoading(false);
           });
       }
     },
@@ -132,20 +135,11 @@ const ManageScanLogs = ({ authConfig }) => {
   );
 
   const handleChangeFilter = ({ target }) => {
-    setFilter((prev) => {
-      return { ...prev, [target.name]: target.value };
-    });
+    if (isMounted)
+      setFilter((prev) => {
+        return { ...prev, [target.name]: target.value };
+      });
   };
-
-  /*   const handleNameMatch = ({ target }) => {
-    setNMatch((prev) => {
-      return { ...prev, [target.name]: target.value };
-    });
-  }; */
-
-  /*   const setPageSize = ({target})=>{
-    setPaginate(prev=>{return {...prev, page_size:target.value}})
-  } */
 
   const getIntOpts = useCallback(() => {
     const adminReq = apiClient.get("admin/users/ADMIN", authConfig);
@@ -155,23 +149,25 @@ const ManageScanLogs = ({ authConfig }) => {
       .all([adminReq, deviceReq, locReq])
       .then(
         axios.spread((...res) => {
-          setOptions({
-            users: res[0].data,
-            devices: res[1].data,
-            locations: res[2].data,
-          });
+          if (isMounted)
+            setOptions({
+              users: res[0].data,
+              devices: res[1].data,
+              locations: res[2].data,
+            });
         })
       )
       .catch((err) => {
         console.error(err);
       });
   }, []);
+
   useEffect(() => {
     getIntOpts();
   }, [getIntOpts]);
 
   return (
-    <div className="mx-10" style={{ width: "1100px" }}>
+    <div className="p-1">
       <span className="w-full flex justify-between py-1 cursor-pointer font-semibold text-sm">
         <button
           ref={refreshRef}

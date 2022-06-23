@@ -14,6 +14,10 @@ const accessStringSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Guest",
     },
+    resident: {
+      type: Boolean,
+      default: null,
+    },
     hash: {
       type: String,
     },
