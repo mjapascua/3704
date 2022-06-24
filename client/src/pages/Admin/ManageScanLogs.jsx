@@ -242,26 +242,6 @@ const ManageScanLogs = () => {
             })}
           </select>
         </label>
-        {/*  <span>
-          <label>
-            First
-            <input
-              name="first"
-              value={nameMatch.first}
-              onChange={handleNameMatch}
-              className="ml-2 p-1"
-            />
-          </label>
-          <label>
-            Last
-            <input
-              name="last"
-              value={nameMatch.last}
-              onChange={handleNameMatch}
-              className="ml-2 p-1"
-            />
-          </label>
-        </span> */}
         <UserSelector handleChangeFilter={handleChangeFilter} />
         <DateSelector handleChangeFilter={handleChangeFilter} />
       </span>

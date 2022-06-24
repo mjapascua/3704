@@ -14,7 +14,7 @@ const QRFormPage = ({ authConfig }) => {
       .get("/user/request_share_link", authConfig)
       .then((res) => {
         navigator.clipboard.writeText(res.data.link);
-        toast("Copied Link!", { theme: "dark" });
+        toast.info("Copied Link!");
       })
       .catch(() =>
         toast.error("Could not generate link! check your connection")

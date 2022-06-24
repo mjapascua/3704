@@ -24,12 +24,12 @@
 
 /* Handle */
 .custom-table::-webkit-scrollbar-thumb {
-  background: #06b6d4;
+  background: #54687b;
 }
 
 /* Handle on hover */
 .custom-table::-webkit-scrollbar-thumb:hover {
-  background: #06b6d4;
+  background: #61788e;
 }
 @keyframes expand-bgImg {
   0% {

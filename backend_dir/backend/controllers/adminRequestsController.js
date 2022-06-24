@@ -49,8 +49,7 @@ const filterUsers = asyncHandler(async (req, res) => {
   User.paginate(
     parseInt(req.query.page),
     parseInt(req.query.limit),
-    req.body,
-    // req.query.role ? { role: ROLES[req.query.role] } : null,
+    req.query.r ? { role: ROLES[req.query.r] } : null,
     function (err, docs) {
       if (err) {
         res.status(404);
@@ -79,18 +78,11 @@ const getUsersByRole = asyncHandler(async (req, res) => {
 // @route   DELETE /api/admin/users/:id
 // @access  Private
 const deleteUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findByIdAndDelete(req.params.id);
   if (!user) {
     res.status(404);
     throw new Error("That user does not exist");
   }
-  const deleteUser = await user.remove();
-
-  if (!deleteUser) {
-    res.status(400);
-    throw new Error("Unable to process delete request");
-  }
-
   res.json({
     message: "User was successfully deleted",
   });
@@ -111,6 +103,15 @@ const getAllUnverfied = asyncHandler(async (req, res) => {
 // @route   PUT /api/admin/verify/:id
 // @access  Private
 const verifyUser = asyncHandler(async (req, res) => {
+  if (req.body.reject) {
+    const account = await UnverifiedAcc.findByIdAndDelete(req.params.id);
+    if (!account || account.message) {
+      res.status(400);
+      throw new Error(unverified.message || "Uknown Error");
+    }
+    res.json({ account, message: "Request rejected" });
+    return;
+  }
   const account = await UnverifiedAcc.findByIdAndUpdate(
     req.params.id,
     {
@@ -358,37 +359,63 @@ const removeFromQueue = asyncHandler(async (req, res) => {
 // @route   GET /api/admin/locations
 // @access  Private
 const getScanPoints = asyncHandler(async (req, res) => {
-  const locations = await ScanPoint.find({}).lean();
+  const filter = req.query.a === "true" ? { active: true } : {};
+  const locations = await ScanPoint.find(filter).sort({ createdAt: -1 }).lean();
   res.status(200).json(locations);
 });
 // @desc    Add a location
 // @route   POST /api/admin/locations
 // @access  Private
 const addScanPoint = asyncHandler(async (req, res) => {
-  const location = await ScanPoint.findOne({ label: req.body.label }).lean();
-  if (location) {
+  const location = await ScanPoint.findOne({ label: req.body.label });
+  if (location && location.active) {
+    console.log(location);
     res.status(400);
     throw new Error("Location exists");
   }
-  const newScanPoint = await ScanPoint.create({ label: req.body.label }).lean();
+  if (location && !location.active) {
+    location.active = true;
+    location.save();
+    res.status(201).json(location);
+  }
+  if (!location) {
+    const newScanPoint = await ScanPoint.create({ label: req.body.label });
 
-  if (!newScanPoint) {
-    res.status(400);
-    throw new Error("Add failed");
-  } else {
-    res.status(201).json(newScanPoint);
+    if (!newScanPoint) {
+      res.status(400);
+      throw new Error("Add failed");
+    } else {
+      res.status(201).json(newScanPoint);
+    }
   }
 });
-// @desc    Add a location
-// @route   DELETE /api/admin/locations
+// @desc    Disable location
+// @route   PUT /api/admin/locations/:id
 // @access  Private
-const delScanPoint = asyncHandler(async (req, res) => {
-  const location = await ScanPoint.findByIdAndDelete(req.body.id).lean();
+const updateScanPoint = asyncHandler(async (req, res) => {
+  const location = await ScanPoint.findByIdAndUpdate(
+    req.params.id,
+    req.body
+  ).lean();
   if (location.message || !location) {
     res.status(400);
-    throw new Error("Remove failed");
+    throw new Error("Update failed");
   } else {
-    const locations = await ScanPoint.find({}).lean();
+    const locations = await ScanPoint.find({}).sort({ createdAt: -1 }).lean();
+    res.json(locations);
+  }
+});
+
+// @desc    Delete a location
+// @route   DELETE /api/admin/locations/:id
+// @access  Private
+const delScanPoint = asyncHandler(async (req, res) => {
+  const location = await ScanPoint.findByIdAndDelete(req.params.id).lean();
+  if (location.message || !location) {
+    res.status(400);
+    throw new Error("Delete failed");
+  } else {
+    const locations = await ScanPoint.find({}).sort({ createdAt: -1 }).lean();
     res.json(locations);
   }
 });
@@ -404,59 +431,85 @@ const filterGuests = asyncHandler(async (req, res) => {
 // @route   GET /api/admin/rfid/devices
 // @access  Private
 const getRFIDDevices = asyncHandler(async (req, res) => {
-  const devices = await RFIDDevice.find().lean();
+  const devices = await RFIDDevice.find({})
+    .lean()
+    .populate("user", "_id fname lname");
+
   res.json(devices);
 });
 // @desc    Register an rfid device
 // @route   POST /api/admin/rfid/devices
 // @access  Private
 const registerRFIDDevice = asyncHandler(async (req, res) => {
-  const device = await RFIDDevice.findOne({ device_key: req.body.key }).lean();
-  if (device) {
+  const device = await RFIDDevice.findOneAndUpdate(
+    { device_key: req.body.key },
+    {
+      device_label: req.body.label,
+      device_key: req.body.key,
+      scan_point: req.body.locID || null,
+      user: req.body.userID || null,
+      active: true,
+    },
+    { upsert: true, new: true }
+  )
+    .sort({ createdAt: -1 })
+    .lean();
+
+  if (!device) {
     res.status(400);
-    throw new Error("Key already taken please use another key");
+    throw new Error("Update error");
   }
+  res.status(201).json(device);
+
+  /* 
   const newDevice = await RFIDDevice.create({
     device_label: req.body.label,
     device_key: req.body.key,
     scan_point: req.body.locID || null,
     user: req.body.userID || null,
   });
-
-  if (!newDevice) {
+ */
+  /*   if (!newDevice) {
     res.status(400);
     throw new Error("Registration failed");
   } else {
     res.status(201).json(newDevice);
-  }
-});
-// @desc    Register an rfid device
-// @route   PUT /api/admin/rfid/devices
-// @access  Private
-const updateRFIDDevice = asyncHandler(async (req, res) => {
-  const device = await RFIDDevice.findOneAndUpdate(
-    { device_key: req.body.key },
-    req.body,
-    { new: true }
-  ).lean();
-  if (!device) {
-    res.status(400);
-    throw new Error("Update failed");
-  } else {
-    res.sendStatus(200);
-  }
+  } */
 });
 
 // @desc    Delete an rfid device
-// @route   DELETE /api/admin/rfid/devices
+// @route   GET /api/admin/rfid/devices/disable/:id
 // @access  Private
-const delRFIDDevice = asyncHandler(async (req, res) => {
-  const device = await RFIDDevice.findByIdAndDelete(req.body.id).lean();
+const updateRFIDDevice = asyncHandler(async (req, res) => {
+  const device = await RFIDDevice.findByIdAndUpdate(
+    req.params.id,
+    req.body
+  ).lean();
+
   if (!device || device.message) {
     res.status(400);
     throw new Error("Update failed");
   } else {
-    const device = await RFIDDevice.find({}).lean();
+    const devices = await RFIDDevice.find({})
+      .sort({ createdAt: -1 })
+      .lean()
+      .populate("user", "_id fname lname");
+    res.json(devices);
+  }
+});
+// @desc    Delete an rfid device
+// @route   DELETE /api/admin/rfid/devices/:id
+// @access  Private
+const delRFIDDevice = asyncHandler(async (req, res) => {
+  const device = await RFIDDevice.findByIdAndDelete(req.params.id).lean();
+  if (!device) {
+    res.status(400);
+    throw new Error("Delete failed");
+  } else {
+    const device = await RFIDDevice.find({})
+      .sort({ createdAt: -1 })
+      .lean()
+      .populate("user", "_id fname lname");
     res.json(device);
   }
 });
@@ -474,7 +527,7 @@ const checkRFIDTag = asyncHandler(async (req, res) => {
     .lean()
     .populate("scan_point", "label");
 
-  if (!tag || !scanner) {
+  if (!tag || !scanner || !scanner.active) {
     res.status(401);
     throw new Error("Unauthorized");
   }
@@ -604,11 +657,12 @@ module.exports = {
   removeFromQueue,
   getScanPoints,
   addScanPoint,
+  updateScanPoint,
+  delRFIDDevice,
   delScanPoint,
   getRFIDDevices,
   registerRFIDDevice,
   updateRFIDDevice,
-  delRFIDDevice,
   checkRFIDTag,
   findByName,
   filterScanLogs,

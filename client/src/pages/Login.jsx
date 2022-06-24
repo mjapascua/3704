@@ -101,7 +101,7 @@ function Login() {
                   onSubmit={handleLoginRequest}
                   className="px-2 lg:px-4 w-96"
                 >
-                  <span className="my-auto text-lg text-meadow-600 block pb-6 font-bold">
+                  <span className="my-auto text-lg text-teal-600 block pb-6 font-bold">
                     Login
                   </span>
                   <div className="data">
@@ -151,7 +151,7 @@ function Login() {
                         className="ml-2"
                       />
                     </label>
-                    <span className="underline font-semibold text-meadow-700">
+                    <span className="underline font-semibold text-teal-600">
                       <a href="#">Forgot Password?</a>
                     </span>
                   </span>
@@ -178,7 +178,7 @@ function Login() {
               )}
             </div>
           </div>
-          <div className="w-1/2  bg-meadow-700  inline-block"></div>
+          <div className="w-1/2  bg-teal-600  inline-block"></div>
         </>
       )}
     </main>

@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { apiClient } from "../../utils/requests";
 import { Link } from "react-router-dom";
@@ -12,14 +12,17 @@ const ManageAccounts = () => {
   const authConfig = useAuthHeader();
 
   return (
-    <div>
+    <div className="w-full">
       <AwaitingVerification authConfig={authConfig} />
+      <span className="font-bold block text-lg px-1 mt-10 mb-5 text-slate-600">
+        Registered Accounts
+      </span>
       <AccountsTable authConfig={authConfig} />
     </div>
   );
 };
 
-const UnverifiedCard = ({ account, authConfig }) => {
+const UnverifiedCard = ({ account, authConfig, rejectAccount }) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(account);
 
@@ -75,7 +78,7 @@ const UnverifiedCard = ({ account, authConfig }) => {
   };
 
   return (
-    <div className="p-3 border rounded-sm bg-white mr-5">
+    <div className="p-4 border rounded shadow mr-5">
       {loading ? (
         <Loading />
       ) : (
@@ -105,14 +108,22 @@ const UnverifiedCard = ({ account, authConfig }) => {
             Status :
             <b className={!data.verified ? "text-rose-500" : "text-violet-700"}>
               {!data.verified
-                ? "Not yet verified"
-                : "Awaiting email confirmation"}
+                ? " Not yet verified"
+                : " Awaiting email confirmation"}
             </b>
           </span>
           {!data.verified && (
-            <Button onClick={verifyAccount} disabled={!data.role} primary>
-              Verify
-            </Button>
+            <>
+              <Button
+                onClick={rejectAccount}
+                className="w-56 bg-rose-500 mb-2 mt-4 block text-slate-50"
+              >
+                Reject
+              </Button>
+              <Button onClick={verifyAccount} disabled={!data.role} primary>
+                Verify
+              </Button>
+            </>
           )}
         </div>
       )}
@@ -124,6 +135,32 @@ const AwaitingVerification = ({ authConfig }) => {
   const [loading, setLoading] = useState(false);
   const [accounts, setAccounts] = useState([]);
   const isMounted = useIsMounted();
+
+  const rejectAccount = (id) => {
+    const toastId = 1;
+    setLoading(true);
+    try {
+      apiClient
+        .put("admin/verify/" + id, { reject: true }, authConfig)
+        .then((res) => {
+          if (res.status === 200) {
+            fetchAccounts();
+            toast.update(toastId, {
+              type: toast.TYPE.SUCCESS,
+              render: res.data.message,
+              autoClose: 2000,
+            });
+          }
+        });
+    } catch (error) {
+      toast.update(toastId, {
+        type: toast.TYPE.ERROR,
+        render: error.response.message,
+        autoClose: 2000,
+      });
+    }
+    setLoading(false);
+  };
 
   const fetchAccounts = useCallback(() => {
     setLoading(true);
@@ -143,24 +180,39 @@ const AwaitingVerification = ({ authConfig }) => {
   }, [fetchAccounts]);
 
   return (
-    <div className="flex w-full py-2 overflow-x-scroll">
-      {loading ? (
-        <Loading />
-      ) : (
-        accounts.map((acc, i) => {
-          return (
-            <React.Fragment key={i}>
-              <UnverifiedCard account={acc} authConfig={authConfig} />
-            </React.Fragment>
-          );
-        })
-      )}
-    </div>
+    <>
+      <span className="font-bold block text-lg px-1 mb-2 text-slate-600">
+        Unapproved accounts
+      </span>
+      <div className="flex bg-slate-100 w-full py-2 overflow-x-scroll">
+        {accounts.length > 0 ? (
+          accounts.map((acc, i) => {
+            return (
+              <React.Fragment key={i}>
+                <UnverifiedCard
+                  account={acc}
+                  authConfig={authConfig}
+                  rejectAccount={() => rejectAccount(acc._id)}
+                />
+              </React.Fragment>
+            );
+          })
+        ) : (
+          <span className="text-center font-semibold w-full text-slate-400">
+            No accounts for approval.
+          </span>
+        )}
+      </div>
+    </>
   );
 };
 
 const AccountsTable = ({ authConfig }) => {
   const isMounted = useIsMounted();
+  const [filter, setFilter] = useState({
+    role: "",
+  });
+  const fetchIdRef = useRef(0);
 
   const columns = React.useMemo(() => [
     {
@@ -210,26 +262,69 @@ const AccountsTable = ({ authConfig }) => {
   });
   const [loading, setLoading] = useState(false);
 
-  const fetchUsers = useCallback(({ pageIndex, pageSize }) => {
-    setLoading(true);
-    apiClient
-      .get(`admin/users?limit=${pageSize}&page=${pageIndex}`, authConfig)
-      .then((res) => {
-        if (res.status === 200 && isMounted) {
-          setPaginate({ ...res.data, page_size: paginate.page_size });
-        }
-      })
-      .catch(() => toast.error("User fetch fail!"))
-      .finally(() => setLoading(false));
-  }, []);
+  const handleChangeFilter = ({ target }) => {
+    if (isMounted)
+      setFilter((prev) => {
+        return { ...prev, [target.name]: target.value };
+      });
+  };
+
+  const fetchUsers = useCallback(
+    ({ pageIndex, pageSize }) => {
+      const fetchId = ++fetchIdRef.current;
+
+      if (fetchId === fetchIdRef.current) {
+        setLoading(true);
+        apiClient
+          .get(
+            `admin/users?limit=${pageSize}&page=${pageIndex}&r=${filter.role}`,
+            authConfig
+          )
+          .then((res) => {
+            if (res.status === 200 && isMounted) {
+              setPaginate({ ...res.data, page_size: paginate.page_size });
+            }
+          })
+          .catch(() => toast.error("User fetch fail!"))
+          .finally(() => setLoading(false));
+      }
+    },
+    [filter]
+  );
+
+  /* useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]); */
 
   return (
-    <Table
-      columns={columns}
-      paginate={paginate}
-      fetchData={fetchUsers}
-      loading={loading}
-    />
+    <>
+      <span className="w-full flex justify-between py-1 cursor-pointer font-semibold text-sm">
+        <label>
+          Account type
+          <select
+            name="role"
+            value={filter.role}
+            onChange={handleChangeFilter}
+            className="ml-2"
+          >
+            <option value={""}>All</option>
+            {Object.keys(authService.ROLES).map((r, index) => {
+              return (
+                <option key={index} value={r}>
+                  {r}
+                </option>
+              );
+            })}
+          </select>
+        </label>
+      </span>
+      <Table
+        columns={columns}
+        paginate={paginate}
+        fetchData={fetchUsers}
+        loading={loading}
+      />
+    </>
   );
 };
 /* 

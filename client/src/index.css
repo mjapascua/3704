@@ -61,12 +61,12 @@ code {
     );
   }
   .gradient-divided-meadow {
-    background: theme("colors.cyan.500");
+    background: theme("colors.meadow.500");
     background: linear-gradient(
       270deg,
-      theme("colors.cyan.500") 29%,
-      theme("colors.cyan.400") 29%,
-      theme("colors.cyan.400") 100%
+      theme("colors.meadow.500") 29%,
+      theme("colors.meadow.400") 29%,
+      theme("colors.meadow.400") 100%
     );
   }
   .gradient-divided-kape {
@@ -99,11 +99,11 @@ code {
 }
 @layer components {
   .form-input {
-    @apply border border-gray-300 focus:ring-1 duration-200 transition-colors ease-in-out outline-none focus:bg-white focus:border-cyan-800 focus:ring-cyan-500 bg-gray-100 text-sm w-full p-2 mt-2 mb-4 rounded-sm;
+    @apply border border-gray-300 focus:ring-1 duration-200 transition-colors ease-in-out outline-none focus:bg-white focus:border-cyan-800 focus:ring-cyan-500 bg-gray-50 text-sm w-full p-2 mt-2 mb-4 rounded-sm;
   }
   input,
   select {
-    @apply border border-gray-300 focus:ring-1 duration-200 transition-colors ease-in-out outline-none focus:bg-white focus:border-cyan-800 focus:ring-cyan-500  text-sm rounded-sm;
+    @apply border border-gray-300 focus:ring-1 duration-200 transition-colors ease-in-out outline-none focus:bg-white focus:border-cyan-800 focus:ring-cyan-500 bg-gray-50 text-sm rounded-sm;
   }
   .table-spacing {
     border-spacing: 0 theme("spacing.2");

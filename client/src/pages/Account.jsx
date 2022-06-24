@@ -300,7 +300,7 @@ const UserAccount = ({ authConfig }) => {
                                 show qr
                               </Button>
                               <Button
-                                className="text-rose-500"
+                                className="text-rose-500 hover:underline"
                                 onClick={() =>
                                   removeGuest({
                                     gId: el._id,
@@ -308,7 +308,7 @@ const UserAccount = ({ authConfig }) => {
                                   })
                                 }
                               >
-                                remove
+                                REMOVE
                               </Button>
                             </span>
                           </span>
@@ -387,6 +387,12 @@ const UserAccount = ({ authConfig }) => {
                 </label>
               </span>
               <br />
+              <Button
+                className="w-56 bg-rose-500 mr-4 text-slate-50"
+                onClick={() => setEdit(false)}
+              >
+                Cancel
+              </Button>
               <Button primary className="w-56" type={"submit"}>
                 Save
               </Button>

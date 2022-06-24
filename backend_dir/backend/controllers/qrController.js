@@ -31,23 +31,23 @@ const requestGuestQR = asyncHandler(async (req, res) => {
     fname: fname,
     lname: lname,
     contact: contact,
-    uid: req.user.id,
+    uid: req.user._id,
   }).populate("qr");
 
   if (!guestExists) {
-    const hash = generateMd5Hash(req.user.id + fname + contact);
+    const hash = generateMd5Hash(req.user._id + fname + contact);
     const guest = await Guest.create({
       fname: fname,
       lname: lname,
       contact: contact,
       addr: address,
-      u_id: req.user.id,
+      u_id: req.user._id,
     });
 
     const guestAccess = await AccessString.create({
       hash,
-      u_id: req.user.id,
-      g_id: guest.id,
+      u_id: req.user._id,
+      g_id: guest._id,
     });
 
     if (!guest || !guestAccess) {
@@ -55,7 +55,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
       throw new Error("Guest registration failed");
     }
 
-    guest.qr = guestAccess.id;
+    guest.qr = guestAccess._id;
     guest.save();
 
     try {
@@ -78,11 +78,11 @@ const requestGuestQR = asyncHandler(async (req, res) => {
   }
 
   if (!guestExists.active) {
-    const hash = generateMd5Hash(req.user.id + fname + contact);
+    const hash = generateMd5Hash(req.user._id + fname + contact);
     const guestAccess = await AccessString.create({
       hash,
-      u_id: req.user.id,
-      g_id: guestExists.id,
+      u_id: req.user._id,
+      g_id: guestExists._id,
     });
 
     guestExists.active = true;
@@ -148,7 +148,7 @@ const checkQR = asyncHandler(async (req, res) => {
 
   const logObj = {
     type: "qr",
-    by: req.user.id,
+    by: req.user._id,
     loc: req.body.locID,
     u_id: entry.u_id,
   };

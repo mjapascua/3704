@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ReturnButton } from "../components/Buttons/Return";
 import Loading from "../components/Loading/Loading";
 import { apiClient } from "../utils/requests";
 import CreateQRForm from "./User/CreateQRForm";
@@ -37,7 +36,7 @@ const VisitorForm = () => {
           toast.success("QR generated!");
           setQR({
             url: res.data.url,
-            name: data.first_name + " " + data.last_name,
+            name: data.fname + " " + data.lname,
           });
         }
         toast.error(res.data.message);
@@ -52,7 +51,7 @@ const VisitorForm = () => {
   }, [checkValidity]);
 
   return (
-    <div>
+    <div className="w-full flex my-10 items-center justify-center">
       {status.loading && <Loading />}
       {!status.loading && !status.valid && (
         <div className="w-full h-screen justify-center flex items-center text-gray-600">
@@ -63,8 +62,7 @@ const VisitorForm = () => {
         <CreateQRForm handleQRRequest={handleQRRequest} />
       )}
       {qr.url && status.valid && (
-        <div className=" w-80 block px-3 md:px-5 relative">
-          <ReturnButton callback={() => setQR({ url: null })} />
+        <div className=" block px-3 md:px-5 relative">
           <RenderQRCode url={qr.url} name={qr.name} />
         </div>
       )}

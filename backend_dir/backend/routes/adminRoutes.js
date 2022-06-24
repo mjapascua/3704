@@ -17,6 +17,7 @@ const {
   removeFromQueue,
   getScanPoints,
   addScanPoint,
+  updateScanPoint,
   delScanPoint,
   getRFIDDevices,
   registerRFIDDevice,
@@ -48,13 +49,18 @@ router.route("/guests").put(filterGuests);
 router
   .route("/locations")
   .get(protect, getScanPoints)
-  .post(protect, addScanPoint)
+  .post(protect, addScanPoint);
+router
+  .route("/locations/:id")
+  .put(protect, updateScanPoint)
   .delete(protect, delScanPoint);
 
 router
   .route("/rfid/devices")
   .get(protect, getRFIDDevices)
-  .post(protect, registerRFIDDevice)
+  .post(protect, registerRFIDDevice);
+router
+  .route("/rfid/devices/:id")
   .put(protect, updateRFIDDevice)
   .delete(protect, delRFIDDevice);
 

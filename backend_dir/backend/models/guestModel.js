@@ -44,6 +44,7 @@ const guestSchema = mongoose.Schema(
 
     active: {
       type: Boolean,
+      default: true,
     },
 
     last_disabled: {

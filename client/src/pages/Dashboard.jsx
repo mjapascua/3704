@@ -19,7 +19,7 @@ const ManageScanLogs = React.lazy(() => import("./Admin/ManageScanLogs"));
 const AdminScanner = React.lazy(() => import("./Admin/AdminScanner"));
 const AccountPage = React.lazy(() => import("./Admin/AccountPage"));
 export const navStyle =
-  "w-full flex items-center font-display py-4 text-sm cursor-pointer border-r-4 transition-all hover:text-slate-50 justify-center md:justify-start my-5 px-6";
+  "w-full flex items-center font-display py-4 text-sm cursor-pointer border-r-4 transition-all hover:text-white justify-center md:justify-start my-5 px-6";
 const activeStyle =
   "border-sky-600 text-sky-600 hover:bg-sky-600 hover:border-sky-700 " +
   navStyle;
@@ -135,8 +135,8 @@ const Dashboard = () => {
 
 export const DashboardNav = ({ pageLabel }) => {
   return (
-    <div className="pl-5 py-3 z-50 mx-2 mt-2 rounded-sm  select-none max-h-16 ">
-      <span className="font-bold block text-xl text-slate-600">
+    <div className="pl-4 py-3 z-50 mx-2 mt-2 rounded-sm  select-none max-h-16 ">
+      <span className="font-bold block text-xl text-slate-700">
         {pageLabel}
       </span>
     </div>

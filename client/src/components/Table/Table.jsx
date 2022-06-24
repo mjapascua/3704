@@ -48,10 +48,10 @@ const Table = ({ columns, paginate, fetchData, loading, refreshRef }) => {
 
   return (
     <div>
-      <div className="custom-table h-144 block overflow-y-scroll border bg-slate-50 border-slate-700">
+      <div className="custom-table h-144 block overflow-y-scroll border border-slate-700">
         <table
           {...getTableProps()}
-          className=" table-spacing table-auto w-full text-sm"
+          className=" table-spacing table-auto w-full bg-slate-50 text-sm"
         >
           <thead>
             {headerGroups.map((headerGroup) => (
@@ -121,7 +121,7 @@ const Table = ({ columns, paginate, fetchData, loading, refreshRef }) => {
         </table>
       </div>
 
-      <div className="flex justify-between px-2 bg-slate-50 py-1">
+      <div className="flex justify-between px-2 bg-white py-1">
         {loading ? (
           <span>Loading...</span>
         ) : (

@@ -4,7 +4,7 @@ import { apiClient } from "../../utils/requests";
 import { Button } from "../../components/Buttons/Main";
 import Swal from "sweetalert2";
 import Loading from "../../components/Loading/Loading";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ReturnButton } from "../../components/Buttons/Return";
 import { useAuthHeader } from "../../utils/authService";
 import { useIsMounted } from "../../utils/general";
@@ -20,6 +20,7 @@ const AccountPage = () => {
   let timeout;
   const authConfig = useAuthHeader();
   const isMounted = useIsMounted();
+  const navigate = useNavigate();
 
   const Queue = Swal.mixin({
     progressSteps: steps,
@@ -50,7 +51,6 @@ const AccountPage = () => {
   const getUser = useCallback(() => {
     apiClient.get("admin/user/" + param.id, authConfig).then((res) => {
       if (res.status === 200 && isMounted) {
-        console.log(res.data);
         setUser(res.data);
         setLoading(false);
       }
@@ -155,23 +155,6 @@ const AccountPage = () => {
           });
         }
       });
-    /*   Swal.fire({
-      title: "Register the card",
-      showConfirmButton: true,
-      input: "text",
-      inputLabel: "Full name",
-      inputValue: "",
-      showConfirmButton: true,
-      showDenyButton: true,
-      allowOutsideClick: false,
-    }).then(({ isDenied, isConfirmed, value }) => {
-      if (isDenied) {
-        cancelRegistration(queue_id);
-      }
-      if (isConfirmed) {
-        
-      }
-    }); */
   };
 
   const warnIfGuestHasRF = () => {
@@ -194,7 +177,23 @@ const AccountPage = () => {
       });
     } else handleRegistration();
   };
-
+  const deleteAcc = () => {
+    Swal.fire({
+      title: "Are you sure",
+      text: "confirm to delete",
+      icon: "question",
+      showCancelButton: true,
+    }).then(({ isConfirmed }) => {
+      if (isConfirmed) {
+        apiClient.delete("admin/user/" + param.id, authConfig).then((res) => {
+          if (res.status === 200) {
+            toast.success("Deleted");
+            navigate("/dashboard/accounts", { replace: true });
+          }
+        });
+      }
+    });
+  };
   useEffect(() => {
     getUser();
   }, [getUser]);
@@ -259,53 +258,65 @@ const AccountPage = () => {
                 />
               </label>
             </span>
-
-            <Button className="w-40" type={"submit"}>
-              Save
-            </Button>
-
-            {!queue_id ? (
-              <Button primary onClick={startCardRegistration}>
-                Add a tag to this account
+            <span className="">
+              <Button primary onClick={deleteAcc} className="!bg-rose-500 mx-5">
+                Delete
               </Button>
-            ) : (
-              <>
-                <Button primary onClick={handleRegistration}>
-                  Add to this user
-                </Button>
-                or
-                <label className="ml-4">
-                  Select a guest
-                  <select
-                    name="by"
-                    onChange={handleSelectGuest}
-                    className="ml-2"
-                  >
-                    <option value={""}></option>
-                    {user.guests.map((g, index) => {
-                      return (
-                        <option key={index} value={index}>
-                          {g.fname + " " + g.lname}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </label>
+              <Button primary type={"submit"}>
+                Save
+              </Button>
+
+              {!queue_id ? (
                 <Button
                   primary
-                  disabled={!regData.guest ? true : false}
-                  onClick={warnIfGuestHasRF}
+                  className="bg-indigo-500"
+                  onClick={startCardRegistration}
                 >
-                  Add to guest
+                  Add a tag to this account
                 </Button>
-                <Button
-                  className="text-white bg-rose-600"
-                  onClick={() => cancelRegistration(queue_id)}
-                >
-                  Cancel
-                </Button>
-              </>
-            )}
+              ) : (
+                <>
+                  <Button
+                    primary
+                    className="bg-indigo-500"
+                    onClick={handleRegistration}
+                  >
+                    Add to this user
+                  </Button>
+                  or
+                  <label className="ml-4">
+                    Select a guest
+                    <select
+                      name="by"
+                      onChange={handleSelectGuest}
+                      className="ml-2"
+                    >
+                      <option value={""}></option>
+                      {user.guests.map((g, index) => {
+                        return (
+                          <option key={index} value={index}>
+                            {g.fname + " " + g.lname}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </label>
+                  <Button
+                    primary
+                    disabled={!regData.guest ? true : false}
+                    onClick={warnIfGuestHasRF}
+                  >
+                    Add to guest
+                  </Button>
+                  <Button
+                    className="text-white bg-rose-600"
+                    onClick={() => cancelRegistration(queue_id)}
+                  >
+                    Cancel
+                  </Button>
+                </>
+              )}
+            </span>
           </form>
         </>
       )}

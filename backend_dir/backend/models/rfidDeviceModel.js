@@ -19,6 +19,9 @@ const RFIDDeviceSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    active: {
+      type: Boolean,
+    },
   },
   {
     timestamps: true,

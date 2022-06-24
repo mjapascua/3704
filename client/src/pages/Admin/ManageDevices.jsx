@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useCallback, useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 import { Button } from "../../components/Buttons/Main";
 import { useAuthHeader } from "../../utils/authService";
 import { useIsMounted } from "../../utils/general";
@@ -18,6 +20,7 @@ const ManageDevices = () => {
   });
   const authConfig = useAuthHeader();
   const isMounted = useIsMounted();
+
   const getIntData = useCallback(() => {
     const adminReq = apiClient.get("admin/users/ADMIN", authConfig);
     const deviceReq = apiClient.get("admin/rfid/devices", authConfig);
@@ -29,8 +32,18 @@ const ManageDevices = () => {
           if (isMounted) {
             // console.log(res);
             setAdmins(res[0].data);
-            setDevices(res[1].data);
-            setLocations(res[2].data);
+            setDevices(
+              res[1].data.sort((a, b) => {
+                if (!b.active) return -1;
+                if (a.active) return 1;
+              })
+            );
+            setLocations(
+              res[2].data.sort((a, b) => {
+                if (!b.active) return -1;
+                if (a.active) return 1;
+              })
+            );
           }
         })
       )
@@ -50,8 +63,12 @@ const ManageDevices = () => {
     apiClient
       .post("admin/locations", { label: newLoc }, authConfig)
       .then((res) => {
-        if (res.status === 201) getIntData();
-      });
+        if (res.status === 201) {
+          toast.success("created");
+          getIntData();
+        }
+      })
+      .catch((err) => toast.error(err.response.message));
   };
 
   const handleAddDevice = (e) => {
@@ -60,123 +77,316 @@ const ManageDevices = () => {
       if (res.status === 201) getIntData();
     });
   };
+  const disableLoc = (id) => {
+    Swal.fire({
+      title: "Are you sure",
+      text: "confirm to set inactive",
+      icon: "question",
+      showCancelButton: true,
+    }).then(({ isConfirmed }) => {
+      if (isConfirmed) {
+        apiClient
+          .put("admin/locations/" + id, { active: false }, authConfig)
+          .then((res) => {
+            if (res.status === 200) {
+              toast.success("Location is now inactive");
+              setLocations(
+                res.data.sort((a, b) => {
+                  if (!b.active) return -1;
+                  if (a.active) return 1;
+                })
+              );
+            }
+          });
+      }
+    });
+  };
+  const deleteLoc = (id) => {
+    Swal.fire({
+      title: "Are you sure",
+      text: "confirm to delete",
+      icon: "question",
+      showCancelButton: true,
+    }).then(({ isConfirmed }) => {
+      if (isConfirmed) {
+        apiClient.delete("admin/locations/" + id, authConfig).then((res) => {
+          if (res.status === 200) {
+            toast.success("Deleted");
+            setLocations(
+              res.data.sort((a, b) => {
+                if (!b.active) return -1;
+                if (a.active) return 1;
+              })
+            );
+          }
+        });
+      }
+    });
+  };
 
+  const disableDev = (id) => {
+    Swal.fire({
+      title: "Are you sure",
+      text: "confirm to set inactive",
+      icon: "question",
+      showCancelButton: true,
+    }).then(({ isConfirmed }) => {
+      if (isConfirmed) {
+        apiClient
+          .put("admin/rfid/devices/" + id, { active: false }, authConfig)
+          .then((res) => {
+            if (res.status === 200) {
+              toast.success("Device is now inactive");
+              setDevices(
+                res.data.sort((a, b) => {
+                  if (!b.active) return -1;
+                  if (a.active) return 1;
+                })
+              );
+            }
+          });
+      }
+    });
+  };
+  const deleteDev = (id) => {
+    Swal.fire({
+      title: "Are you sure",
+      text: "confirm to delete",
+      icon: "question",
+      showCancelButton: true,
+    }).then(({ isConfirmed }) => {
+      if (isConfirmed) {
+        apiClient.delete("admin/rfid/devices/" + id, authConfig).then((res) => {
+          if (res.status === 200) {
+            toast.success("Deleted");
+            setDevices(
+              res.data.sort((a, b) => {
+                if (!b.active) return -1;
+                if (a.active) return 1;
+              })
+            );
+          }
+        });
+      }
+    });
+  };
   useEffect(() => {
     getIntData();
   }, [getIntData]);
 
   return (
-    <div className="flex w-ful flex-col">
-      <div className=" w-4/5 flex bg-white p-4 border h-96">
-        <div className="w-1/2 inline-flex flex-col justify-between h-full p-3">
-          <form onSubmit={handleAddLoc}>
-            <h1>
-              <b>New Location</b>
-            </h1>
-            <span className="inline-flex my-5  justify-between ">
-              <label>
+    <div className="w-full mb-10 flex flex-col">
+      <span className="font-bold block text-lg px-1 mb-5 text-slate-600">
+        Scan Locations
+      </span>
+      <span className="flex pb-10 border-b">
+        <div className="w-1/3 border mr-5 inline-block h-fit px-4 py-3 shadow-md rounded">
+          <span className="w-full">
+            <span className="font-bold block text-lg mb-5 text-slate-600">
+              Add a new location
+            </span>
+            <form onSubmit={handleAddLoc} className=" w-full">
+              <label className="block">
                 Label
                 <br />
                 <input
                   type="text"
                   value={newLoc}
                   name="label"
-                  className="form-input !w-40"
+                  className="form-input w-full"
                   onChange={(e) => setNewLoc(e.target.value)}
                 />
               </label>
-            </span>
-          </form>
-          <Button
-            primary
-            className="w-full"
-            disabled={newLoc?.length < 1 ? true : false}
-            type="submit"
-          >
-            Add
-          </Button>
-        </div>
-        <div className="w-1/2 inline-block h-full overflow-y-auto bg-gray-100 p-2">
-          {locations.map((loc) => {
-            const created = new Date(loc.createdAt).toLocaleDateString();
-            return (
-              <span
-                key={loc._id}
-                className="py-2 px-4 group bg-white hover:shadow-md relative w-full shadow block border mb-2"
+              <Button
+                primary
+                className="w-full mt-5"
+                disabled={newLoc?.length < 1 ? true : false}
+                type="submit"
               >
-                <b>{loc.label}</b>
-                <br />
-                <span>Date created : {created}</span>
-                <Button className=" text-rose-500  absolute top-3 right-1">
-                  <span className="material-icons-sharp">delete</span>
-                </Button>
-              </span>
-            );
-          })}
-        </div>
-      </div>
-      <div className=" w-4/5">
-        Add a device
-        <form className="w-full py-1" onSubmit={handleAddDevice}>
-          <span className="inline-flex w-3/4 justify-between ">
-            <label>
-              Label
-              <input
-                type="text"
-                value={info.label}
-                name="label"
-                className="form-input !w-40"
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              Key
-              <input
-                type="text"
-                value={info.key}
-                name="key"
-                className="form-input !w-40"
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              Tag to user:
-              <select name="userID" value={info.userID} onChange={handleChange}>
-                <option value="">none</option>
-                {admins.map((user, index) => {
-                  return (
-                    <option key={index} value={user._id}>
-                      {user.fname + " " + user.lname}
-                    </option>
-                  );
-                })}
-              </select>
-            </label>
-            <label>
-              Tag to location:
-              <select name="locID" value={info.locID} onChange={handleChange}>
-                <option value="">none</option>
-                {locations.map((loc, index) => {
-                  return (
-                    <option key={index} value={loc._id}>
-                      {loc.label}
-                    </option>
-                  );
-                })}
-              </select>
-            </label>
+                Add
+              </Button>
+            </form>
           </span>
-          <Button
-            primary
-            disabled={
-              info.label.length < 1 || info.label.length < 1 ? true : false
-            }
-            type="submit"
-          >
-            Add
-          </Button>
-        </form>
-      </div>
+        </div>
+        <div className="w-4/5 border mr-5 inline-block h-fit px-4 py-3 shadow-md rounded">
+          <span className="font-bold block text-lg mb-5 text-slate-600">
+            Entries
+          </span>
+          <div className=" h-56 w-full overflow-y-scroll bg-gray-100 p-2">
+            {locations.map((loc) => {
+              const created = new Date(loc.createdAt).toLocaleDateString();
+
+              return (
+                <span
+                  key={loc._id}
+                  className={
+                    "flex items-center w-full h-16 justify-between mb-2 rounded shadow border px-3 py-1 " +
+                    (loc.active ? " bg-white" : " bg-slate-50")
+                  }
+                >
+                  <span>
+                    <b>{loc.label}</b> <br />
+                    <span className="text-sm text-slate-600">{created}</span>
+                  </span>
+                  <span>
+                    {loc.active ? (
+                      <Button
+                        onClick={() => disableLoc(loc._id)}
+                        className="text-indigo-500 hover:underline"
+                      >
+                        DISABLE
+                      </Button>
+                    ) : (
+                      <b className="text-slate-500 text-sm pr-4">INACTIVE</b>
+                    )}
+                    <Button
+                      onClick={() => deleteLoc(loc._id)}
+                      className="text-rose-500 hover:underline"
+                    >
+                      DELETE
+                    </Button>
+                  </span>
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      </span>
+      <br />
+      <span className="font-bold block text-lg px-1 mb-5 text-slate-600">
+        RFID devices
+      </span>
+      <span className="flex">
+        <div className="w-1/3 border mr-5 inline-block h-fit px-4 py-3 shadow-md rounded">
+          <span className="w-full">
+            <span className="font-bold block text-lg mb-5 text-slate-600">
+              Add a new device
+            </span>
+            <form className="w-full h-fit py-1" onSubmit={handleAddDevice}>
+              <span className="inline-flex flex-col w-full justify-between ">
+                <span className="flex ">
+                  <label className=" mr-4">
+                    Label
+                    <input
+                      type="text"
+                      value={info.label}
+                      name="label"
+                      className="form-input"
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label>
+                    Key
+                    <input
+                      type="text"
+                      value={info.key}
+                      name="key"
+                      className="form-input"
+                      onChange={handleChange}
+                    />
+                  </label>
+                </span>
+
+                <label className="mb-4">
+                  Tag to user:
+                  <select
+                    name="userID"
+                    value={info.userID}
+                    onChange={handleChange}
+                    className="w-full mt-2 py-2"
+                  >
+                    <option value="">none</option>
+                    {admins.map((user, index) => {
+                      return (
+                        <option key={index} value={user._id}>
+                          {user.fname + " " + user.lname}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </label>
+                <label className="mb-4">
+                  Tag to location:
+                  <select
+                    name="locID"
+                    value={info.locID}
+                    className="w-full mt-2 py-2"
+                    onChange={handleChange}
+                  >
+                    <option value="">none</option>
+                    {locations
+                      .filter((loc) => loc.active)
+                      .map((loc, index) => {
+                        return (
+                          <option key={index} value={loc._id}>
+                            {loc.label}
+                          </option>
+                        );
+                      })}
+                  </select>
+                </label>
+              </span>
+              <Button
+                primary
+                className="w-full mt-5"
+                disabled={
+                  info.label.length < 1 || info.label.length < 1 ? true : false
+                }
+                type="submit"
+              >
+                Add
+              </Button>
+            </form>
+          </span>
+        </div>
+        <div className="w-4/5 border mr-5 inline-block h-fit px-4 py-3 shadow-md rounded">
+          <span className="font-bold block text-lg mb-5 text-slate-600">
+            Entries
+          </span>
+          <div className=" h-80 w-full overflow-y-scroll bg-gray-100 p-2">
+            {devices.map((dev) => {
+              const created = new Date(dev.createdAt).toLocaleDateString();
+              return (
+                <span
+                  key={dev._id}
+                  className={
+                    "flex items-center w-full h-16 justify-between mb-2 rounded shadow border px-3 py-1 " +
+                    (dev.active ? " bg-white" : " bg-slate-50")
+                  }
+                >
+                  <span>
+                    <b>{dev.device_label} : </b>
+                    {dev.device_key} <br />
+                    <span className="text-sm text-slate-600">{created}</span>
+                  </span>{" "}
+                  {dev.user
+                    ? dev.user.fname + " " + dev.user.lname
+                    : "No user please set"}
+                  <br />
+                  <span>
+                    {dev.active ? (
+                      <Button
+                        onClick={() => disableDev(dev._id)}
+                        className="text-indigo-500 hover:underline"
+                      >
+                        DISABLE
+                      </Button>
+                    ) : (
+                      <b className="text-slate-500 text-sm pr-4">INACTIVE</b>
+                    )}
+                    <Button
+                      onClick={() => deleteDev(dev._id)}
+                      className="text-rose-500 hover:underline"
+                    >
+                      DELETE
+                    </Button>
+                  </span>
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      </span>
     </div>
   );
 };

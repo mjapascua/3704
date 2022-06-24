@@ -131,7 +131,7 @@ const getMe = asyncHandler(async (req, res) => {
   const { _id, fname, lname, email, residence, contact } = await User.findById(
     req.user.id
   ).lean();
-  const guests = await Guest.find({ u_id: req.user.id });
+  const guests = await Guest.find({ u_id: req.user.id, active: true });
   const tags = await RegisteredTag.find({ u_id: req.user.id }).populate("g_id");
 
   if (!_id) {

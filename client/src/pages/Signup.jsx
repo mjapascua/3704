@@ -144,7 +144,7 @@ function SignUp() {
                 onSubmit={handleSignUpRequest}
                 className="px-2 lg:px-4 w-96 block  overflow-hidden "
               >
-                <span className="my-auto text-lg text-violet-600 block font-bold">
+                <span className="my-auto text-lg text-teal-600 block font-bold">
                   Sign up
                 </span>
                 <span className="text-md block pb-4 pt-1">
@@ -260,7 +260,7 @@ function SignUp() {
                   SIGN UP
                 </Button>
                 <StatusMessage {...status} />
-                <span className="w-full mt-3 inline-block h-6 select-none relative text-lg text-meadow-600">
+                <span className="w-full mt-3 inline-block h-6 select-none relative text-lg text-teal-600">
                   {progress > 1 && (
                     <span
                       className="cursor-pointer absolute left-0 underline underline-offset-1"
@@ -293,9 +293,8 @@ function SignUp() {
                       <span
                         key={num}
                         className={
-                          (progress >= num
-                            ? " bg-meadow-500"
-                            : " bg-gray-300") + defClass
+                          (progress >= num ? " bg-teal-500" : " bg-gray-300") +
+                          defClass
                         }
                       ></span>
                     );
@@ -314,7 +313,7 @@ function SignUp() {
               </form>
             </div>
           </div>
-          <div className="w-1/2  bg-meadow-700  inline-block"></div>
+          <div className="w-1/2  bg-teal-600  inline-block"></div>
         </>
       )}
     </main>

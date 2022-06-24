@@ -14,7 +14,7 @@ const AdminScanner = () => {
 
   const getLoc = useCallback(() => {
     apiClient
-      .get("admin/locations", authConfig)
+      .get("admin/locations?a=true", authConfig)
       .then((res) => {
         if (res.status === 200 && isMounted) {
           setLocations(res.data);
