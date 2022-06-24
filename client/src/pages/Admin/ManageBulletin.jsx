@@ -57,113 +57,115 @@ const ManageBulletin = () => {
 
   return (
     <div className="w-full">
-      <form className="w-4/5 border px-4 py-3 rounded" onSubmit={handlePost}>
-        <span className="font-bold block text-lg mb-5 text-slate-600">
-          Create a post
-        </span>
-        <span className="inline-flex flex-col w-3/4 ">
-          <span className="flex">
-            <label className="w-fit inline-block">
-              <span className="block">
-                Title <span className="text-rose-500">*</span>
+      <div className="w-4/5 border mr-5 inline-block h-fit px-4 py-3 shadow-md rounded">
+        <form className="" onSubmit={handlePost}>
+          <span className="font-bold block text-lg mb-5 text-slate-600">
+            Create a post
+          </span>
+          <div className="flex">
+            <span className="inline-flex mr-2 flex-col w-1/2 ">
+              <span className="">
+                <label className="w-fit inline-block">
+                  <span className="block">Title</span>
+                  <input
+                    type="text"
+                    value={data.title}
+                    name="title"
+                    className="form-input !w-72"
+                    onChange={handleChange}
+                  />
+                </label>
+                <label className="inline-block">
+                  <span className="block">Category</span>
+                  <select
+                    onChange={handleAddTag}
+                    className="my-2 h-9 w-44"
+                    ref={tagSelRef}
+                  >
+                    <option value=""></option>
+                    <option value="event">Event</option>
+                    <option value="news">News</option>
+                    <option value="announcement">Announcement</option>
+                    <option value="report">Report</option>
+                    <option value="inquiry">Inquiry</option>
+                  </select>
+                </label>
               </span>
-              <input
-                type="text"
-                value={data.title}
-                name="title"
-                className="form-input !w-72"
-                onChange={handleChange}
-              />
-            </label>
-            <label className="w-fit ml-3 inline-block">
-              <span className="block">
-                Category <span className="text-rose-500">*</span>
+              <span className="h-14">
+                {data.tags?.map((tag) => {
+                  return (
+                    <span
+                      key={tag}
+                      onClick={handleRmvTag}
+                      data-name={tag}
+                      className={
+                        postCategories[tag].color +
+                        " text-white px-2 inline-flex justify-center hover:bg-rose-600 select-none w-32 py-1 mr-2 rounded-sm font-semibold"
+                      }
+                      onMouseEnter={(e) => (e.target.innerText = "x")}
+                      onMouseLeave={(e) =>
+                        (e.target.innerText = postCategories[tag].text)
+                      }
+                    >
+                      {postCategories[tag].text}
+                    </span>
+                  );
+                })}
               </span>
-              <select
-                onChange={handleAddTag}
-                className="my-2 h-9"
-                ref={tagSelRef}
-              >
-                <option value=""></option>
-                <option value="event">Event</option>
-                <option value="news">News</option>
-                <option value="announcement">Announcement</option>
-                <option value="report">Report</option>
-                <option value="inquiry">Inquiry</option>
-              </select>
-            </label>
+              <span className="flex">
+                <label className="w-fit inline-block">
+                  Header image
+                  <input
+                    type="text"
+                    value={data.header_url}
+                    name="header_url"
+                    className="form-input"
+                    onChange={handleChange}
+                  />
+                </label>
+                <label className="w-fit ml-3">
+                  Describe the header
+                  <input
+                    type="text"
+                    value={data.header_text}
+                    name="header_text"
+                    className="form-input"
+                    onChange={handleChange}
+                  />
+                </label>
+              </span>
+            </span>
+            <span className="w-1/2 ml-2 inline-block">
+              <label className="w-full">
+                Text
+                <textarea
+                  value={data.text}
+                  name="text"
+                  className="form-input"
+                  onChange={handleChange}
+                  placeholder="Details"
+                />
+              </label>
+            </span>
+          </div>
+          <br />
+          <span className="w-full flex justify-end mt-2">
+            <Button
+              primary
+              className="w-44"
+              disabled={
+                data.tags.length === 0 ||
+                !data.title ||
+                !data.header_url ||
+                !data.header_text
+              }
+              type="submit"
+            >
+              Add
+            </Button>
           </span>
-          <span className="h-14">
-            {data.tags?.map((tag) => {
-              return (
-                <span
-                  key={tag}
-                  onClick={handleRmvTag}
-                  data-name={tag}
-                  className={
-                    postCategories[tag].color +
-                    " text-white px-2 inline-flex justify-center hover:bg-rose-600 select-none w-32 py-1 mr-2 rounded-sm font-semibold"
-                  }
-                  onMouseEnter={(e) => (e.target.innerText = "x")}
-                  onMouseLeave={(e) =>
-                    (e.target.innerText = postCategories[tag].text)
-                  }
-                >
-                  {postCategories[tag].text}
-                </span>
-              );
-            })}
-          </span>
-          <span className="flex">
-            <label className="w-fit inline-block">
-              Header image <span className="text-rose-500 ">*</span>
-              <input
-                type="text"
-                value={data.header_url}
-                name="header_url"
-                className="form-input"
-                onChange={handleChange}
-              />
-            </label>
-            <label className="w-fit ml-3">
-              Describe the header <span className="text-rose-500 ">*</span>
-              <input
-                type="text"
-                value={data.header_text}
-                name="header_text"
-                className="form-input"
-                onChange={handleChange}
-              />
-            </label>
-          </span>
-
-          <label className="w-full">
-            <textarea
-              value={data.text}
-              name="text"
-              className="form-input !w-full"
-              onChange={handleChange}
-              placeholder="Details"
-            />
-          </label>
-        </span>
-        <br />
-        <span className="w-full flex justify-end mt-2">
-          <Button
-            primary
-            className="w-44"
-            disabled={
-              data.tags.length === 0 ||
-              !data.title ||
-              !data.header_url ||
-              !data.header_text
-            }
-            type="submit"
-          >
-            Add
-          </Button>
-        </span>
-      </form>
+        </form>
+      </div>
       <span className="font-bold block text-lg px-1 mb-5 mt-20 text-slate-600">
         Posts
       </span>
