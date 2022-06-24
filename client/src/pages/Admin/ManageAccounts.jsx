@@ -78,7 +78,7 @@ const UnverifiedCard = ({ account, authConfig, rejectAccount }) => {
   };
 
   return (
-    <div className="p-4 border rounded shadow mr-5">
+    <div className="p-4 border rounded bg-white shadow mr-5">
       {loading ? (
         <Loading />
       ) : (
@@ -91,11 +91,12 @@ const UnverifiedCard = ({ account, authConfig, rejectAccount }) => {
             showRoleType()
           ) : (
             <label>
+              Role:
               <select
                 name="role"
                 value={data.role || ""}
                 onChange={handleSetRole}
-                className="mx-4"
+                className="mx-2 w-2/3"
               >
                 <option value={""}>NOT SET</option>
                 <option value={authService.ROLES.BASIC}>Resident</option>
@@ -116,7 +117,7 @@ const UnverifiedCard = ({ account, authConfig, rejectAccount }) => {
             <>
               <Button
                 onClick={rejectAccount}
-                className="w-56 bg-rose-500 mb-2 mt-4 block text-slate-50"
+                className=" bg-rose-500 mb-2 mt-4 block text-slate-50"
               >
                 Reject
               </Button>
@@ -181,28 +182,34 @@ const AwaitingVerification = ({ authConfig }) => {
 
   return (
     <>
-      <span className="font-bold block text-lg px-1 mb-2 text-slate-600">
-        Unapproved accounts
-      </span>
-      <div className="flex bg-slate-100 w-full py-2 overflow-x-scroll">
-        {accounts.length > 0 ? (
-          accounts.map((acc, i) => {
-            return (
-              <React.Fragment key={i}>
-                <UnverifiedCard
-                  account={acc}
-                  authConfig={authConfig}
-                  rejectAccount={() => rejectAccount(acc._id)}
-                />
-              </React.Fragment>
-            );
-          })
-        ) : (
-          <span className="text-center font-semibold w-full text-slate-400">
-            No accounts for approval.
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          <span className="font-bold block text-lg px-1 mb-2 text-slate-600">
+            Unapproved accounts
           </span>
-        )}
-      </div>
+          <div className="flex bg-slate-100 w-full p-3 overflow-x-scroll">
+            {accounts.length > 0 ? (
+              accounts.map((acc, i) => {
+                return (
+                  <React.Fragment key={i}>
+                    <UnverifiedCard
+                      account={acc}
+                      authConfig={authConfig}
+                      rejectAccount={() => rejectAccount(acc._id)}
+                    />
+                  </React.Fragment>
+                );
+              })
+            ) : (
+              <span className="text-center font-semibold w-full text-slate-400">
+                No accounts for approval.
+              </span>
+            )}
+          </div>
+        </>
+      )}
     </>
   );
 };

@@ -125,12 +125,15 @@ const verifyUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error(unverified.message || "Uknown Error");
   }
-
+  const link =
+    process.env.NODE_ENV === "development"
+      ? `http://localhost:3000/verification/` + account.id
+      : process.env.HOSTED_URL + "/verification/" + account.id;
   const mailOptions = {
     from: '"Community thesis app" <community4704@outlook.com>', // sender address
     to: account.email, // list of receivers
     subject: "Account confirmation", // Subject line
-    html: `<div> <b>Your account has been verified please click the button below to create your password</b> <button><a href=http://localhost:3000/verification/${account.id} rel='external' target='_blank'>Create password</a></button> </div>`, // html body
+    html: `<div> <b>Your account has been verified please click the button below to create your password</b> <button><a href=${link} rel='external' target='_blank'>Create password</a></button> </div>`, // html body
   };
   await mailer.outlookTransporter
     .sendMail(mailOptions)
