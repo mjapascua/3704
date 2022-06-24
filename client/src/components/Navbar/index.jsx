@@ -207,7 +207,7 @@ export const Navbar = React.memo(() => {
                 <span className="px-4 py-1 text-cyan-700 font-head font-semibold block">
                   NOTIFICATIONS
                 </span>
-                <div className="block overflow-scroll h-96">
+                <div className="block overflow-y-scroll h-96">
                   {notif.data.map(displayNotif)}
                 </div>
               </div>

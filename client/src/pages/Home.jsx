@@ -44,10 +44,10 @@ function Home() {
           <div className="container px-5 py-24 mx-auto">
             <div className="text-center mb-20">
               <h1 className="sm:text-3xl text-2xl font-medium title-font text-gray-900 mb-4">
-                ResPass now in Palmera Homes
+                ResPass now in Lessandra
               </h1>
               <p className="text-base leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto">
-                ResPass manages the QR codes of residents of Palmera Homes.
+                ResPass manages the QR codes of residents of Lessandra.
                 These QR codes serve as identification of residents and their
                 visitors upon entering the subdivision.
               </p>
@@ -144,12 +144,12 @@ function Home() {
           <div className="container px-5 py-24 mx-auto">
             <div className="flex flex-col text-center w-full mb-20">
               <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">
-                Palmera Homes
+                Lessandra
               </h1>
               <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-                Welcome to Palmera Homes. We're dedicated to giving you the very
-                best of our homes, with a focus on durability, security, and a
-                friendly community.
+                Welcome to Lessandra. We're dedicated to giving you the very
+                best of our homes, with a focus on affordability, durability,
+                security, and a friendly community.
               </p>
             </div>
             <div className="flex flex-wrap -m-4">
@@ -162,13 +162,13 @@ function Home() {
                   />
                   <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
                     <h2 className="tracking-widest text-sm title-font font-medium text-teal-500 mb-1">
-                      Palmera Homes
+                      Lessandra
                     </h2>
                     <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
                       Peaceful Neighborhood
                     </h1>
                     <p className="leading-relaxed">
-                      Enjoy Palmera Homes and its surroundings free from smog
+                      Enjoy Lessandra and its surroundings free from smog
                       thanks to the abundance of greenery. Lush plants and trees
                       surround the subdivision, providing natural air to
                       breathe.
@@ -185,13 +185,13 @@ function Home() {
                   />
                   <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
                     <h2 className="tracking-widest text-sm title-font font-medium text-teal-500 mb-1">
-                      Palmera Homes
+                      Lessandra
                     </h2>
                     <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
                       Natural Scenery
                     </h1>
                     <p className="leading-relaxed">
-                      Palmera Homes is a place of beautiful scenery of nature,
+                      Lessandra is a place of beautiful scenery of nature,
                       no skyscrapers blocking the view. The nice view together
                       with the fresh air makes mornings wonderful.
                     </p>
@@ -207,13 +207,13 @@ function Home() {
                   />
                   <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
                     <h2 className="tracking-widest text-sm title-font font-medium text-teal-500 mb-1">
-                      Palmera Homes
+                      Lessandra
                     </h2>
                     <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
                       Blue Skies in the Summer
                     </h1>
                     <p className="leading-relaxed">
-                      Located far away from Manila, Palmera Homes has less
+                      Located far away from Manila, Lessandra has less
                       exposure to industrial smoke. Pure white clouds and clear
                       blue sky can be admired during great weather.
                     </p>
@@ -229,7 +229,7 @@ function Home() {
                   />
                   <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
                     <h2 className="tracking-widest text-sm title-font font-medium text-teal-500 mb-1">
-                      Palmera Homes
+                      Lessandra
                     </h2>
                     <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
                       Open Park
@@ -251,13 +251,13 @@ function Home() {
                   />
                   <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
                     <h2 className="tracking-widest text-sm title-font font-medium text-teal-500 mb-1">
-                      Palmera Homes
+                      Lessandra
                     </h2>
                     <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
                       Reliable Security
                     </h1>
                     <p className="leading-relaxed">
-                      Palmera Homes Subdivision is guarded by Baranggay Tanod in
+                      Lessandra is guarded by Baranggay Tanod in
                       their outpost. The 24/7 security brings assurance to
                       residents in their home.
                     </p>
@@ -273,7 +273,7 @@ function Home() {
                   />
                   <div className="px-8 py-10 relative z-10 w-full border-4 border-gray-200 bg-white opacity-0 hover:opacity-100">
                     <h2 className="tracking-widest text-sm title-font font-medium text-teal-500 mb-1">
-                      Palmera Homes
+                      Lessandra
                     </h2>
                     <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
                       QR Code Identification

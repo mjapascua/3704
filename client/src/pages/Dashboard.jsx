@@ -110,7 +110,7 @@ const Dashboard = () => {
             <div className="w-full p-5">
               <React.Suspense fallback={<Loading />}>
                 <div className="relative w-full flex box-border">
-                  <div className="w-full flex overflow-scroll">
+                  <div className="w-full flex">
                     <Routes>
                       <Route path={"/accounts/:id"} element={<AccountPage />} />
                       <Route path={"/accounts"} element={<ManageAccounts />} />
