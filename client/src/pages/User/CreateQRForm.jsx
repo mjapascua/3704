@@ -47,7 +47,7 @@ const CreateQRForm = ({ handleQRRequest }) => {
   }, [handlePhoneNumCheck]);
 
   return (
-    <div className="w-2/5 flex flex-col justify-center">
+    <div className="md:w-2/5 flex flex-col justify-center">
       <form className="text-sm">
         <span className="text-2xl text-cyan-600 block mb-6 font-bold">
           Create Visitor Pass

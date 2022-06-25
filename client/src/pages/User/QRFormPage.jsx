@@ -43,7 +43,11 @@ const QRFormPage = ({ authConfig }) => {
       {!qr.url ? (
         <div className="w-full">
           <CreateQRForm handleQRRequest={handleQRRequest} />
-          <Button primary className="w-2/5" onClick={requestShareable}>
+          <Button
+            primary
+            className="w-full md:w-2/5"
+            onClick={requestShareable}
+          >
             Share link
             <span className="material-icons-sharp md:mr-5">share</span>
           </Button>

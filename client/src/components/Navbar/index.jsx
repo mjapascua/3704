@@ -16,25 +16,10 @@ const routes = [
 const min = 60;
 const hr = 3600;
 
-const useOutsideClick = (ref) => {
-  useEffect(() => {
-    const handleClick = (e) => {
-      if (!ref.current?.contains(e.target)) {
-        console.log("clicked outside");
-      }
-    };
-
-    document.addEventListener("mousedown", handleClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
-    };
-  }, [ref]);
-};
-
 export const Navbar = React.memo(() => {
   const [notif, setNotifs] = useState({ data: [], unread: 0 });
   const [toggle, setToggle] = useState(false);
+  const [menu, setMenu] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -102,20 +87,21 @@ export const Navbar = React.memo(() => {
   };
 
   const fetchNotifs = useCallback(() => {
-    apiClient
-      .get("user/notifs", authConfig)
-      .then((res) => {
-        setNotifs((prev) => {
-          return {
-            ...prev,
-            data: res.data.notifications,
-            unread: res.data.unreadCount,
-          };
+    if (user)
+      apiClient
+        .get("user/notifs", authConfig)
+        .then((res) => {
+          setNotifs((prev) => {
+            return {
+              ...prev,
+              data: res.data.notifications,
+              unread: res.data.unreadCount,
+            };
+          });
+        })
+        .catch(() => {
+          dispatch(logout());
         });
-      })
-      .catch(() => {
-        dispatch(logout());
-      });
   }, []);
 
   useEffect(() => {
@@ -136,92 +122,112 @@ export const Navbar = React.memo(() => {
   }, [fetchNotifs]);
 
   return (
-    <div className="px-7 py-3 sticky h-16 top-0 z-30 bg-white shadow-sm select-none flex justify-between">
-      <span className="material-icons-sharp md:hidden my-auto text-3xl">
-        menu
-      </span>
-      <span className="font-bold block text-xl my-1.5 text-center text-slate-800 pb-5">
-        {process.env.REACT_APP_NAME}
-      </span>
-      <span className="flex items-center">
-        <span className="w-fit mr-8 justify-center hidden md:inline-flex">
-          {routes.map((route) => (
-            <NavItem route={route} key={route.label} />
-          ))}
+    <>
+      <div className="md:px-7 px-4 py-3 sticky h-16 top-0 z-30 bg-white shadow-sm select-none items-center flex justify-between">
+        <span
+          onClick={() => {
+            setMenu(!menu);
+          }}
+          className="material-icons-sharp md:hidden my-auto text-3xl"
+        >
+          menu
         </span>
-
-        {!user ? (
-          <span>
-            <Button
-              onClick={() =>
-                navigate("/signup", {
-                  replace: true,
-                  state: { from: location },
-                })
-              }
-            >
-              Join us
-            </Button>
-            <Button
-              onClick={() =>
-                navigate("/login", { replace: true, state: { from: location } })
-              }
-              className=" ml-1 text-white bg-cyan-600 transition-color"
-            >
-              Login
-            </Button>
+        <span className="font-bold block text-md  md:text-xl my-1.5 text-center text-slate-800 md:pb-5">
+          {process.env.REACT_APP_NAME}
+        </span>
+        <span className="flex items-center">
+          <span className="w-fit mr-8 justify-center hidden md:inline-flex">
+            {routes.map((route) => (
+              <NavItem route={route} key={route.label} />
+            ))}
           </span>
-        ) : (
-          <div className="relative">
-            <span className="relative  mr-5">
-              <span
-                onClick={() => {
-                  if (!toggle && notif.unread > 0) {
-                    apiClient
-                      .get("user/read_notifs", authConfig)
-                      .then((res) => {
-                        if (res.status === 200 && !res.data.message) {
-                          setNotifs({
-                            data: res.data.notifications,
-                            unread: 0,
-                          });
-                        }
-                      });
-                  }
-                  setToggle(!toggle);
-                }}
-                className="material-icons-sharp text-gray-400 text-3xl cursor-pointer"
-              >
-                notifications
-              </span>
-              {notif.unread > 0 && (
-                <span className=" w-3 h-3 left-5  bottom-6 inline-block absolute rounded-md bg-red-500"></span>
-              )}
-            </span>
 
-            {toggle && (
-              <div
-                ref={wrapper}
-                className="absolute rounded py-1 font-display right-14 border shadow-sprd bg-white"
+          {!user ? (
+            <span className="">
+              <Button
+                onClick={() =>
+                  navigate("/signup", {
+                    replace: true,
+                    state: { from: location },
+                  })
+                }
               >
-                <span className="px-4 py-1 text-cyan-700 font-head font-semibold block">
-                  NOTIFICATIONS
+                Join us
+              </Button>
+              <Button
+                onClick={() =>
+                  navigate("/login", {
+                    replace: true,
+                    state: { from: location },
+                  })
+                }
+                className=" md:ml-1 text-white bg-cyan-600 transition-color"
+              >
+                Login
+              </Button>
+            </span>
+          ) : (
+            <div className="relative">
+              <span className="relative  mr-5">
+                <span
+                  onClick={() => {
+                    if (!toggle && notif.unread > 0) {
+                      apiClient
+                        .get("user/read_notifs", authConfig)
+                        .then((res) => {
+                          if (res.status === 200 && !res.data.message) {
+                            setNotifs({
+                              data: res.data.notifications,
+                              unread: 0,
+                            });
+                          }
+                        });
+                    }
+                    setToggle(true);
+                  }}
+                  className="material-icons-sharp text-gray-400 text-3xl cursor-pointer"
+                >
+                  notifications
                 </span>
-                <div className="block overflow-y-scroll h-96">
-                  {notif.data.map(displayNotif)}
+                {notif.unread > 0 && (
+                  <span className=" w-3 h-3 left-5  bottom-6 inline-block absolute rounded-md bg-red-500"></span>
+                )}
+              </span>
+              {toggle && (
+                <div
+                  ref={wrapper}
+                  className="absolute rounded py-1 font-display right-0 md:right-14 border shadow-sprd bg-white"
+                >
+                  <span className="px-4 py-1 text-cyan-700 font-head font-semibold block">
+                    NOTIFICATIONS
+                  </span>
+                  <div className="block overflow-y-scroll h-96">
+                    {notif.data.map(displayNotif)}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+              <span
+                onClick={() => navigate("/account")}
+                className="material-icons-sharp text-cyan-600 text-4xl cursor-pointer"
+              >
+                account_circle
+              </span>
+            </div>
+          )}
+        </span>
+      </div>
 
-            <span
-              onClick={() => navigate("/account")}
-              className="material-icons-sharp text-cyan-600 text-4xl cursor-pointer"
-            >
-              account_circle
-            </span>
+      <div className="fixed md:hidden bg-white w-full z-20">
+        {menu && (
+          <div>
+            {routes.map((route) => (
+              <span key={route.label} className="py-4 block border-b">
+                <NavItem route={route} key={route.label} />
+              </span>
+            ))}
           </div>
         )}
-      </span>
-    </div>
+      </div>
+    </>
   );
 });

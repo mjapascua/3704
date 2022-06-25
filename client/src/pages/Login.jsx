@@ -89,8 +89,8 @@ function Login() {
               w-full border-b pb-5 border-gray-300 mb-5"
             >
               <ReturnButton />
-              <span className="my-auto w-full text-center block font-bold">
-                LOGO
+              <span className="my-auto w-full text-lg text-center block font-bold">
+                {process.env.REACT_APP_NAME}
               </span>
             </span>
             <div className="flex justify-center  font-display">

@@ -121,60 +121,73 @@ const Table = ({ columns, paginate, fetchData, loading, refreshRef }) => {
         </table>
       </div>
 
-      <div className="flex justify-between px-2 bg-white py-1">
+      <div className="flex flex-col md:flex-row md:justify-between px-2 bg-white py-1">
         {loading ? (
           <span>Loading...</span>
         ) : (
           <>
-            <span>{paginate.total_count || 0} results</span>
             <span>
-              {pageSize * pageIndex + 1} -{pageSize * pageIndex + page.length}
+              <span>{paginate.total_count || 0} results</span>
+              <span>
+                {" "}
+                {pageSize * pageIndex + 1} -{pageSize * pageIndex + page.length}
+              </span>
             </span>
-            <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-              {"<<"}
-            </button>
-            <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-              prev
-            </button>
-            <button onClick={() => nextPage()} disabled={!canNextPage}>
-              next
-            </button>
-            <button
-              onClick={() => gotoPage(pageCount - 1)}
-              disabled={!canNextPage}
-            >
-              {">>"}
-            </button>
-            <span>
-              Page{" "}
-              <strong>
-                {pageIndex + 1} of {pageOptions.length || 1}
-              </strong>{" "}
+            <span className="w-full flex justify-between md:w-1/5">
+              <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                {"<<"}
+              </button>
+              <button
+                onClick={() => previousPage()}
+                disabled={!canPreviousPage}
+              >
+                prev
+              </button>
+              <span>
+                Page{" "}
+                <strong>
+                  {pageIndex + 1} of {pageOptions.length || 1}
+                </strong>{" "}
+              </span>
+              <button onClick={() => nextPage()} disabled={!canNextPage}>
+                next
+              </button>
+              <button
+                onClick={() => gotoPage(pageCount - 1)}
+                disabled={!canNextPage}
+              >
+                {">>"}
+              </button>
             </span>
+
             <span>
-              Go to page:{" "}
-              <input
-                type="number"
-                defaultValue={pageIndex + 1}
+              <span>
+                Go to page:{" "}
+                <input
+                  type="number"
+                  defaultValue={pageIndex + 1}
+                  onChange={(e) => {
+                    const page = e.target.value
+                      ? Number(e.target.value) - 1
+                      : 1;
+                    gotoPage(page);
+                  }}
+                  style={{ width: "100px" }}
+                />
+              </span>{" "}
+              <select
+                value={pageSize}
                 onChange={(e) => {
-                  const page = e.target.value ? Number(e.target.value) - 1 : 1;
-                  gotoPage(page);
+                  setPageSize(Number(e.target.value));
                 }}
-                style={{ width: "100px" }}
-              />
-            </span>{" "}
-            <select
-              value={pageSize}
-              onChange={(e) => {
-                setPageSize(Number(e.target.value));
-              }}
-            >
-              {[20, 30, 40, 50, 100].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
-              ))}
-            </select>
+              >
+                {[20, 30, 40, 50, 100].map((pageSize) => (
+                  <option key={pageSize} value={pageSize}>
+                    Show {pageSize}
+                  </option>
+                ))}
+              </select>
+            </span>
           </>
         )}
       </div>

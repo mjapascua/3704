@@ -45,7 +45,7 @@ const Article = () => {
 
   return (
     <div className="flex flex-col bg-slate-100 items-center w-full">
-      <div className="z-10 w-4/5 mt-5  items-center flex flex-col">
+      <div className="z-10 md:w-4/5 mt-5  items-center flex flex-col">
         <div className=" w-full h-fit px-10 py-7 shadow-md rounded-sm bg-white mb-5s6">
           <h1 className=" text-3xl font-head mb-6  w-fit text-slate-800 font-bold">
             {data?.title}
@@ -72,11 +72,11 @@ const Article = () => {
           </span>
         </div>
         <div
-          className="w-full h-112 object-cover bg-no-repeat bg-cover"
+          className="w-full h-112 bg-center object-cover bg-no-repeat bg-cover"
           style={{ backgroundImage: `url(${bgStr})` }}
         ></div>
         <div className="inline-block shadow-md w-full rounded-sm pb-20 bg-white mb-20 py-5 px-10 font-medium">
-          <span className="flex justify-between pb-4 mb-8 border-b">
+          <span className="flex justify-end pb-4 mb-8 border-b">
             <Button
               className={
                 "border-gray-200 border group disabled:!bg-white " +
@@ -109,7 +109,7 @@ const Article = () => {
             </Button>
           </span>
 
-          <p className="h-fit my-10 mx-20 px-10 overflow-hidden text-lg">
+          <p className="h-fit md:my-10 md:mx-20 px-5 md:px-10 overflow-hidden text-lg">
             {data?.text}
           </p>
         </div>

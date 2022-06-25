@@ -27,7 +27,7 @@ const defStyle =
   "text-gray-500 border-slate-50 hover:bg-sky-600 hover:border-sky-700 " +
   navStyle;
 const sideMenuStyle =
-  "left-0 fixed border-box md:w-64 w-16 bg-slate-50 pt-5 z-40 h-full md:pl-3";
+  "left-0 absolute md:fixed pt-14 border-box md:w-64 w-16 bg-slate-50 md:pt-5 z-40 h-full md:pl-3";
 
 const routes = [
   { to: "/dashboard/qr-scanner", label: "QR Scanner", icon: "qr_code_scanner" },
@@ -44,6 +44,7 @@ const routes = [
 const Dashboard = () => {
   const [pageLabel, setLabel] = useState(false);
   const [redir, setRedir] = useState(false);
+  const [md, setMenu] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -73,12 +74,6 @@ const Dashboard = () => {
     };
   }, [user, navigate, isError, message, dispatch]);
 
-  const authConfig = {
-    headers: {
-      Authorization: "Bearer " + user?.token,
-    },
-  };
-
   const setHeader = () => {
     setLabel(
       routes.find((route) => {
@@ -86,7 +81,9 @@ const Dashboard = () => {
       })?.label || ""
     );
   };
-
+  const handleMenuClick = () => {
+    setMenu((prev) => !prev);
+  };
   useEffect(() => {
     setHeader();
   }, [location]);
@@ -102,12 +99,20 @@ const Dashboard = () => {
           <Loading text={"Unauthorized, redirecting"} />
         </div>
       ) : (
-        <div className="flex md:ml-64 bg-white ml-16 min-h-screen">
-          <Sidemenu />
+        <div className="flex md:ml-64 bg-white h-screen">
+          <div className="md:block hidden">
+            <Sidemenu handleMenuClick={handleMenuClick} />
+          </div>
+          <div className="">
+            {md && <Sidemenu handleMenuClick={handleMenuClick} />}
+          </div>
 
-          <div className="flex flex-col w-full">
-            <DashboardNav pageLabel={pageLabel} />
-            <div className="w-full p-5">
+          <div className="flex flex-col pt-14 w-full">
+            <DashboardNav
+              pageLabel={pageLabel}
+              handleMenuClick={handleMenuClick}
+            />
+            <div className="w-full h-screen overflow-y-scroll p-5">
               <React.Suspense fallback={<Loading />}>
                 <div className="relative w-full flex box-border">
                   <div className="w-full flex">
@@ -133,11 +138,19 @@ const Dashboard = () => {
   );
 };
 
-export const DashboardNav = ({ pageLabel }) => {
+export const DashboardNav = ({ pageLabel, handleMenuClick }) => {
   return (
-    <div className="pl-4 py-3 z-50 mx-2 mt-2 rounded-sm  select-none max-h-16 ">
-      <span className="font-bold block text-xl text-slate-700">
-        {pageLabel}
+    <div className="fixed md:block top-0 py-3 px-4 w-full z-50  select-none max-h-16 ">
+      <span className="flex w-full items-center">
+        <span
+          onClick={handleMenuClick}
+          className="material-icons-sharp md:hidden inline-block  active:text-slate-50 active:bg-sky-600 text-3xl"
+        >
+          menu
+        </span>
+        <span className="font-bold ml-7 md:ml-0 text-xl text-slate-700">
+          {pageLabel}
+        </span>
       </span>
     </div>
   );
@@ -148,7 +161,7 @@ export const Sidemenu = () => {
   const navigate = useNavigate();
   return (
     <div className={sideMenuStyle}>
-      <span className="font-bold block text-2xl text-center -ml-3 text-slate-800 pb-5">
+      <span className="font-bold hidden md:block text-2xl text-center -ml-3 text-slate-800 pb-5">
         {process.env.REACT_APP_NAME}
       </span>
       {routes.map((route) => {

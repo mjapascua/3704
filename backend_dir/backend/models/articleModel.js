@@ -64,6 +64,7 @@ articleSchema.statics.paginate = async function (
   this.find(checkFilter)
     .skip(skip)
     .limit(limit)
+    .sort({ createdAt: -1 })
     .exec(function (err, docs) {
       if (err) {
         return callback("Error in query", null);

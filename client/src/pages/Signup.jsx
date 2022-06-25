@@ -134,8 +134,8 @@ function SignUp() {
               w-full border-b pb-5 border-gray-300 mb-5"
             >
               <ReturnButton />
-              <span className="my-auto w-full text-center block font-bold">
-                LOGO
+              <span className="my-auto w-full text-lg text-center block font-bold">
+                {process.env.REACT_APP_NAME}
               </span>
             </span>
 
@@ -305,7 +305,7 @@ function SignUp() {
                 </span>
                 <Button
                   secondary
-                  className="w-full"
+                  className="w-full mb-20 md:mb-0"
                   onClick={() => navigate("/login", { replace: true })}
                 >
                   LOG IN
@@ -313,7 +313,7 @@ function SignUp() {
               </form>
             </div>
           </div>
-          <div className="w-1/2  bg-teal-600  inline-block"></div>
+          <div className="w-1/2 hidden bg-teal-600  md:inline-block"></div>
         </>
       )}
     </main>

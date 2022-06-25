@@ -68,7 +68,7 @@ const Account = () => {
         </div>
       ) : (
         <div className="flex h-full relative">
-          <span className=" w-80 md:pl-3 block bg-slate-50 h-64 md:h-full ">
+          <span className=" w-16 md:w-80 md:pl-3 block bg-slate-50 h-64 md:h-full ">
             {routes.map((route) => {
               return (
                 <NavLink
