@@ -75,7 +75,9 @@ const Contact = () => {
                 </button>
               </div>
               <div className="p-2 w-full pt-8 mt-8 border-t border-gray-200 text-center">
-                <a className="text-indigo-500">espren.anjo@gmail.com</a>
+                <a className="text-indigo-500">
+                  {process.env.REACT_APP_GMAIL_USERNAME}
+                </a>
                 <p className="leading-normal my-5">
                   Block 15 Lot 13 Phase 3B Daniel St.
                   <br />

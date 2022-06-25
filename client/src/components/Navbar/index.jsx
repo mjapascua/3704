@@ -132,7 +132,7 @@ export const Navbar = React.memo(() => {
         >
           menu
         </span>
-        <span className="font-bold block text-md  md:text-xl my-1.5 text-center text-slate-800 md:pb-5">
+        <span className="font-bold block text-md  md:text-xl my-1.5 text-center text-slate-800">
           {process.env.REACT_APP_NAME}
         </span>
         <span className="flex items-center">
