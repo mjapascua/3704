@@ -122,16 +122,16 @@ export const QRScanner = ({ location, openOnRender, authConfig }) => {
       >
         {!scanner ? "Open scanner" : "Close"}
       </Button>
-      <div className="mt-4 bg-black p-10">
-        <div className=" w-96 h-96 text-center  block">
+      <div className="mt-4 bg-black md:p-10">
+        <div className=" w-80 h-80 md:w-96 md:h-96 text-center  block">
           {!scanner ? (
-            <span className="h-full text-white block">
+            <span className="h-full pt-5 text-white block">
               Please allow to access device's camera
             </span>
           ) : (
             <QrReader
               ViewFinder={() => (
-                <div className="block absolute top-0 h-4/5 m-9 w-4/5 p-5 border-4 rounded-xl z-20 border-violet-600"></div>
+                <div className="block absolute top-0 h-4/5 m-8 md:m-9 w-4/5 p-5 border-4 rounded-xl z-20 border-violet-600"></div>
               )}
               className={"qr-vid-container"}
               onResult={(result, error) => {
