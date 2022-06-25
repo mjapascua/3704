@@ -18,7 +18,7 @@ function Home() {
                 We are online!
               </h1>
               <p className="mb-8 leading-relaxed">
-                ResPass manages the QR codes of residents of a subdivision.
+                MMNP Systems manages the QR codes of residents of a subdivision.
                 These QR codes serve as identification of residents and their
                 visitors upon entering the subdivision.
               </p>
@@ -44,10 +44,10 @@ function Home() {
           <div className="container px-5 py-24 mx-auto">
             <div className="text-center mb-20">
               <h1 className="sm:text-3xl text-2xl font-medium title-font text-gray-900 mb-4">
-                ResPass now in Lessandra
+                MMNP Systems now in Lessandra
               </h1>
               <p className="text-base leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto">
-                ResPass manages the QR codes of residents of Lessandra.
+                MMNP Systems manages the QR codes of residents of Lessandra.
                 These QR codes serve as identification of residents and their
                 visitors upon entering the subdivision.
               </p>
@@ -63,8 +63,8 @@ function Home() {
                     Create a User Account
                   </h2>
                   <p className="leading-relaxed text-base">
-                    To start creating QR codes for your visitors, create a
-                    ResPass account to register as a resident of Palmera Homes.
+                    To start creating QR codes for your visitors, create an
+                    account to register as a resident of Palmera Homes.
                   </p>
                   <a className="mt-3 text-teal-500 inline-flex items-center">
                     Learn More

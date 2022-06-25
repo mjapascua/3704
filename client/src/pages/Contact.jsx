@@ -14,10 +14,10 @@ const Contact = () => {
               Contact Us
             </h1>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-              Raise your concerns whether about Palmera Homes or about ResPass.
+              Raise your concerns whether about Lessandra or about MMNP Systems.
               Let us know your name and your email to reach us. Check your email
               for a response from authorized personnel of the HOA or from the
-              ResPass team.
+              MMNP team.
             </p>
           </div>
           <div className="lg:w-1/2 md:w-2/3 mx-auto">
@@ -79,9 +79,9 @@ const Contact = () => {
                   {process.env.REACT_APP_GMAIL_USERNAME}
                 </a>
                 <p className="leading-normal my-5">
-                  Block 15 Lot 13 Phase 3B Daniel St.
+                  
                   <br />
-                  Palmera Northwinds City, San Jose Del Monte Bulacan
+                  Lessandra, San Jose Del Monte, Bulacan
                 </p>
                 <span className="inline-flex">
                   <a className="text-gray-500">
