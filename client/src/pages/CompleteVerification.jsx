@@ -36,7 +36,7 @@ function CompleteVerification() {
   let from = location.state?.from?.pathname
     ? location.state?.from?.pathname
     : user?.role === authService.ROLES.ADMIN
-    ? "/dashboard"
+    ? "/dashboard/qr-scanner"
     : "/account";
 
   useEffect(() => {

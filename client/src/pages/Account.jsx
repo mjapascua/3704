@@ -206,7 +206,7 @@ const UserAccount = ({ authConfig }) => {
         }
       })
       .catch((error) => {
-        toast.error(error.response.message);
+        toast.error("Failed to update");
       });
   };
 

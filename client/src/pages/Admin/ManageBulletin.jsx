@@ -19,6 +19,14 @@ const ManageBulletin = () => {
 
   const tagSelRef = useRef(null);
 
+  const [toEdit, setToEdit] = useState(null);
+  const chooseEdit = (item) => {
+    setToEdit(item);
+  };
+  const cancelEdit = () => {
+    setToEdit(null);
+  };
+
   const handleChange = ({ target }) => {
     setData((prev) => {
       return { ...prev, [target.name]: target.value };
@@ -47,12 +55,15 @@ const ManageBulletin = () => {
       .then((res) => {
         // if (res.status === 201) getIntpost();
         if (res.status === 201) {
-          setFetchPosts(!fetchPosts);
+          toggleFetch();
         }
       })
       .catch((err) => {
         toast.error(err.response.data.message || err.message);
       });
+  };
+  const toggleFetch = () => {
+    setFetchPosts(!fetchPosts);
   };
 
   return (
@@ -169,84 +180,197 @@ const ManageBulletin = () => {
       <span className="font-bold block text-lg px-1 mb-5 mt-20 text-slate-600">
         Posts
       </span>
-      <BulletinTable authConfig={authConfig} fetchPosts={fetchPosts} />
+      {toEdit && (
+        <PostEditor
+          item={toEdit}
+          toggleFetch={toggleFetch}
+          cancelEdit={cancelEdit}
+        />
+      )}
+
+      <BulletinTable
+        authConfig={authConfig}
+        fetchPosts={fetchPosts}
+        chooseEdit={chooseEdit}
+      />
     </div>
   );
 };
-const EventManager = ({ authConfig }) => {
+
+const PostEditor = ({ item, cancelEdit, toggleFetch }) => {
   const [data, setData] = useState({
-    title: "",
-    description: "",
-    date: new Date(),
+    title: item.title,
+    text: item.text,
+    header_text: item.header_image.text,
+    header_url: item.header_image.url,
+    tags: item.tags,
   });
-  const [fetchEvents, setFetchEvents] = useState(false);
+  const authConfig = useAuthHeader();
+  const tagSelRef = useRef(null);
 
   const handleChange = ({ target }) => {
     setData((prev) => {
       return { ...prev, [target.name]: target.value };
     });
   };
+  const handleAddTag = ({ target }) => {
+    if (target.value && !data.tags.includes(target.value)) {
+      setData((prev) => {
+        return { ...prev, tags: [...prev.tags, target.value] };
+      });
+    }
+    tagSelRef.current.value = "";
+  };
+  const handleRmvTag = ({ target }) => {
+    setData((prev) => {
+      const ind = prev.tags.indexOf(target.getAttribute("data-name"));
+      prev.tags.splice(ind, 1);
+      return { ...prev, tags: prev.tags };
+    });
+  };
 
-  const handleNewEvent = (e) => {
+  const handlePost = (e) => {
     e.preventDefault();
     apiClient
-      .post("bulletin/events", data, authConfig)
+      .put("bulletin/" + item._id, data, authConfig)
       .then((res) => {
-        if (res.status === 201) {
-          setFetchEvents(!fetchEvents);
+        if (res.status === 200) {
+          toggleFetch();
+          cancelEdit();
         }
       })
       .catch((err) => {
         toast.error(err.response.data.message || err.message);
       });
   };
-  return (
-    <div className="w-full">
-      <form className="w-full py-1" onSubmit={handleNewEvent}>
-        <span className="inline-flex w-3/4 justify-between ">
-          <label className="w-fit">
-            Title <span className="text-rose-500 block">*</span>
-            <input
-              type="text"
-              value={data.title}
-              name="title"
-              className="form-input !w-40"
-              onChange={handleChange}
-            />
-          </label>
-          <label className="w-fit">
-            Description <span className="text-rose-500 block">*</span>
-            <textarea
-              value={data.description}
-              name="description"
-              className="form-input !w-40"
-              onChange={handleChange}
-            />
-          </label>
-          <label className="w-fit">
-            Date of event <span className="text-rose-500 block">*</span>
-            <input
-              type="date"
-              value={data.date}
-              name="date"
-              className="form-input !w-40"
-              onChange={handleChange}
-            />
-          </label>
 
+  return (
+    <div className="w-4/5 border mr-5 inline-block h-fit px-4 py-3 shadow-md rounded">
+      <form className="" onSubmit={handlePost}>
+        <span className="font-bold block text-lg mb-5 text-slate-600">
+          Edit {item.title}
+        </span>
+        <div className="flex">
+          <span className="inline-flex mr-2 flex-col w-1/2 ">
+            <span className="">
+              <label className="w-fit inline-block">
+                <span className="block">Title</span>
+                <input
+                  type="text"
+                  value={data.title}
+                  name="title"
+                  className="form-input !w-72"
+                  onChange={handleChange}
+                />
+              </label>
+              <label className="inline-block">
+                <span className="block">Category</span>
+                <select
+                  onChange={handleAddTag}
+                  className="my-2 h-9 w-44"
+                  ref={tagSelRef}
+                >
+                  <option value=""></option>
+                  <option value="event">Event</option>
+                  <option value="news">News</option>
+                  <option value="announcement">Announcement</option>
+                  <option value="report">Report</option>
+                  <option value="inquiry">Inquiry</option>
+                </select>
+              </label>
+            </span>
+            <span className="h-14">
+              {data.tags?.map((tag) => {
+                return (
+                  <span
+                    key={tag}
+                    onClick={handleRmvTag}
+                    data-name={tag}
+                    className={
+                      postCategories[tag].color +
+                      " text-white px-2 inline-flex justify-center hover:bg-rose-600 select-none w-32 py-1 mr-2 rounded-sm font-semibold"
+                    }
+                    onMouseEnter={(e) => (e.target.innerText = "x")}
+                    onMouseLeave={(e) =>
+                      (e.target.innerText = postCategories[tag].text)
+                    }
+                  >
+                    {postCategories[tag].text}
+                  </span>
+                );
+              })}
+            </span>
+            <span className="flex">
+              <label className="w-fit inline-block">
+                Header image
+                <input
+                  type="text"
+                  value={data.header_url}
+                  name="header_url"
+                  className="form-input"
+                  onChange={handleChange}
+                />
+              </label>
+              <label className="w-fit ml-3">
+                Describe the header
+                <input
+                  type="text"
+                  value={data.header_text}
+                  name="header_text"
+                  className="form-input"
+                  onChange={handleChange}
+                />
+              </label>
+            </span>
+          </span>
+          <span className="w-1/2 ml-2 inline-block">
+            <label className="w-full">
+              Text
+              <textarea
+                value={data.text}
+                name="text"
+                className="form-input"
+                onChange={handleChange}
+                placeholder="Details"
+              />
+            </label>
+          </span>
+        </div>
+        <br />
+        <span className="w-full flex justify-end mt-2">
           <Button
             primary
-            disabled={data.tags.length > 0 && data.title && data}
+            className="w-44 mr-3 !bg-rose-500"
+            disabled={
+              data.tags.length === 0 ||
+              !data.title ||
+              !data.header_url ||
+              !data.header_text
+            }
+            onClick={cancelEdit}
+          >
+            Cancel
+          </Button>
+          <Button
+            primary
+            className="w-44"
+            disabled={
+              data.tags.length === 0 ||
+              !data.title ||
+              !data.header_url ||
+              !data.header_text
+            }
             type="submit"
           >
-            Add
+            Save
           </Button>
         </span>
       </form>
     </div>
   );
 };
-const BulletinTable = ({ authConfig, fetchPosts }) => {
+
+const BulletinTable = ({ authConfig, fetchPosts, chooseEdit }) => {
   const isMounted = useIsMounted();
 
   const [paginate, setPaginate] = useState({
@@ -265,6 +389,20 @@ const BulletinTable = ({ authConfig, fetchPosts }) => {
     {
       Header: "Text",
       accessor: "text",
+      width: "100",
+    },
+    {
+      Header: "Edit",
+      Cell: ({ row }) => {
+        return (
+          <span
+            onClick={() => chooseEdit(row.original)}
+            className="text-cyan-600 material-icons-sharp cursor-pointer mx-3"
+          >
+            edit
+          </span>
+        );
+      },
       width: "100",
     },
   ]);

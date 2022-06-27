@@ -11,7 +11,7 @@ const QRFormPage = ({ authConfig }) => {
 
   const requestShareable = () => {
     apiClient
-      .get("/user/request_share_link", authConfig)
+      .get("user/request_share_link", authConfig)
       .then((res) => {
         navigator.clipboard.writeText(res.data.link);
         toast.info("Copied Link!");

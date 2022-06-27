@@ -7,7 +7,7 @@ import Loading from "../../components/Loading/Loading";
 import { useNavigate, useParams } from "react-router-dom";
 import { ReturnButton } from "../../components/Buttons/Return";
 import { useAuthHeader } from "../../utils/authService";
-import { useIsMounted } from "../../utils/general";
+import { swalCustomClass, useIsMounted } from "../../utils/general";
 
 const steps = [1, 2, 3];
 
@@ -194,6 +194,49 @@ const AccountPage = () => {
       }
     });
   };
+
+  const removeGuest = ({ gId, name }) => {
+    Swal.fire({
+      text: `Are you sure you want to remove ${name} as a guest?`,
+      confirmButtonColor: "var(--toastify-color-success)",
+      cancelButtonColor: "var(--toastify-color-error)",
+      showCancelButton: true,
+      confirmButtonText: "Confirm",
+      customClass: swalCustomClass,
+      icon: "warning",
+    }).then((result) => {
+      if (result.isConfirmed)
+        apiClient
+          .delete("user/" + user._id + "/" + gId, authConfig)
+          .then((res) => {
+            if (res.status === 200) {
+              getUser();
+            }
+          })
+          .catch((err) => toast.error(err.response.message));
+    });
+  };
+
+  const removeRFIDTag = (tagId) => {
+    Swal.fire({
+      text: `Are you sure you want to delete this tag`,
+      confirmButtonColor: "var(--toastify-color-success)",
+      cancelButtonColor: "var(--toastify-color-error)",
+      showCancelButton: true,
+      confirmButtonText: "Confirm",
+      customClass: swalCustomClass,
+      icon: "warning",
+    }).then((result) => {
+      if (result.isConfirmed)
+        apiClient
+          .delete("admin/rfid/tags/" + tagId, authConfig)
+          .then((res) => {
+            if (res.status === "200") getUser();
+          })
+          .catch((err) => toast.error(err.response.message));
+    });
+  };
+
   useEffect(() => {
     getUser();
   }, [getUser]);
@@ -318,6 +361,62 @@ const AccountPage = () => {
               )}
             </span>
           </form>
+          {user.guests.length > 0 && (
+            <>
+              <span className="block mb-3">
+                <b>Guests</b>
+              </span>
+
+              <span className=" block overflow-auto">
+                {user.guests.map((el, index) => {
+                  return (
+                    <span
+                      key={index}
+                      className="flex items-center w-3/5 h-14 justify-between my-2 rounded bg-white shadow border px-3 py-2 "
+                    >
+                      {el.fname + " " + el.lname}
+                      <Button
+                        className="text-rose-500 hover:underline"
+                        onClick={() =>
+                          removeGuest({
+                            gId: el._id,
+                            name: el.fname,
+                          })
+                        }
+                      >
+                        REMOVE
+                      </Button>
+                    </span>
+                  );
+                })}
+              </span>
+            </>
+          )}
+          {user.tags.length > 0 && (
+            <>
+              <span className="block mt-6 mb-3">
+                <b>RFIDs tags</b>
+              </span>
+              <span className="h-80 block overflow-auto">
+                {user.tags.map((el, index) => {
+                  return (
+                    <span
+                      key={index}
+                      className="flex items-center w-3/5 h-14 justify-between my-2 rounded bg-white shadow border px-3 py-3"
+                    >
+                      {el.g_id?.fname || user.fname + " " + user.lname}{" "}
+                      <Button
+                        className="text-rose-500 hover:underline"
+                        onClick={() => removeRFIDTag(el._id)}
+                      >
+                        REMOVE
+                      </Button>
+                    </span>
+                  );
+                })}
+              </span>
+            </>
+          )}
         </>
       )}
     </div>

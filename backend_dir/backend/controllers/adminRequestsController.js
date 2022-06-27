@@ -35,11 +35,14 @@ const getUser = asyncHandler(async (req, res) => {
     req.params.id,
     "-password -notifications -qr"
   ).lean();
-  const userGuests = await Guest.find({ u_id: user._id }).lean();
-  if (!user || !userGuests) {
+  const userGuests = await Guest.find({ u_id: user._id, active: true }).lean();
+  const userTags = await RegisteredTag.find({
+    u_id: user._id,
+  }).lean();
+  if (!user) {
     res.status(404);
     throw new Error("No user found");
-  } else res.status(200).json({ ...user, guests: userGuests });
+  } else res.status(200).json({ ...user, guests: userGuests, tags: userTags });
 });
 
 // @desc    Get all users
@@ -313,10 +316,6 @@ const tagRegistration = asyncHandler(async (req, res) => {
       req.body.g_id,
       {
         u_id: inQueue.user,
-        /*   fname: req.body.fname,
-        lname: req.body.lname,
-        contact: req.body.phone_number,
-        addr: req.body.address, */
         active: true,
       },
       { new: true }
@@ -357,7 +356,18 @@ const removeFromQueue = asyncHandler(async (req, res) => {
     throw new Error("Remove failed");
   } else res.sendStatus(200);
 });
-
+// @desc    Delete a tag
+// @route   DELET /api/admin/rfid/tags/:id
+// @access  Private
+const deleteRFIDTag = asyncHandler(async (req, res) => {
+  const deleteTag = await RegisteredTag.findByIdAndDelete(req.params.id);
+  if (deleteTag) {
+    res.sendStatus(200);
+  } else {
+    res.status(400);
+    throw new Error("delete failed");
+  }
+});
 // @desc    Add locations
 // @route   GET /api/admin/locations
 // @access  Private
@@ -658,6 +668,7 @@ module.exports = {
   updateQueueItem,
   checkRegistrationStatus,
   removeFromQueue,
+  deleteRFIDTag,
   getScanPoints,
   addScanPoint,
   updateScanPoint,

@@ -13,14 +13,19 @@ const ArticleList = () => {
 
   const getArticles = useCallback(() => {
     apiClient.get(`bulletin?limit=5&page=${offset}`).then((res) => {
-      offset += 1;
       if (total !== res.data.total_count) setTotal(res.data.total_count);
-      setTimeout(() => {
-        if (isMounted)
-          setArticles((prev) => {
-            return prev.concat(res.data.data);
-          });
-      }, 2000);
+      if (res.data.data.length > 0) {
+        offset += 1;
+
+        setTimeout(() => {
+          if (isMounted)
+            setArticles((prev) => {
+              return prev.concat(res.data.data);
+            });
+        }, 2000);
+      } else {
+        setTotal(0);
+      }
     });
   }, []);
 
@@ -35,6 +40,11 @@ const ArticleList = () => {
         next={getArticles}
         hasMore={!(total === articles.length)}
         loader={<WideLoading />}
+        endMessage={
+          <p className="text-center text-slate-600 font-display py-5">
+            <b>No more posts</b>
+          </p>
+        }
       >
         {articles.map((item, ind) => (
           <WidePreview article={item} key={ind} />

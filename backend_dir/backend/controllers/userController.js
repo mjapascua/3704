@@ -71,6 +71,7 @@ const confirmViaEmail = asyncHandler(async (req, res) => {
   // Create qr hash
   const access = await AccessString.create({
     hash: main_unique,
+    resident: true,
   });
   // Create user
   const user = await User.create({
@@ -152,25 +153,17 @@ const getMe = asyncHandler(async (req, res) => {
 });
 
 // @desc    Set guest to inactive
-// @route   GET /api/users/:id/:guest_id
+// @route   DELETE /api/users/:id/:guest_id
 // @access  Private
 const deleteGuests = asyncHandler(async (req, res) => {
   if (!req.params.guest_id) {
     res.status(400);
     throw new Error("Unable to process");
   }
-  //const gId = mongoose.Types.ObjectId();
-  /* 
-  const user = await User.findByIdAndUpdate(
-    req.params.id,
-    {
-      $pull: {
-        guests: gId,
-      },
-    },
-    { new: true }
-  );
- */
+  await AccessString.findOneAndDelete({
+    g_id: req.params.guest_id,
+  });
+
   const guest = await Guest.findByIdAndUpdate(
     req.params.guest_id,
     {
@@ -181,8 +174,6 @@ const deleteGuests = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  AccessString.findOneAndDelete({ g_id: req.params.guest_id });
-
   /*   if (!user) {
     res.status(401);
     throw new Error("Unauthorized user not found");
@@ -190,8 +181,7 @@ const deleteGuests = asyncHandler(async (req, res) => {
   if (!guest) {
     res.status(400);
     throw new Error("Access not removed");
-  }
-  res.json("success");
+  } else res.json("success");
 });
 
 // @desc    Update user data

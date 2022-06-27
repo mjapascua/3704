@@ -15,6 +15,7 @@ const {
   updateQueueItem,
   checkRegistrationStatus,
   removeFromQueue,
+  deleteRFIDTag,
   getScanPoints,
   addScanPoint,
   updateScanPoint,
@@ -65,6 +66,8 @@ router
   .delete(protect, delRFIDDevice);
 
 router.get("/rfid/register/:tag_uid", verifyTagStatus);
+
+router.delete("/rfid/tags/:id", deleteRFIDTag);
 
 router.post("/scan", protect, authAllow([ROLES.ADMIN, ROLES.EDITOR]), checkQR);
 

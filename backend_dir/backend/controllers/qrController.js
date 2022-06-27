@@ -48,6 +48,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
       hash,
       u_id: req.user._id,
       g_id: guest._id,
+      resident: false,
     });
 
     if (!guest || !guestAccess) {
@@ -55,7 +56,7 @@ const requestGuestQR = asyncHandler(async (req, res) => {
       throw new Error("Guest registration failed");
     }
 
-    guest.qr = guestAccess._id;
+    guest.qr = guestAccess.id;
     guest.save();
 
     try {
@@ -77,28 +78,20 @@ const requestGuestQR = asyncHandler(async (req, res) => {
     }
   }
 
-  if (!guestExists.active) {
+  if (!guestExists.active || !guestExists.qr) {
     const hash = generateMd5Hash(req.user._id + fname + contact);
     const guestAccess = await AccessString.create({
       hash,
       u_id: req.user._id,
       g_id: guestExists._id,
+      resident: false,
     });
 
     guestExists.active = true;
+    guestExists.qr = guestAccess._id;
     guestExists.save();
-    /* 
-    const update = await User.findByIdAndUpdate(
-      req.user.id,
-      {
-        $push: {
-          guests: guestExists.id,
-        },
-      },
-      { new: true }
-    ); */
 
-    if (!guestUpdate /* || !update */) {
+    if (!guestAccess) {
       res.status(404);
       throw new Error("QR registration failed");
     }
@@ -135,7 +128,9 @@ const guestQR = asyncHandler(async (req, res) => {
 });
 
 const checkQR = asyncHandler(async (req, res) => {
-  const entry = await AccessString.findOne({ hash: req.body.hash })
+  const entry = await AccessString.findOne({
+    hash: req.body.hash,
+  })
     .lean()
     .populate("g_id", "fname");
 

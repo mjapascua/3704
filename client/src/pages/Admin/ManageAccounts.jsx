@@ -252,7 +252,7 @@ const AccountsTable = ({ authConfig }) => {
           <Link to={row.original._id}>
             <span
               //            onClick={() => handleSelect(row.original)}
-              className="text-meadow-600 material-icons-outlined cursor-pointer mx-3"
+              className="text-cyan-600 material-icons-outlined cursor-pointer mx-3"
             >
               arrow_circle_right
             </span>
