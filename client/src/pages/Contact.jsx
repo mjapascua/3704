@@ -1,9 +1,10 @@
 import React from "react";
 import { useEffect } from "react";
+import { CLIENT_NAME } from "../utils/appInfo";
 
 const Contact = () => {
   useEffect(() => {
-    document.title = "Contact | " + process.env.REACT_APP_NAME;
+    document.title = "Contact | " + CLIENT_NAME;
   }, []);
   return (
     <>
@@ -75,11 +76,8 @@ const Contact = () => {
                 </button>
               </div>
               <div className="p-2 w-full pt-8 mt-8 border-t border-gray-200 text-center">
-                <a className="text-indigo-500">
-                  {process.env.REACT_APP_GMAIL_USERNAME}
-                </a>
+                <a className="text-indigo-500">community4704@gmail.com</a>
                 <p className="leading-normal my-5">
-                  
                   <br />
                   Lessandra, San Jose Del Monte, Bulacan
                 </p>

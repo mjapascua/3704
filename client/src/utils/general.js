@@ -6,7 +6,6 @@ export const swalCustomClass = {
   confirmButton: "font-semibold font-display p-4 text-sm rounded-sm",
   cancelButton: "font-semibold font-display p-4 text-sm rounded-sm",
 };
-
 export const useIsMounted = () => {
   const mounted = useRef(false);
   useEffect(() => {

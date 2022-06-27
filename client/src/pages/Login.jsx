@@ -7,6 +7,7 @@ import { login, reset } from "../utils/authSlice";
 import Loading from "../components/Loading/Loading";
 import { ReturnButton } from "../components/Buttons/Return";
 import authService from "../utils/authService";
+import { CLIENT_NAME } from "../utils/appInfo";
 
 export const redirect = (renderLoading, navigate, from) => {
   renderLoading(true);
@@ -90,7 +91,7 @@ function Login() {
             >
               <ReturnButton />
               <span className="my-auto w-full text-lg text-center block font-bold">
-                {process.env.REACT_APP_NAME}
+                {CLIENT_NAME}
               </span>
             </span>
             <div className="flex justify-center  font-display">

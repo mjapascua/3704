@@ -11,6 +11,7 @@ import { logout, reset } from "../utils/authSlice";
 import { redirect } from "./Login";
 import Loading from "../components/Loading/Loading";
 import authService from "../utils/authService";
+import { CLIENT_NAME } from "../utils/appInfo";
 
 const ManageAccounts = React.lazy(() => import("./Admin/ManageAccounts"));
 const ManageDevices = React.lazy(() => import("./Admin/ManageDevices"));
@@ -89,7 +90,7 @@ const Dashboard = () => {
   }, [location]);
 
   useEffect(() => {
-    document.title = "Admin dashboard | " + process.env.REACT_APP_NAME;
+    document.title = "Admin dashboard | " + CLIENT_NAME;
   }, []);
 
   return (
@@ -162,7 +163,7 @@ export const Sidemenu = () => {
   return (
     <div className={sideMenuStyle}>
       <span className="font-bold hidden md:block text-2xl text-center -ml-3 text-slate-800 pb-5">
-        {process.env.REACT_APP_NAME}
+        {CLIENT_NAME}
       </span>
       {routes.map((route) => {
         return (

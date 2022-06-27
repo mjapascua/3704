@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import axios from "axios";
+import { CLIENT_NAME } from "../utils/appInfo";
 
 function Home() {
   /*   useEffect(() => {
     axios.get("http://localhost:5000").then((res) => console.log(res));
   }, []); */
   useEffect(() => {
-    document.title = process.env.REACT_APP_NAME;
+    document.title = CLIENT_NAME;
   }, []);
   return (
     <>
@@ -168,8 +168,8 @@ function Home() {
                       Peaceful Neighborhood
                     </h1>
                     <p className="leading-relaxed">
-                      Enjoy Lessandra and its surroundings free from smog
-                      thanks to the abundance of greenery. Lush plants and trees
+                      Enjoy Lessandra and its surroundings free from smog thanks
+                      to the abundance of greenery. Lush plants and trees
                       surround the subdivision, providing natural air to
                       breathe.
                     </p>
@@ -191,9 +191,9 @@ function Home() {
                       Natural Scenery
                     </h1>
                     <p className="leading-relaxed">
-                      Lessandra is a place of beautiful scenery of nature,
-                      no skyscrapers blocking the view. The nice view together
-                      with the fresh air makes mornings wonderful.
+                      Lessandra is a place of beautiful scenery of nature, no
+                      skyscrapers blocking the view. The nice view together with
+                      the fresh air makes mornings wonderful.
                     </p>
                   </div>
                 </div>
@@ -213,9 +213,9 @@ function Home() {
                       Blue Skies in the Summer
                     </h1>
                     <p className="leading-relaxed">
-                      Located far away from Manila, Lessandra has less
-                      exposure to industrial smoke. Pure white clouds and clear
-                      blue sky can be admired during great weather.
+                      Located far away from Manila, Lessandra has less exposure
+                      to industrial smoke. Pure white clouds and clear blue sky
+                      can be admired during great weather.
                     </p>
                   </div>
                 </div>
@@ -257,9 +257,9 @@ function Home() {
                       Reliable Security
                     </h1>
                     <p className="leading-relaxed">
-                      Lessandra is guarded by Baranggay Tanod in
-                      their outpost. The 24/7 security brings assurance to
-                      residents in their home.
+                      Lessandra is guarded by Baranggay Tanod in their outpost.
+                      The 24/7 security brings assurance to residents in their
+                      home.
                     </p>
                   </div>
                 </div>

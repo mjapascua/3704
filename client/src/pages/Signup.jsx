@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import { apiClient } from "../utils/requests";
 import { redirect } from "./Login";
 import { toast } from "react-toastify";
+import { CLIENT_NAME } from "../utils/appInfo";
 export const phoneRegex = /^([0-9]{10})$/;
 
 function SignUp() {
@@ -135,7 +136,7 @@ function SignUp() {
             >
               <ReturnButton />
               <span className="my-auto w-full text-lg text-center block font-bold">
-                {process.env.REACT_APP_NAME}
+                {CLIENT_NAME}
               </span>
             </span>
 

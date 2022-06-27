@@ -1,3 +1,5 @@
+import { CLIENT_NAME } from "../../utils/appInfo";
+
 const RenderQRCode = (props) => {
   return (
     <div className="border-4 rounded-lg text-center bg-slate-700 border-gray-700">
@@ -14,7 +16,7 @@ const RenderQRCode = (props) => {
         </span>
       </span>
       <span className=" w-full text-white text-sm font-semibold mt-2">
-        {process.env.REACT_APP_NAME}
+        {CLIENT_NAME}
       </span>
     </div>
   );

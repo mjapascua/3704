@@ -1,8 +1,9 @@
 import { useEffect } from "react";
+import { CLIENT_NAME } from "../utils/appInfo";
 
 function About() {
   useEffect(() => {
-    document.title = "About | " + process.env.REACT_APP_NAME;
+    document.title = "About | " + CLIENT_NAME;
   }, []);
   return (
     <>
@@ -13,14 +14,14 @@ function About() {
               About Us
             </h1>
             <p className="lg:w-1/2 w-full leading-relaxed text-gray-500">
-              Welcome to Lessandra. We're dedicated to giving you the very
-              best of our homes, with a focus on durability, security, and a
-              friendly community. Lessandra has come a long way from its beginnings in a small
-              subdivision with only a couple of families. When Lessandra
+              Welcome to Lessandra. We're dedicated to giving you the very best
+              of our homes, with a focus on durability, security, and a friendly
+              community. Lessandra has come a long way from its beginnings in a
+              small subdivision with only a couple of families. When Lessandra
               first started out, the community was very small but still very
               united. With the help of everyone in the community, the
-              Homeowners' Association for Lessandra joined together in
-              making the subdivision the best place to call home.
+              Homeowners' Association for Lessandra joined together in making
+              the subdivision the best place to call home.
             </p>
           </div>
           <div className="flex flex-wrap -m-4">
@@ -43,8 +44,9 @@ function About() {
                   Liveliness
                 </h2>
                 <p className="leading-relaxed text-base">
-                  The Homeowners' Association is very active in starting recreational events for the
-                  residents to join in such as the Lessandra Anniversary Fest.
+                  The Homeowners' Association is very active in starting
+                  recreational events for the residents to join in such as the
+                  Lessandra Anniversary Fest.
                 </p>
               </div>
             </div>
@@ -93,8 +95,8 @@ function About() {
                   Affable People
                 </h2>
                 <p className="leading-relaxed text-base">
-                  People who live here in Lessandra are easily approachable.
-                  Our friendliness will show that we are fun to talk to.
+                  People who live here in Lessandra are easily approachable. Our
+                  friendliness will show that we are fun to talk to.
                 </p>
               </div>
             </div>
@@ -167,8 +169,8 @@ function About() {
                 </h2>
                 <p className="leading-relaxed text-base">
                   HOA officers are assigned in rotation to the outposts around
-                  the subdivision. Feel safe with the new addition of the MMNP system for
-                  verification of residents and visitors.
+                  the subdivision. Feel safe with the new addition of the MMNP
+                  system for verification of residents and visitors.
                 </p>
               </div>
             </div>
@@ -185,11 +187,12 @@ function About() {
               OUR TEAM
             </h3>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-              Lessandra's HOA Administration System named MMNP Systems is produced by students
-              of Polytechnic University of the Philippines: Montales, Montilla, Navarro, and Pascua.
-              They had the idea of
+              Lessandra's HOA Administration System named MMNP Systems is
+              produced by students of Polytechnic University of the Philippines:
+              Montales, Montilla, Navarro, and Pascua. They had the idea of
               donating their services to the community to help the community
-              take its next step towards modern age security and to be the first one to do it.
+              take its next step towards modern age security and to be the first
+              one to do it.
             </p>
           </div>
           <div className="flex flex-wrap -m-4">
@@ -207,10 +210,11 @@ function About() {
                   <h3 className="text-gray-500 mb-3">Project Leader</h3>
                   <p className="mb-4">
                     An aspiring computer engineer of Polytechnic University of
-                    the Philippines. He found the wonderful community of Lessandra
-                    while cycling around the city. He lives in the neighboring community of
-                    Phase 3B Palmera Northwinds. Lessandra having only one entryway to the subdivision,
-                    Niel decided to take their gateway security to the next level.
+                    the Philippines. He found the wonderful community of
+                    Lessandra while cycling around the city. He lives in the
+                    neighboring community of Phase 3B Palmera Northwinds.
+                    Lessandra having only one entryway to the subdivision, Niel
+                    decided to take their gateway security to the next level.
                   </p>
                   <span className="inline-flex">
                     <a className="text-gray-500">
@@ -270,8 +274,9 @@ function About() {
                   <h3 className="text-gray-500 mb-3">Front End Developer</h3>
                   <p className="mb-4">
                     An aspiring computer engineer of Polytechnic University of
-                    the Philippines. With the talent and experience on front end design with CSS,
-                    he applies UX with his UI principles in developing the face of MMNP Systems.
+                    the Philippines. With the talent and experience on front end
+                    design with CSS, he applies UX with his UI principles in
+                    developing the face of MMNP Systems.
                   </p>
                   <span className="inline-flex">
                     <a className="text-gray-500">
@@ -331,10 +336,11 @@ function About() {
                   <h3 className="text-gray-500 mb-3">MERN Stack Developer</h3>
                   <p className="mb-4">
                     An aspiring computer engineer of Polytechnic University of
-                    the Philippines. Ralph is an experienced MERN stack developer.
-                    Utiziling the modern approach for web development and with Mike,
-                    he developed MMNP systems with the goal of using internet of things
-                    connected to the system's functions.
+                    the Philippines. Ralph is an experienced MERN stack
+                    developer. Utiziling the modern approach for web development
+                    and with Mike, he developed MMNP systems with the goal of
+                    using internet of things connected to the system's
+                    functions.
                   </p>
                   <span className="inline-flex">
                     <a className="text-gray-500">
@@ -394,9 +400,9 @@ function About() {
                   <h3 className="text-gray-500 mb-3">MERN Stack Developer</h3>
                   <p className="mb-4">
                     An aspiring computer engineer of Polytechnic University of
-                    the Philippines. Together with Ralph, they developed a prototype
-                    for the MMNP systems. One that responses with an RFID scanner by
-                    operating a functional barrier gate.
+                    the Philippines. Together with Ralph, they developed a
+                    prototype for the MMNP systems. One that responses with an
+                    RFID scanner by operating a functional barrier gate.
                   </p>
                   <span className="inline-flex">
                     <a className="text-gray-500">

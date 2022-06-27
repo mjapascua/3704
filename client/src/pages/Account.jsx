@@ -8,13 +8,13 @@ import Loading from "../components/Loading/Loading";
 import authService from "../utils/authService";
 import { logout, reset } from "../utils/authSlice";
 import { apiClient } from "../utils/requests";
-import EventsCalendar from "./User/EventsCalendar";
 import QRFormPage from "./User/QRFormPage";
 import swal from "sweetalert2";
 import { swalCustomClass } from "../utils/general";
 import { redirect } from "./Login";
 import { navStyle } from "./Dashboard";
 import RenderQRCode from "./User/RenderQRCode";
+import { CLIENT_NAME } from "../utils/appInfo";
 const activeStyle =
   "border-cyan-600 text-cyan-600 hover:bg-cyan-600 hover:border-cyan-700 " +
   navStyle;
@@ -57,7 +57,7 @@ const Account = () => {
   };
 
   useEffect(() => {
-    document.title = "Account | " + process.env.REACT_APP_NAME;
+    document.title = "Account | " + CLIENT_NAME;
   }, []);
 
   return (
@@ -126,10 +126,6 @@ const Account = () => {
               <Route
                 path="/generate-qr-pass"
                 element={<QRFormPage authConfig={authConfig} />}
-              />
-              <Route
-                path="/events"
-                element={<EventsCalendar authConfig={authConfig} />}
               />
             </Routes>
           </div>
