@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { CLIENT_NAME } from "../utils/appInfo";
+import { Link } from "react-router-dom";
 
 function Home() {
   /*   useEffect(() => {
@@ -23,12 +24,11 @@ function Home() {
                 visitors upon entering the subdivision.
               </p>
               <div className="flex justify-center">
-                <button className="inline-flex text-white bg-slate-700 border-0 py-2 px-6 focus:outline-none hover:bg-teal-500 rounded text-lg">
-                  Get started
-                </button>
-                <button className="ml-4 inline-flex text-gray-700 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded text-lg">
-                  Explore
-                </button>
+                <Link to="login">
+                  <button className="inline-flex text-white bg-slate-700 border-0 py-2 px-6 focus:outline-none hover:bg-teal-500 rounded text-lg">
+                    Get started
+                  </button>
+                </Link>
               </div>
             </div>
             <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
@@ -66,20 +66,6 @@ function Home() {
                     To start creating QR codes for your visitors, create an
                     account to register as a resident of Palmera Homes.
                   </p>
-                  <a className="mt-3 text-teal-500 inline-flex items-center">
-                    Learn More
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-4 h-4 ml-2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M5 12h14M12 5l7 7-7 7"></path>
-                    </svg>
-                  </a>
                 </div>
               </div>
               <div className="p-4 md:w-1/3 md:mb-0 mb-6 flex flex-col text-center items-center">
@@ -92,20 +78,6 @@ function Home() {
                     In your account panel, you can create QR codes for visitors
                     by typing in their information
                   </p>
-                  <a className="mt-3 text-teal-500 inline-flex items-center">
-                    Learn More
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-4 h-4 ml-2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M5 12h14M12 5l7 7-7 7"></path>
-                    </svg>
-                  </a>
                 </div>
               </div>
               <div className="p-4 md:w-1/3 md:mb-0 mb-6 flex flex-col text-center items-center">
@@ -118,26 +90,14 @@ function Home() {
                     Log in as a HOA representative to scan QR codes to verify if
                     they are allowed to enter the subdivision
                   </p>
-                  <a className="mt-3 text-teal-500 inline-flex items-center">
-                    Learn More
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="w-4 h-4 ml-2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M5 12h14M12 5l7 7-7 7"></path>
-                    </svg>
-                  </a>
                 </div>
               </div>
             </div>
-            <button className="flex mx-auto mt-16 text-white bg-slate-700 border-0 py-2 px-6 focus:outline-none hover:bg-teal-500 rounded text-lg">
-              Join Now
-            </button>
+            <Link to="signup">
+              <button className="flex mx-auto mt-16 text-white bg-slate-700 border-0 py-2 px-6 focus:outline-none hover:bg-teal-500 rounded text-lg">
+                Join Now
+              </button>
+            </Link>
           </div>
         </section>
         <section className="text-gray-700 body-fontw-5/6 md:w-3/4 mx-auto">
