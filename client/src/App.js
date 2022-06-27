@@ -19,7 +19,7 @@ import { Footer } from "./components/Footer";
 import VisitorForm from "./pages/VistorForm";
 import CompleteVerification from "./pages/CompleteVerification";
 import Loading from "./components/Loading/Loading";
-const Article = React.lazy(() => import("./pages/Article"));
+import Article from "./pages/Article";
 
 function App() {
   return (
