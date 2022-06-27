@@ -130,8 +130,8 @@ const verifyUser = asyncHandler(async (req, res) => {
   }
   const link =
     process.env.NODE_ENV === "development"
-      ? `http://localhost:3000/verification/` + account.id
-      : process.env.HOSTED_URL + "/verification/" + account.id;
+      ? `http://localhost:3000/verification/${account.id}`
+      : `${req.protocol}://${req.get("host")}/verification/${account.id}`;
   const mailOptions = {
     from: '"Community thesis app" <community4704@outlook.com>', // sender address
     to: account.email, // list of receivers
