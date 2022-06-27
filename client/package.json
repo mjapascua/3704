@@ -35,7 +35,7 @@
     "web-vitals": "^2.1.2"
   },
   "scripts": {
-    "dev": "concurrently --kill-others \"cd ../backend_dir/backend && nodemon server.js\" \"react-scripts start\" ",
+    "dev": "concurrently --kill-others \"cd ../backend && nodemon server.js\" \"react-scripts start\" ",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -66,6 +66,6 @@
   },
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "postcss.config.js",
-  "author": "",
+  "author": "Group 4704",
   "license": "ISC"
 }

@@ -22,7 +22,7 @@ const ArticleList = () => {
             setArticles((prev) => {
               return prev.concat(res.data.data);
             });
-        }, 2000);
+        }, 500);
       } else {
         setTotal(0);
       }

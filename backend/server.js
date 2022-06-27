@@ -1,13 +1,14 @@
 const path = require("path");
 const express = require("express");
-const dotenv = require("dotenv");
+const dotenv = require("dotenv").config({
+  path: path.resolve(__dirname, "../.env"),
+});
 const colors = require("colors");
 //const cors = require("cors");
 const { errorHandler } = require("./middleware/errorMiddleware");
 const port = process.env.PORT || 5000;
 const connectDB = require("./config/db");
 
-dotenv.config({ path: __dirname + "/.env" });
 connectDB();
 
 const app = express();
@@ -16,7 +17,6 @@ const app = express();
   origin: "http://localhost:3000",
   credentials: true,
 }; */
-
 //app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -28,11 +28,11 @@ app.use("/api/public", require("./routes/publicRoutes"));
 app.use("/api/bulletin", require("./routes/bulletinRoutes"));
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../../client/build")));
+  app.use(express.static(path.join(__dirname, "../client/build")));
 
   app.get("*", (req, res) => {
     res.sendFile(
-      path.resolve(__dirname, "../../", "client", "build", "index.html")
+      path.resolve(__dirname, "../", "client", "build", "index.html")
     );
   });
 } else {

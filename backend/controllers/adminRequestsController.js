@@ -128,10 +128,9 @@ const verifyUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error(unverified.message || "Uknown Error");
   }
-  const link =
-    process.env.NODE_ENV === "development"
-      ? `http://localhost:3000/verification/${account.id}`
-      : `${req.protocol}://${req.get("host")}/verification/${account.id}`;
+  const link = `${req.protocol}://${req.get("host")}/verification/${
+    account.id
+  }`;
   const mailOptions = {
     from: '"Community thesis app" <community4704@outlook.com>', // sender address
     to: account.email, // list of receivers
