@@ -131,7 +131,7 @@ export const QRScanner = ({ location, openOnRender, authConfig }) => {
           ) : (
             <QrReader
               ViewFinder={() => (
-                <div className="block absolute top-0 h-4/5 m-8 md:m-9 w-4/5 p-5 border-4 rounded-xl z-20 border-violet-600"></div>
+                <div className="block absolute top-0 h-3/5 my-16 mx-7 md:my-20 w-5/6 p-5 border-4 rounded-2xl z-20 border-white"></div>
               )}
               className={"qr-vid-container"}
               onResult={(result, error) => {
@@ -139,11 +139,8 @@ export const QRScanner = ({ location, openOnRender, authConfig }) => {
                   setLastHash(result.text);
                 }
               }}
-              style={{ width: "40%" }}
               constraints={{
                 facingMode: "environment",
-                height: 100,
-                width: 100,
               }}
             />
           )}
