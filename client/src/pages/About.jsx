@@ -1,5 +1,9 @@
 import { useEffect } from "react";
 import { CLIENT_NAME } from "../utils/appInfo";
+import img1 from '../images/navarro.png';
+import img2 from '../images/montales.png';
+import img3 from '../images/montilla.png';
+import img4 from '../images/pascua.png';
 
 function About() {
   useEffect(() => {
@@ -199,9 +203,9 @@ function About() {
             <div className="p-4 lg:w-1/4 md:w-1/2">
               <div className="h-full flex flex-col items-center text-center">
                 <img
-                  alt="testimonial"
+                  alt="Navarro 2x2"
                   className="w-20 h-20 mb-8 object-cover object-center rounded-full inline-block border-2 border-gray-200 bg-gray-100"
-                  src="https://dummyimage.com/302x302"
+                  src={img1}
                 />
                 <div className="w-full">
                   <h2 className="title-font font-medium text-lg text-gray-900">
@@ -263,9 +267,9 @@ function About() {
             <div className="p-4 lg:w-1/4 md:w-1/2">
               <div className="h-full flex flex-col items-center text-center">
                 <img
-                  alt="testimonial"
+                  alt="Montales 2x2"
                   className="w-20 h-20 mb-8 object-cover object-center rounded-full inline-block border-2 border-gray-200 bg-gray-100"
-                  src="https://dummyimage.com/302x302"
+                  src={img2}
                 />
                 <div className="w-full">
                   <h2 className="title-font font-medium text-lg text-gray-900">
@@ -325,9 +329,9 @@ function About() {
             <div className="p-4 lg:w-1/4 md:w-1/2">
               <div className="h-full flex flex-col items-center text-center">
                 <img
-                  alt="testimonial"
+                  alt="Montilla 2x2"
                   className="w-20 h-20 mb-8 object-cover object-center rounded-full inline-block border-2 border-gray-200 bg-gray-100"
-                  src="https://dummyimage.com/302x302"
+                  src={img3}
                 />
                 <div className="w-full">
                   <h2 className="title-font font-medium text-lg text-gray-900">
@@ -389,9 +393,9 @@ function About() {
             <div className="p-4 lg:w-1/4 md:w-1/2">
               <div className="h-full flex flex-col items-center text-center">
                 <img
-                  alt="testimonial"
+                  alt="Pascua 2x2"
                   className="w-20 h-20 mb-8 object-cover object-center rounded-full inline-block border-2 border-gray-200 bg-gray-100"
-                  src="https://dummyimage.com/302x302"
+                  src={img4}
                 />
                 <div className="w-full">
                   <h2 className="title-font font-medium text-lg text-gray-900">
