@@ -19,6 +19,9 @@ function CompleteVerification() {
     password: "",
     password_confirm: "",
   });
+
+  const [viewPass, setViewPass] = useState(false);
+
   const [status, setStatus] = useState({
     text: "",
     status: null,
@@ -161,6 +164,12 @@ function CompleteVerification() {
                   <div className=" animate-slideToR h-60 bg-white">
                     <label className="md:mr-1 md:w-44">
                       Password
+                      <span
+                        onClick={() => setViewPass((prev) => !prev)}
+                        className="material-icons-sharp absolute cursor-pointer right-0 text-base px-1"
+                      >
+                        {!viewPass ? "visibility_off" : "visibility"}
+                      </span>
                       <input
                         type={!viewPass ? "password" : "text"}
                         name="password"
@@ -176,6 +185,12 @@ function CompleteVerification() {
 
                     <label className="md:ml-1 md:w-44">
                       Confirm password
+                      <span
+                        onClick={() => setViewPass((prev) => !prev)}
+                        className="material-icons-sharp absolute cursor-pointer right-0 text-base px-1"
+                      >
+                        {!viewPass ? "visibility_off" : "visibility"}
+                      </span>
                       <input
                         type={!viewPass ? "password" : "text"}
                         name="password_confirm"
