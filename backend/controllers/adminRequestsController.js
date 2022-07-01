@@ -128,7 +128,7 @@ const verifyUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error(unverified.message || "Uknown Error");
   }
-  const link = `${req.protocol}://${req.get("host")}/verification/${
+  const link = `${req.protocol}https://${req.get("host")}/verification/${
     account.id
   }`;
   const mailOptions = {
