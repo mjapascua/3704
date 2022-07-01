@@ -162,7 +162,7 @@ function CompleteVerification() {
                     <label className="md:mr-1 md:w-44">
                       Password
                       <input
-                        type="password"
+                        type={!viewPass ? "password" : "text"}
                         name="password"
                         onChange={handleChange}
                         value={credentials.password}
@@ -177,7 +177,7 @@ function CompleteVerification() {
                     <label className="md:ml-1 md:w-44">
                       Confirm password
                       <input
-                        type="password"
+                        type={!viewPass ? "password" : "text"}
                         name="password_confirm"
                         onChange={handleChange}
                         value={credentials.password_confirm}
