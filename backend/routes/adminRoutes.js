@@ -78,7 +78,12 @@ router
   .put(updateQueueItem)
   .delete(removeFromQueue);
 
-router.get("/users/:role", protect, authAllow([ROLES.ADMIN]), getUsersByRole);
+router.get(
+  "/users/:role",
+  protect,
+  authAllow([ROLES.ADMIN, ROLES.EDITOR]),
+  getUsersByRole
+);
 
 router
   .route("/user/:id")

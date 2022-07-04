@@ -1,9 +1,10 @@
 import axios from "axios";
 import { useCallback, useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { Button } from "../../components/Buttons/Main";
-import { useAuthHeader } from "../../utils/authService";
+import authService, { useAuthHeader } from "../../utils/authService";
 import { useIsMounted } from "../../utils/general";
 import { apiClient } from "../../utils/requests";
 
@@ -20,9 +21,10 @@ const ManageDevices = () => {
   });
   const authConfig = useAuthHeader();
   const isMounted = useIsMounted();
+  const { user } = useSelector((state) => state.auth);
 
   const getIntData = useCallback(() => {
-    const adminReq = apiClient.get("admin/users/ADMIN", authConfig);
+    const adminReq = apiClient.get("admin/users/ADMIN,EDITOR", authConfig);
     const deviceReq = apiClient.get("admin/rfid/devices", authConfig);
     const locReq = apiClient.get("admin/locations", authConfig);
     axios
@@ -200,7 +202,11 @@ const ManageDevices = () => {
               <Button
                 primary
                 className="w-full mt-5"
-                disabled={newLoc?.length < 1 ? true : false}
+                disabled={
+                  newLoc?.length < 1 || user.role !== authService.ROLES.ADMIN
+                    ? true
+                    : false
+                }
                 type="submit"
               >
                 Add
@@ -330,7 +336,9 @@ const ManageDevices = () => {
                 primary
                 className="w-full mt-5"
                 disabled={
-                  info.label.length < 1 || info.label.length < 1 ? true : false
+                  info.label.length < 1 || user.role !== authService.ROLES.ADMIN
+                    ? true
+                    : false
                 }
                 type="submit"
               >

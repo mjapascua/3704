@@ -66,10 +66,10 @@ const filterUsers = asyncHandler(async (req, res) => {
 // @route   GET /api/admin/users/:role
 // @access  Private
 const getUsersByRole = asyncHandler(async (req, res) => {
-  const users = await User.find(
-    { role: ROLES[req.params.role] },
-    "fname lname"
-  ).lean();
+  const roles = req.params.role.split(",").map((el) => {
+    return ROLES[el];
+  });
+  const users = await User.find({ role: roles }, "fname lname").lean();
 
   if (!users) {
     res.status(404);

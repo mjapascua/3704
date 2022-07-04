@@ -6,13 +6,15 @@ import Swal from "sweetalert2";
 import Loading from "../../components/Loading/Loading";
 import { useNavigate, useParams } from "react-router-dom";
 import { ReturnButton } from "../../components/Buttons/Return";
-import { useAuthHeader } from "../../utils/authService";
+import authService, { useAuthHeader } from "../../utils/authService";
 import { swalCustomClass, useIsMounted } from "../../utils/general";
+import { useSelector } from "react-redux";
 
 const steps = [1, 2, 3];
 
 const AccountPage = () => {
-  const [user, setUser] = useState({});
+  const [account, setAccount] = useState({});
+
   const [loading, setLoading] = useState(true);
   const [regData, setRegData] = useState({ guest: "" });
   const [queue_id, setQueue] = useState(null);
@@ -21,6 +23,7 @@ const AccountPage = () => {
   const authConfig = useAuthHeader();
   const isMounted = useIsMounted();
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
 
   const Queue = Swal.mixin({
     progressSteps: steps,
@@ -39,19 +42,19 @@ const AccountPage = () => {
   });
 
   const handleEdit = ({ target }) => {
-    setUser((prev) => {
+    setAccount((prev) => {
       return { ...prev, [target.name]: target.value };
     });
   };
 
   const handleSelectGuest = ({ target }) => {
-    setRegData({ guest: user.guests[target.value] });
+    setRegData({ guest: account.guests[target.value] });
   };
 
-  const getUser = useCallback(() => {
+  const getaccount = useCallback(() => {
     apiClient.get("admin/user/" + param.id, authConfig).then((res) => {
       if (res.status === 200 && isMounted) {
-        setUser(res.data);
+        setAccount(res.data);
         setLoading(false);
       }
     });
@@ -59,9 +62,9 @@ const AccountPage = () => {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    apiClient.put(`user/${user._id}`, user, authConfig).then((res) => {
+    apiClient.put(`user/${account._id}`, account, authConfig).then((res) => {
       if (res.status === 200) {
-        toast.success(`User ${res.data.fname} has been updated`);
+        toast.success(`account ${res.data.fname} has been updated`);
       }
     });
   };
@@ -73,25 +76,27 @@ const AccountPage = () => {
   };
 
   const startCardRegistration = () => {
-    apiClient.post("admin/rfid/register/", { user: user._id }).then((res) => {
-      if (res.status === 201 || res.status === 200) {
-        setQueue(res.data.id);
-        Queue.fire({
-          title: !res.data
-            ? "Waiting for scanner"
-            : res.data.message + " waiting for scanner",
-          icon: "question",
-          currentProgressStep: 0,
-          showConfirmButton: false,
-          showCancelButton: true,
-          showClass: { backdrop: "swal2-noanimation" },
-        }).then((result) => {
-          if (result.dismiss === Swal.DismissReason.cancel) {
-            cancelRegistration(res.data.id);
-          }
-        });
-      } else toast.error(res.data.message);
-    });
+    apiClient
+      .post("admin/rfid/register/", { account: account._id })
+      .then((res) => {
+        if (res.status === 201 || res.status === 200) {
+          setQueue(res.data.id);
+          Queue.fire({
+            title: !res.data
+              ? "Waiting for scanner"
+              : res.data.message + " waiting for scanner",
+            icon: "question",
+            currentProgressStep: 0,
+            showConfirmButton: false,
+            showCancelButton: true,
+            showClass: { backdrop: "swal2-noanimation" },
+          }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.cancel) {
+              cancelRegistration(res.data.id);
+            }
+          });
+        } else toast.error(res.data.message);
+      });
   };
 
   const checkRegistration = useCallback(() => {
@@ -139,7 +144,7 @@ const AccountPage = () => {
   const handleRegistration = () => {
     apiClient
       .post("admin/rfid/register/q/" + queue_id, {
-        u_id: user._id,
+        u_id: account._id,
         guest: regData?.guest._id,
       })
       .then((res) => {
@@ -185,12 +190,14 @@ const AccountPage = () => {
       showCancelButton: true,
     }).then(({ isConfirmed }) => {
       if (isConfirmed) {
-        apiClient.delete("admin/user/" + param.id, authConfig).then((res) => {
-          if (res.status === 200) {
-            toast.success("Deleted");
-            navigate("/dashboard/accounts", { replace: true });
-          }
-        });
+        apiClient
+          .delete("admin/account/" + param.id, authConfig)
+          .then((res) => {
+            if (res.status === 200) {
+              toast.success("Deleted");
+              navigate("/dashboard/accounts", { replace: true });
+            }
+          });
       }
     });
   };
@@ -207,10 +214,10 @@ const AccountPage = () => {
     }).then((result) => {
       if (result.isConfirmed)
         apiClient
-          .delete("user/" + user._id + "/" + gId, authConfig)
+          .delete("account/" + account._id + "/" + gId, authConfig)
           .then((res) => {
             if (res.status === 200) {
-              getUser();
+              getaccount();
             }
           })
           .catch((err) => toast.error(err.response.message));
@@ -231,15 +238,15 @@ const AccountPage = () => {
         apiClient
           .delete("admin/rfid/tags/" + tagId, authConfig)
           .then((res) => {
-            if (res.status === "200") getUser();
+            if (res.status === "200") getaccount();
           })
           .catch((err) => toast.error(err.response.message));
     });
   };
 
   useEffect(() => {
-    getUser();
-  }, [getUser]);
+    getaccount();
+  }, [getaccount]);
 
   useEffect(() => {
     checkRegistration();
@@ -260,7 +267,7 @@ const AccountPage = () => {
               <label>
                 <input
                   type="text"
-                  value={user.fname}
+                  value={account.fname}
                   name="fname"
                   className="form-input !w-40"
                   onChange={handleEdit}
@@ -269,7 +276,7 @@ const AccountPage = () => {
               <label>
                 <input
                   type="text"
-                  value={user.lname}
+                  value={account.lname}
                   name="lname"
                   className="form-input !w-40"
                   onChange={handleEdit}
@@ -284,7 +291,7 @@ const AccountPage = () => {
                     type="text"
                     name="contact"
                     onChange={handleEdit}
-                    value={user.contact}
+                    value={account.contact}
                     className="form-input !inline-block !w-40"
                     placeholder="9*********"
                     required
@@ -294,7 +301,7 @@ const AccountPage = () => {
               <label>
                 <input
                   type="email"
-                  value={user.email}
+                  value={account.email}
                   name="email"
                   className="form-input !w-56"
                   onChange={handleEdit}
@@ -302,7 +309,12 @@ const AccountPage = () => {
               </label>
             </span>
             <span className="">
-              <Button primary onClick={deleteAcc} className="!bg-rose-500 mx-5">
+              <Button
+                primary
+                disabled={user.role !== authService.ROLES.ADMIN}
+                onClick={deleteAcc}
+                className="!bg-rose-500 mx-5"
+              >
                 Delete
               </Button>
               <Button primary type={"submit"}>
@@ -324,7 +336,7 @@ const AccountPage = () => {
                     className="bg-indigo-500"
                     onClick={handleRegistration}
                   >
-                    Add to this user
+                    Add to this account
                   </Button>
                   or
                   <label className="ml-4">
@@ -335,7 +347,7 @@ const AccountPage = () => {
                       className="ml-2"
                     >
                       <option value={""}></option>
-                      {user.guests.map((g, index) => {
+                      {account.guests.map((g, index) => {
                         return (
                           <option key={index} value={index}>
                             {g.fname + " " + g.lname}
@@ -361,14 +373,14 @@ const AccountPage = () => {
               )}
             </span>
           </form>
-          {user.guests.length > 0 && (
+          {account.guests.length > 0 && (
             <>
               <span className="block mb-3">
                 <b>Guests</b>
               </span>
 
               <span className=" block overflow-auto">
-                {user.guests.map((el, index) => {
+                {account.guests.map((el, index) => {
                   return (
                     <span
                       key={index}
@@ -392,19 +404,19 @@ const AccountPage = () => {
               </span>
             </>
           )}
-          {user.tags.length > 0 && (
+          {account.tags.length > 0 && (
             <>
               <span className="block mt-6 mb-3">
                 <b>RFIDs tags</b>
               </span>
               <span className="h-80 block overflow-auto">
-                {user.tags.map((el, index) => {
+                {account.tags.map((el, index) => {
                   return (
                     <span
                       key={index}
                       className="flex items-center w-3/5 h-14 justify-between my-2 rounded bg-white shadow border px-3 py-3"
                     >
-                      {el.g_id?.fname || user.fname + " " + user.lname}{" "}
+                      {el.g_id?.fname || account.fname + " " + account.lname}{" "}
                       <Button
                         className="text-rose-500 hover:underline"
                         onClick={() => removeRFIDTag(el._id)}
