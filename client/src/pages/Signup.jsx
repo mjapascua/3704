@@ -38,7 +38,8 @@ function SignUp() {
 
   let from = location.state?.from?.pathname
     ? location.state?.from?.pathname
-    : user?.role === authService.ROLES.ADMIN
+    : user?.role === authService.ROLES.ADMIN ||
+      user?.role === authService.ROLES.EDITOR
     ? "/dashboard/qr-scanner"
     : "/account";
 

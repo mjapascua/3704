@@ -89,7 +89,8 @@ const Account = () => {
               );
             })}
 
-            {user?.role === authService.ROLES.ADMIN && (
+            {(user?.role === authService.ROLES.ADMIN ||
+              user?.role === authService.ROLES.EDITOR) && (
               <NavLink
                 to={"/dashboard/qr-scanner"}
                 className={({ isActive }) =>
