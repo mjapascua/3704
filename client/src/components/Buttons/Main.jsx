@@ -8,7 +8,7 @@ export const Button = React.forwardRef((props, ref) => {
       onClick={props.onClick}
       className={
         props.className +
-        " font-display box-border select-none py-2 items-center justify-center font-semibold text-sm rounded-sm disabled:bg-gray-300 disabled:text-gray-700 disabled:border-gray-300" +
+        " font-display box-border select-none py-2 items-center justify-center font-semibold text-sm rounded-sm disabled:!bg-gray-300 disabled:text-gray-700 disabled:!border-gray-300" +
         (props.primary && primaryClass) +
         (props.secondary && secondaryClass)
       }
