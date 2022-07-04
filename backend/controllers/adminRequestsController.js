@@ -115,19 +115,12 @@ const verifyUser = asyncHandler(async (req, res) => {
     res.json({ account, message: "Request rejected" });
     return;
   }
-  const account = await UnverifiedAcc.findByIdAndUpdate(
-    req.params.id,
-    {
-      role: req.body.role,
-      verified: true,
-    },
-    { new: true }
-  );
+  const account = await UnverifiedAcc.findById(req.params.id);
 
-  if (!account || account.message) {
+  /* if (!account || account.message) {
     res.status(400);
     throw new Error(unverified.message || "Uknown Error");
-  }
+  } */
   const link = `https://${req.get("host")}/verification/${account.id}`;
   const mailOptions = {
     from: '"Community thesis app" <community4704@outlook.com>', // sender address
@@ -138,9 +131,13 @@ const verifyUser = asyncHandler(async (req, res) => {
   await mailer.outlookTransporter
     .sendMail(mailOptions)
     .then((stat) => {
-      if (stat.accepted.length > 0)
+      if (stat.accepted.length > 0) {
+        account.role = req.body.role;
+        account.verified = true;
+        account.save();
+
         res.json({ account, message: "Email sent via outlook" });
-      else {
+      } else {
         throw new Error();
       }
     })
@@ -149,8 +146,13 @@ const verifyUser = asyncHandler(async (req, res) => {
       mailer.gmailTransporter
         .sendMail(mailOptions)
         .then((stat) => {
-          if (stat.accepted.length > 0)
+          if (stat.accepted.length > 0) {
+            account.role = req.body.role;
+            account.verified = true;
+            account.save();
+
             res.json({ account, message: "Email sent via gmail" });
+          }
         })
         .catch(() => {
           res.status(400);
