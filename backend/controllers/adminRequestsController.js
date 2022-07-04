@@ -128,9 +128,7 @@ const verifyUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error(unverified.message || "Uknown Error");
   }
-  const link = `https://${req.get("host")}/verification/${
-    account.id
-  }`;
+  const link = `https://${req.get("host")}/verification/${account.id}`;
   const mailOptions = {
     from: '"Community thesis app" <community4704@outlook.com>', // sender address
     to: account.email, // list of receivers
@@ -142,6 +140,9 @@ const verifyUser = asyncHandler(async (req, res) => {
     .then((stat) => {
       if (stat.accepted.length > 0)
         res.json({ account, message: "Email sent via outlook" });
+      else {
+        throw new Error();
+      }
     })
     .catch(() => {
       mailOptions.from = '"Community thesis app" <community4704@gmail.com>';
