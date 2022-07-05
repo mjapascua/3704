@@ -66,7 +66,7 @@ ScanLogSchema.statics.paginate = async function (
     .lean()
     .populate("by", "fname lname")
     .populate("loc", "label")
-    .populate("u_id", "fname lname")
+    .populate("u_id", "fname lname residence")
     .populate("g_id", "fname lname")
     .sort({ createdAt: checkFilter.order || -1 })
     .skip(skip)
