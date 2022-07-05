@@ -100,7 +100,11 @@ const ManageScanLogs = () => {
         { Header: "Last name", accessor: "g_id.lname" },
       ],
     },
-
+    { 
+      Header: "Destination / Residence", 
+      accessor: "u_id.residence",      
+      width: 340,
+    },
     { Header: "Scanned by", accessor: "by.fname" },
   ]);
 
