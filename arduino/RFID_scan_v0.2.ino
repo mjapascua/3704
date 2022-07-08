@@ -62,9 +62,9 @@ void setup() {
   P.setZone(1, 4, 7);
   P.displayZoneText(0,"S T O P",PA_CENTER,P.getSpeed(), P.getPause(), PA_PRINT, PA_CLOSING);
 
-  bool rfDisabled = mfrc522.PCD_PerformSelfTest();
+  bool rfFunctional = mfrc522.PCD_PerformSelfTest();
 
-  if(!digitalRead(rfDisabled)){
+  if(!rfFunctional){
     Serial.print("Connecting");
     while (WiFi.status() != WL_CONNECTED) {
       Serial.print(".");
