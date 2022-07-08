@@ -12,7 +12,7 @@ const int SS_PIN = 21; // Slave select pin
 
 const char* ssid = "SKYFiber_MESH_1A10";
 const char* password =  "531055085";
-const char* requestPath = "http://192.168.55.107:5000/api/admin/rfid/register/";
+const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/register/";
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance
 
