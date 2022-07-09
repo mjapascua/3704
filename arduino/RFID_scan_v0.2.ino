@@ -6,7 +6,8 @@
 #include <HTTPClient.h>
 #include <Arduino_JSON.h>
 
-#define ledPin 2
+#define passPin 2
+#define statusPin 26
 #define failPin 4
 //#define RFdisabled 27
 
@@ -32,10 +33,17 @@ MD_Parola P = MD_Parola(HARDWARE_TYPE, dPin, clkPin, csPin, MAX_DEVICES);
 const int RST_PIN = 22; // Reset pin
 const int SS_PIN = 21; // Slave select pin
 
+//const char* deviceKey = "124TEST";
+//const char* ssid = "2.4G";
+//const char* password =  "Mikepascua123#";
+//const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";\
+
 const char* deviceKey = "124TEST";
-const char* ssid = "SKYFiber_MESH_1A10";
-const char* password =  "531055085";
-const char* requestPath = "http://192.168.55.107:5000/api/admin/rfid/scan/";
+const char* ssid = "mike";
+const char* password =  "12345678";
+const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";
+
+
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance
 
@@ -43,8 +51,9 @@ void setup() {
   Serial.begin(115200);
   WiFi.begin(ssid, password);
 
-  pinMode(ledPin, OUTPUT);
+  pinMode(passPin, OUTPUT);
   pinMode(failPin, OUTPUT);
+  pinMode(statusPin, OUTPUT);
   pinMode(stepPin, OUTPUT);
   pinMode(dirPin, OUTPUT);
   pinMode(trigPin, OUTPUT);
@@ -56,16 +65,19 @@ void setup() {
   SPI.begin(); // Init SPI bus
   mfrc522.PCD_Init(); // Init MFRC522
   mfrc522.PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader details
-  
-  P.begin(8);
-  P.setZone(0, 0, 3);
-  P.setZone(1, 4, 7);
-  P.displayZoneText(0,"S T O P",PA_CENTER,P.getSpeed(), P.getPause(), PA_PRINT, PA_CLOSING);
-
   bool rfFunctional = mfrc522.PCD_PerformSelfTest();
 
-  if(!rfFunctional){
+  P.begin(2);
+  P.setZone(0, 0, 3);
+  P.setZone(1, 4, 7);
+  P.displayClear(1);
+  P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
+  P.displayAnimate();
+
+
+  if(rfFunctional){
     Serial.print("Connecting");
+    digitalWrite(statusPin,HIGH);
     while (WiFi.status() != WL_CONNECTED) {
       Serial.print(".");
       delay(500);
@@ -73,25 +85,29 @@ void setup() {
     Serial.println("\nConnected to network");
     Serial.println("<-- SCAN TAG -->");
     Serial.println("\n - - - Watching for tags - - -");
+  } else {
+    digitalWrite(statusPin,LOW);
   }
 }
 
 void loop() {
+
+  P.displayAnimate();
   bool rfFunctional = mfrc522.PCD_PerformSelfTest();
+  bool manualOpen = digitalRead(manualPin);
   
   if(!rfFunctional){
-    digitalWrite(failPin,HIGH);
-  }  digitalWrite(failPin,LOW);
-
+    digitalWrite(statusPin,LOW);
+  }  digitalWrite(statusPin,HIGH);
   
-  if(digitalRead(manualPin)){
-    digitalWrite(ledPin, HIGH);
-    P.displayZoneText(1,"P A S S",PA_CENTER,P.getSpeed(), P.getPause(), PA_PRINT, PA_CLOSING);
-    Serial.println("RFID scan recorded");
-    
+  if(manualOpen){
+    digitalWrite(passPin, HIGH);
+    P.displayClear(0);
+    P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);  
+    P.displayAnimate();  
     bool isStopped = runRevolution(HIGH);
     
-    if(!isStopped){
+    if(!isStopped){   
       trigSensor();
       long duration = pulseIn(echoPin, HIGH);
       float distance = duration * 0.034 / 2;;
@@ -117,21 +133,20 @@ void loop() {
       }
       
       delay(1000);
-      P.displayZoneText(0,"S T O P",PA_CENTER,P.getSpeed(), P.getPause(), PA_PRINT, PA_CLOSING);
-      delay(2000);
+      P.displayClear(1);
+      P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
+      P.displayAnimate();
+      delay(0);
       
       runRevolution(LOW);
     }
-    digitalWrite(ledPin, LOW);
-  }
+    digitalWrite(passPin, LOW);
+  };
 
-  
-  
   if(!rfFunctional){
-    delay(200);
+    delay(100);
     return;
-  }
-
+  };
 
   if ((WiFi.status() == WL_CONNECTED)) //Check the current connection status
   {
@@ -139,10 +154,9 @@ void loop() {
     for (byte i = 0; i < 6; i++) key.keyByte[i] = 0xFF;
 
     if ( ! mfrc522.PICC_IsNewCardPresent() || ! mfrc522.PICC_ReadCardSerial()) {
-      digitalWrite(ledPin, LOW);
+      //digitalWrite(statusPin, HIGH);
       return;
     }
-    
     HTTPClient http;
     MFRC522::StatusCode status;
     String uid;
@@ -153,17 +167,17 @@ void loop() {
       uid += mfrc522.uid.uidByte[i];
     }
     
-    String path = String(requestPath) + String(deviceKey) + "/" + uid;    
-    Serial.println(path);
-  
+    String path = String(requestPath) + String(deviceKey) + "/" + uid;      
     http.begin(path);
     int httpResponseCode = http.GET();
   
     Serial.println("\nRequesting to server...");
   
     if (httpResponseCode == 200) {
-      digitalWrite(ledPin, HIGH);
-      P.displayZoneText(1,"P A S S",PA_CENTER,P.getSpeed(), P.getPause(), PA_PRINT, PA_CLOSING);
+      digitalWrite(passPin, HIGH);
+      P.displayClear(0);
+      P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);   
+      P.displayAnimate();
       Serial.println("RFID scan recorded");
       
       bool isStopped = runRevolution(HIGH);
@@ -194,35 +208,46 @@ void loop() {
         }
         
         delay(1000);
-        P.displayZoneText(0,"S T O P",PA_CENTER,P.getSpeed(), P.getPause(), PA_PRINT, PA_CLOSING);
-        delay(2000);
+        P.displayClear(1);
+        P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
+        P.displayAnimate();
+        delay(0);
         
         runRevolution(LOW);
       }
-      digitalWrite(ledPin, LOW);
+      digitalWrite(passPin, LOW);
     }
     else {
       Serial.print("Response code: ");
       Serial.println(httpResponseCode);
-      P.displayZoneText(0,"F A I L",PA_CENTER,P.getSpeed(), P.getPause(), PA_PRINT, PA_CLOSING);
+      digitalWrite(failPin,HIGH);
+      P.displayClear(1);
+      P.displayZoneText(0,"F A I L",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
+      P.displayAnimate();
       delay(2000);
+      P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
+      P.displayAnimate();
+      digitalWrite(failPin,LOW);
+      delay(0);
     }
     
     http.end();
     mfrc522.PICC_HaltA(); // Halt PICC
     mfrc522.PCD_StopCrypto1();  // Stop encryption on PCD
-
-    delay(200);
+    
+    digitalWrite(failPin,LOW);
+    digitalWrite(passPin,LOW);
 
     Serial.println("\n - - - Watching for tags - - -");
-  }
-  else {
+    delay(100);
+
+  }  else {
     Serial.println("Connection lost");
-    digitalWrite(failPin,HIGH);
-    delay(200);
-    digitalWrite(failPin,LOW);
+    digitalWrite(statusPin,LOW);
+    delay(100);
+    return;
   }
-  delay(200);
+
 }
 
 
@@ -234,11 +259,13 @@ void trigSensor(){
   digitalWrite(trigPin, LOW);
 }
 
-bool runRevolution(bool startAt){
+int runRevolution(int startAt){
   digitalWrite(dirPin, startAt);
+  int manualPress;
 
   for (int i = 0; i < stepsPerRevolution; i++) {
-    if(digitalRead(manualPin)){
+    manualPress = digitalRead(manualPin);
+    if(manualPress ==  HIGH){
       trigSensor();
       long duration = pulseIn(echoPin, HIGH);
       float distance = duration * 0.034 / 2;
@@ -250,14 +277,14 @@ bool runRevolution(bool startAt){
       };
       
       digitalWrite(dirPin, !startAt);
-      for (int x = i; x < stepsPerRevolution; x++) {
+      for (int x = 0; x < i; x++) {
         digitalWrite(stepPin, HIGH);
         delayMicroseconds(4000);
         digitalWrite(stepPin, LOW);
         delayMicroseconds(4000); 
       }
       
-      return true;
+      return 1;
     };
     
     digitalWrite(stepPin, HIGH);
@@ -266,5 +293,5 @@ bool runRevolution(bool startAt){
     delayMicroseconds(4000); 
   }   
   
-  return false;
+  return 0;
 }
