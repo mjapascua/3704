@@ -90,9 +90,7 @@ void loop() {
   
   if(manualOpen){
     digitalWrite(passPin, HIGH);
-    P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);
-    Serial.println("RFID scan recorded");
-    
+    P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);    
     int isStopped = runRevolution(HIGH);
     
     if(isStopped == 1){
