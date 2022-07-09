@@ -8,7 +8,7 @@
 
 #define passPin 2
 #define statusPin 4
-#define failPin 15
+#define failPin 26
 //#define RFdisabled 27
 
 //Sensor
