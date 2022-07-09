@@ -60,10 +60,10 @@ void setup() {
   mfrc522.PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader details
   bool rfFunctional = mfrc522.PCD_PerformSelfTest();
 
-  P.begin(8);
+  P.begin(2);
   P.setZone(0, 0, 3);
   P.setZone(1, 4, 7);
-  P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);
+  P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
 
   if(rfFunctional){
     Serial.print("Connecting");
@@ -90,7 +90,7 @@ void loop() {
   
   if(manualOpen){
     digitalWrite(passPin, HIGH);
-    P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);    
+    P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);    
     int isStopped = runRevolution(HIGH);
     
     if(isStopped == 1){
@@ -119,7 +119,7 @@ void loop() {
       }
       
       delay(1000);
-      P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);
+      P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
       delay(2000);
       
       runRevolution(LOW);
@@ -159,7 +159,7 @@ void loop() {
   
     if (httpResponseCode == 200) {
       digitalWrite(passPin, HIGH);
-      P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);
+      P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
       Serial.println("RFID scan recorded");
       
       bool isStopped = runRevolution(HIGH);
@@ -190,7 +190,7 @@ void loop() {
         }
         
         delay(1000);
-        P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);
+        P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
         delay(2000);
         
         runRevolution(LOW);
@@ -201,7 +201,7 @@ void loop() {
       Serial.print("Response code: ");
       Serial.println(httpResponseCode);
       digitalWrite(failPin,HIGH);
-      P.displayZoneText(0,"F A I L",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);
+      P.displayZoneText(0,"F A I L",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
       delay(2000);
     }
     
