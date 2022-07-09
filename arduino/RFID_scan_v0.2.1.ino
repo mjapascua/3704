@@ -63,7 +63,7 @@ void setup() {
   P.begin(8);
   P.setZone(0, 0, 3);
   P.setZone(1, 4, 7);
-  P.displayZoneText(0,"S T O P",PA_CENTER,P.getSpeed(), P.getPause(), PA_PRINT, PA_CLOSING);
+  P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);
 
   if(rfFunctional){
     Serial.print("Connecting");
@@ -90,7 +90,7 @@ void loop() {
   
   if(manualOpen){
     digitalWrite(passPin, HIGH);
-    P.displayZoneText(1,"P A S S",PA_CENTER,P.getSpeed(), P.getPause(), PA_PRINT, PA_CLOSING);
+    P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);
     Serial.println("RFID scan recorded");
     
     int isStopped = runRevolution(HIGH);
@@ -121,7 +121,7 @@ void loop() {
       }
       
       delay(1000);
-      P.displayZoneText(0,"S T O P",PA_CENTER,P.getSpeed(), P.getPause(), PA_PRINT, PA_CLOSING);
+      P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);
       delay(2000);
       
       runRevolution(LOW);
@@ -140,7 +140,7 @@ void loop() {
     for (byte i = 0; i < 6; i++) key.keyByte[i] = 0xFF;
 
     if ( ! mfrc522.PICC_IsNewCardPresent() || ! mfrc522.PICC_ReadCardSerial()) {
-      digitalWrite(statusPin, HIGH);
+      //digitalWrite(statusPin, HIGH);
       return;
     }
     HTTPClient http;
@@ -161,7 +161,7 @@ void loop() {
   
     if (httpResponseCode == 200) {
       digitalWrite(passPin, HIGH);
-      P.displayZoneText(1,"P A S S",PA_CENTER,P.getSpeed(), P.getPause(), PA_PRINT, PA_CLOSING);
+      P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);
       Serial.println("RFID scan recorded");
       
       bool isStopped = runRevolution(HIGH);
@@ -192,7 +192,7 @@ void loop() {
         }
         
         delay(1000);
-        P.displayZoneText(0,"S T O P",PA_CENTER,P.getSpeed(), P.getPause(), PA_PRINT, PA_CLOSING);
+        P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);
         delay(2000);
         
         runRevolution(LOW);
@@ -203,7 +203,7 @@ void loop() {
       Serial.print("Response code: ");
       Serial.println(httpResponseCode);
       digitalWrite(failPin,HIGH);
-      P.displayZoneText(0,"F A I L",PA_CENTER,P.getSpeed(), P.getPause(), PA_PRINT, PA_CLOSING);
+      P.displayZoneText(0,"F A I L",PA_CENTER, 10, 2000, PA_PRINT, PA_CLOSING);
       delay(2000);
     }
     
@@ -213,7 +213,6 @@ void loop() {
     
     digitalWrite(failPin,LOW);
     digitalWrite(passPin,LOW);
-    digitalWrite(statusPin,HIGH);
 
     Serial.println("\n - - - Watching for tags - - -");
     delay(100);
