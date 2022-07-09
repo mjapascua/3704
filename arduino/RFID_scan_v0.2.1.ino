@@ -7,8 +7,8 @@
 #include <Arduino_JSON.h>
 
 #define passPin 2
-#define statusPin 4
-#define failPin 26
+#define statusPin 26
+#define failPin 4
 //#define RFdisabled 27
 
 //Sensor
@@ -226,7 +226,6 @@ void loop() {
   }
 }
 
-
 void trigSensor(){
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -237,11 +236,14 @@ void trigSensor(){
 
 int runRevolution(int startAt){
   digitalWrite(dirPin, startAt);
-  int manualPress;
 
   for (int i = 0; i < stepsPerRevolution; i++) {
-    manualPress = digitalRead(manualPin);
-    if(manualPress ==  HIGH){
+    if(digitalRead(manualPin) ==  LOW){
+      digitalWrite(stepPin, HIGH);
+      delayMicroseconds(4000);
+      digitalWrite(stepPin, LOW);
+      delayMicroseconds(4000); 
+    } else {
       trigSensor();
       long duration = pulseIn(echoPin, HIGH);
       float distance = duration * 0.034 / 2;
@@ -261,12 +263,8 @@ int runRevolution(int startAt){
       }
       
       return 1;
-    };
-    
-    digitalWrite(stepPin, HIGH);
-    delayMicroseconds(4000);
-    digitalWrite(stepPin, LOW);
-    delayMicroseconds(4000); 
+    }
+  
   }   
   
   return 0;
