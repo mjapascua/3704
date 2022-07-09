@@ -33,10 +33,17 @@ MD_Parola P = MD_Parola(HARDWARE_TYPE, dPin, clkPin, csPin, MAX_DEVICES);
 const int RST_PIN = 22; // Reset pin
 const int SS_PIN = 21; // Slave select pin
 
+//const char* deviceKey = "124TEST";
+//const char* ssid = "2.4G";
+//const char* password =  "Mikepascua123#";
+//const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";\
+
 const char* deviceKey = "124TEST";
-const char* ssid = "2.4G";
-const char* password =  "Mikepascua123#";
+const char* ssid = "mike";
+const char* password =  "12345678";
 const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";
+
+
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance
 
@@ -61,10 +68,12 @@ void setup() {
   bool rfFunctional = mfrc522.PCD_PerformSelfTest();
 
   P.begin(2);
-  P.print('FUCK U');
   P.setZone(0, 0, 3);
   P.setZone(1, 4, 7);
+  P.displayClear(1);
   P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
+  P.displayAnimate();
+
 
   if(rfFunctional){
     Serial.print("Connecting");
@@ -82,6 +91,8 @@ void setup() {
 }
 
 void loop() {
+
+  P.displayAnimate();
   bool rfFunctional = mfrc522.PCD_PerformSelfTest();
   bool manualOpen = digitalRead(manualPin);
   
@@ -91,10 +102,12 @@ void loop() {
   
   if(manualOpen){
     digitalWrite(passPin, HIGH);
-    P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);    
+    P.displayClear(0);
+    P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);  
+    P.displayAnimate();  
     bool isStopped = runRevolution(HIGH);
     
-    if(isStopped){
+    if(!isStopped){   
       trigSensor();
       long duration = pulseIn(echoPin, HIGH);
       float distance = duration * 0.034 / 2;;
@@ -120,8 +133,10 @@ void loop() {
       }
       
       delay(1000);
+      P.displayClear(1);
       P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
-      delay(2000);
+      P.displayAnimate();
+      delay(0);
       
       runRevolution(LOW);
     }
@@ -160,7 +175,9 @@ void loop() {
   
     if (httpResponseCode == 200) {
       digitalWrite(passPin, HIGH);
-      P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
+      P.displayClear(0);
+      P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);   
+      P.displayAnimate();
       Serial.println("RFID scan recorded");
       
       bool isStopped = runRevolution(HIGH);
@@ -191,8 +208,10 @@ void loop() {
         }
         
         delay(1000);
+        P.displayClear(1);
         P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
-        delay(2000);
+        P.displayAnimate();
+        delay(0);
         
         runRevolution(LOW);
       }
@@ -202,8 +221,14 @@ void loop() {
       Serial.print("Response code: ");
       Serial.println(httpResponseCode);
       digitalWrite(failPin,HIGH);
+      P.displayClear(1);
       P.displayZoneText(0,"F A I L",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
+      P.displayAnimate();
       delay(2000);
+      P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
+      P.displayAnimate();
+      digitalWrite(failPin,LOW);
+      delay(0);
     }
     
     http.end();
@@ -222,6 +247,7 @@ void loop() {
     delay(100);
     return;
   }
+
 }
 
 
