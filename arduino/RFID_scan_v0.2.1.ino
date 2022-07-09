@@ -106,6 +106,8 @@ void loop() {
     P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);  
     P.displayAnimate();  
     bool isStopped = runRevolution(HIGH);
+    Serial.print('Stopped : ');
+    Serial.println(isStopped);
     
     if(!isStopped){   
       trigSensor();
