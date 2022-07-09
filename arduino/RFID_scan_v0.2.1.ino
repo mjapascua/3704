@@ -61,6 +61,7 @@ void setup() {
   bool rfFunctional = mfrc522.PCD_PerformSelfTest();
 
   P.begin(2);
+  P.print('FUCK U');
   P.setZone(0, 0, 3);
   P.setZone(1, 4, 7);
   P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
