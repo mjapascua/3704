@@ -26,7 +26,7 @@
 #define dirPin 32 
 #define stepPin 33
 #define manualPin 34
-#define stepsPerRevolution 200
+#define stepsPerRevolution 800
 
 MD_Parola P = MD_Parola(HARDWARE_TYPE, dPin, clkPin, csPin, MAX_DEVICES);
 
@@ -158,15 +158,14 @@ void loop() {
     String uid;
 
     if ( ! mfrc522.PICC_IsNewCardPresent() || ! mfrc522.PICC_ReadCardSerial()) {
-      //digitalWrite(statusPin, HIGH);
       return;
     }
- //AHA bobobo no lloo
+    
     Serial.println("\n<< Tag detected >>");
     for (byte i = 0; i < mfrc522.uid.size; i++) {
       uid += mfrc522.uid.uidByte[i];
     }
-    //Serial.println(uid);
+    Serial.println(uid);
 
     String path = String(requestPath) + String(deviceKey) + "/" + uid;      
     http.begin(path);
@@ -217,9 +216,10 @@ void loop() {
       P.displayAnimate();     
       digitalWrite(passPin, LOW);
     }
-    else {
-      Serial.print("Response code: ");
+
+    if(httpResponseCode < 200){
       Serial.println(httpResponseCode);
+      Serial.println(": 1~ Network ERROR");
       digitalWrite(failPin,HIGH);
       P.displayClear(1);
       P.displayZoneText(0,"F A I L",PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);
@@ -229,6 +229,20 @@ void loop() {
       P.displayAnimate();
       digitalWrite(failPin,LOW);
     }
+
+    if(httpResponseCode > 200){
+      Serial.println(httpResponseCode);
+      Serial.println(": 40~ Server side ERROR");
+       digitalWrite(failPin,HIGH);
+      P.displayClear(1);
+      P.displayZoneText(0,"F A I L",PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);
+      P.displayAnimate();
+      delay(2000);
+      P.displayZoneText(0,"S T O P",PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);
+      P.displayAnimate();
+      digitalWrite(failPin,LOW);
+    }
+  
     
     http.end();
     mfrc522.PICC_HaltA(); // Halt PICC
@@ -284,18 +298,18 @@ int runRevolution(int startAt, int addDelay){
 
       for (int x = 0; x < i; x++) {
         digitalWrite(stepPin, HIGH);
-        delayMicroseconds(4000);
+        delayMicroseconds(3000);
         digitalWrite(stepPin, LOW);
-        delayMicroseconds(4000); 
+        delayMicroseconds(3000); 
       }
 
       return 1;
     };
     
     digitalWrite(stepPin, HIGH);
-    delayMicroseconds(4000);
+    delayMicroseconds(3000);
     digitalWrite(stepPin, LOW);
-    delayMicroseconds(4000); 
+    delayMicroseconds(3000); 
   }   
   return 0;
 }
