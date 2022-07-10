@@ -547,21 +547,28 @@ const checkRFIDTag = asyncHandler(async (req, res) => {
     throw new Error("Unauthorized");
   }
 
+  res.sendStatus(200);
+
   const logObj = {
     type: "rf",
     by: scanner.user,
     node: scanner.id,
     loc: scanner.scan_point,
     u_id: tag.u_id,
-    //  g_id: !tag.g_id ?  : null,
   };
   if (tag.g_id) {
     logObj.g_id = tag.g_id;
   }
 
-  const log = await ScanLog.create(logObj);
+  await ScanLog.create(logObj);
+  /* if (!log) {
+    res.status(400);
+    throw new Error("Not recorded");
+  } else {
+    res.sendStatus(200);
+  } */
 
-  const notify = await createNotif(
+  await createNotif(
     {
       title: "RFID Tag scanned",
       category: notifTypes.entry_tag,
@@ -571,14 +578,6 @@ const checkRFIDTag = asyncHandler(async (req, res) => {
     },
     { id: tag.u_id }
   );
-
-  if (!log || !notify) {
-    res.status(400);
-    throw new Error("Not recorded");
-  } else {
-    //console.log(req.params.id);
-    res.sendStatus(200);
-  }
 });
 
 // @desc    Get filter options
