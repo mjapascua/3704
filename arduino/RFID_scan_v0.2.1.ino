@@ -26,22 +26,22 @@
 #define dirPin 32 
 #define stepPin 33
 #define manualPin 34
-#define stepsPerRevolution 100
+#define stepsPerRevolution 200
 
 MD_Parola P = MD_Parola(HARDWARE_TYPE, dPin, clkPin, csPin, MAX_DEVICES);
 
 const int RST_PIN = 22; // Reset pin
 const int SS_PIN = 21; // Slave select pin
 
-//const char* deviceKey = "124TEST";
-//const char* ssid = "2.4G";
-//const char* password =  "Mikepascua123#";
-//const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";\
-
 const char* deviceKey = "124TEST";
-const char* ssid = "mike";
-const char* password =  "12345678";
-const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";
+const char* ssid = "2.4G";
+const char* password =  "Mikepascua123#";
+const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";\
+
+// const char* deviceKey = "124TEST";
+// const char* ssid = "mike";
+// const char* password =  "12345678";
+// const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";
 
 
 
@@ -71,17 +71,18 @@ void setup() {
   P.setZone(0, 0, 3);
   P.setZone(1, 4, 7);
   P.displayClear(1);
-  P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
+  P.displayZoneText(0,"S T O P",PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);
   P.displayAnimate();
 
 
   if(rfFunctional){
     Serial.print("Connecting");
-    digitalWrite(statusPin,HIGH);
+    digitalWrite(statusPin,LOW);
     while (WiFi.status() != WL_CONNECTED) {
       Serial.print(".");
       delay(500);
     }
+    digitalWrite(statusPin,HIGH);
     Serial.println("\nConnected to network");
     Serial.println("<-- SCAN TAG -->");
     Serial.println("\n - - - Watching for tags - - -");
@@ -103,10 +104,10 @@ void loop() {
   if(manualOpen){
     digitalWrite(passPin, HIGH);
     P.displayClear(0);
-    P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);  
+    P.displayZoneText(1,"P A S S",PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);  
     P.displayAnimate();  
-    bool isStopped = runRevolution(HIGH);
-    Serial.print('Stopped : ');
+    int isStopped = runRevolution(HIGH, 1000);
+    Serial.print("Stopped : ");
     Serial.println(isStopped);
     
     if(!isStopped){   
@@ -114,7 +115,7 @@ void loop() {
       long duration = pulseIn(echoPin, HIGH);
       float distance = duration * 0.034 / 2;;
       
-      while(distance > 40){
+      while(distance > 100){
         trigSensor();
         duration = pulseIn(echoPin, HIGH);
         distance = duration * 0.034 / 2;
@@ -125,7 +126,7 @@ void loop() {
       
       delay(200);
   
-      while(distance < 40){
+      while(distance < 100){
         trigSensor();
         duration = pulseIn(echoPin, HIGH);
         distance = duration * 0.034 / 2;
@@ -134,14 +135,12 @@ void loop() {
         delay(400);
       }
       
-      delay(1000);
-      P.displayClear(1);
-      P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
-      P.displayAnimate();
-      delay(0);
-      
-      runRevolution(LOW);
+      delay(1000);      
+      runRevolution(LOW,0);
     }
+    P.displayClear(1);
+    P.displayZoneText(0,"S T O P",PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);
+    P.displayAnimate();
     digitalWrite(passPin, LOW);
   };
 
@@ -154,21 +153,21 @@ void loop() {
   {
     MFRC522::MIFARE_Key key;
     for (byte i = 0; i < 6; i++) key.keyByte[i] = 0xFF;
+    HTTPClient http;
+    MFRC522::StatusCode status;
+    String uid;
 
     if ( ! mfrc522.PICC_IsNewCardPresent() || ! mfrc522.PICC_ReadCardSerial()) {
       //digitalWrite(statusPin, HIGH);
       return;
     }
-    HTTPClient http;
-    MFRC522::StatusCode status;
-    String uid;
-
+ //AHA bobobo no lloo
     Serial.println("\n<< Tag detected >>");
-
     for (byte i = 0; i < mfrc522.uid.size; i++) {
       uid += mfrc522.uid.uidByte[i];
     }
-    
+    //Serial.println(uid);
+
     String path = String(requestPath) + String(deviceKey) + "/" + uid;      
     http.begin(path);
     int httpResponseCode = http.GET();
@@ -178,18 +177,18 @@ void loop() {
     if (httpResponseCode == 200) {
       digitalWrite(passPin, HIGH);
       P.displayClear(0);
-      P.displayZoneText(1,"P A S S",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);   
+      P.displayZoneText(1,"P A S S",PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);   
       P.displayAnimate();
       Serial.println("RFID scan recorded");
       
-      bool isStopped = runRevolution(HIGH);
+      bool isStopped = runRevolution(HIGH,200);
       
       if(!isStopped){
         trigSensor();
         long duration = pulseIn(echoPin, HIGH);
         float distance = duration * 0.034 / 2;;
         
-        while(distance > 40){
+        while(distance > 100){
           trigSensor();
           duration = pulseIn(echoPin, HIGH);
           distance = duration * 0.034 / 2;
@@ -200,7 +199,7 @@ void loop() {
         
         delay(200);
   
-        while(distance < 40){
+        while(distance < 100){
           trigSensor();
           duration = pulseIn(echoPin, HIGH);
           distance = duration * 0.034 / 2;
@@ -208,15 +207,14 @@ void loop() {
           Serial.println(distance);
           delay(400);
         }
-        
+         
         delay(1000);
-        P.displayClear(1);
-        P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
-        P.displayAnimate();
-        delay(0);
-        
-        runRevolution(LOW);
+       
+        runRevolution(LOW,0);
       }
+      P.displayClear(1);
+      P.displayZoneText(0,"S T O P",PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);
+      P.displayAnimate();     
       digitalWrite(passPin, LOW);
     }
     else {
@@ -224,13 +222,12 @@ void loop() {
       Serial.println(httpResponseCode);
       digitalWrite(failPin,HIGH);
       P.displayClear(1);
-      P.displayZoneText(0,"F A I L",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
+      P.displayZoneText(0,"F A I L",PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);
       P.displayAnimate();
       delay(2000);
-      P.displayZoneText(0,"S T O P",PA_CENTER, 10, 2000, PA_PRINT, PA_NO_EFFECT);
+      P.displayZoneText(0,"S T O P",PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);
       P.displayAnimate();
       digitalWrite(failPin,LOW);
-      delay(0);
     }
     
     http.end();
@@ -261,31 +258,37 @@ void trigSensor(){
   digitalWrite(trigPin, LOW);
 }
 
-int runRevolution(int startAt){
+int runRevolution(int startAt, int addDelay){
   digitalWrite(dirPin, startAt);
-  int manualPress;
+  delay(100+addDelay);
 
   for (int i = 0; i < stepsPerRevolution; i++) {
-    manualPress = digitalRead(manualPin);
-    if(manualPress ==  HIGH){
+    bool btnPress = digitalRead(manualPin);
+    P.displayZoneText(1,"P A S S",PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);
+    P.displayClear(0);
+    P.displayAnimate();
+    if(btnPress ==  HIGH){
       trigSensor();
       long duration = pulseIn(echoPin, HIGH);
-      float distance = duration * 0.034 / 2;
-      
-      while(duration < 40){   
+      float distance = duration * 0.034 / 2;      
+      while(duration < 100){   
         trigSensor();
         duration = pulseIn(echoPin, HIGH);
         distance = duration * 0.034 / 2;
       };
       
       digitalWrite(dirPin, !startAt);
+      P.displayZoneText(0,"S T O P",PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);
+      P.displayClear(1);
+      P.displayAnimate();
+
       for (int x = 0; x < i; x++) {
         digitalWrite(stepPin, HIGH);
         delayMicroseconds(4000);
         digitalWrite(stepPin, LOW);
         delayMicroseconds(4000); 
       }
-      
+
       return 1;
     };
     
@@ -294,6 +297,5 @@ int runRevolution(int startAt){
     digitalWrite(stepPin, LOW);
     delayMicroseconds(4000); 
   }   
-  
   return 0;
 }
