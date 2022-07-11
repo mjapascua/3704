@@ -69,10 +69,10 @@ function App() {
         <Route
           path="account/*"
           element={
-            <div className="w-full flex h-screen flex-col box-border">
+            <>
               <Navbar />
               <Account />
-            </div>
+            </>
           }
         />
         <Route

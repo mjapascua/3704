@@ -567,6 +567,9 @@ const checkRFIDTag = asyncHandler(async (req, res) => {
   } else {
     res.sendStatus(200);
   } */
+  await ScanPoint.findByIdAndUpdate(scanner.scan_point, {
+    $inc: { scan_count: 1 },
+  });
 
   await createNotif(
     {

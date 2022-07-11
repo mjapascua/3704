@@ -1,11 +1,14 @@
 import { useEffect } from "react";
 import { CLIENT_NAME } from "../utils/appInfo";
 import { Link } from "react-router-dom";
+import { apiClient } from "../utils/requests";
 
 function Home() {
-  /*   useEffect(() => {
-    axios.get("http://localhost:5000").then((res) => console.log(res));
-  }, []); */
+  useEffect(() => {
+    apiClient.get("admin/data-vis").then((res) => {
+      console.log(res.data);
+    });
+  }, []);
   useEffect(() => {
     document.title = CLIENT_NAME;
   }, []);

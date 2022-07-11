@@ -139,7 +139,11 @@ const checkQR = asyncHandler(async (req, res) => {
     throw new Error("No Entry");
   }
 
-  const loc = await ScanPoint.findById(req.body.locID).lean();
+  const loc = await ScanPoint.findByIdAndUpdate(
+    req.body.locID,
+    { $inc: { scan_count: 1 } },
+    { new: true }
+  );
 
   const logObj = {
     type: "qr",

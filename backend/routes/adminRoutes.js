@@ -29,11 +29,14 @@ const {
   findByName,
   getScanLogsFilters,
 } = require("../controllers/adminRequestsController");
+const { getAnalytics } = require("../controllers/analyticsController");
 const { checkQR } = require("../controllers/qrController");
 const { protect, authAllow } = require("../middleware/authMiddleware");
 
 router.get("/rfid/scan/:key/:id", checkRFIDTag);
 router.post("/rfid/register", queueUserTagRegistration);
+
+router.get("/data-vis", getAnalytics);
 
 router.get(
   "/users",

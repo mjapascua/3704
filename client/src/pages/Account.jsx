@@ -67,7 +67,7 @@ const Account = () => {
           <Loading text={"Unauthorized, redirecting"} />
         </div>
       ) : (
-        <div className="flex h-full relative">
+        <div className="flex">
           <span className=" w-16 md:w-80 md:pl-3 block bg-slate-50 h-full">
             {routes.map((route) => {
               return (
