@@ -74,3 +74,9 @@
 .qr-success-popup h2 {
   font-weight: 700 !important;
 }
+.chart-container {
+  width: 800px;
+}
+.chart-container-sm {
+  width: 240px;
+}

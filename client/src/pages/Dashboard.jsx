@@ -12,6 +12,7 @@ import { redirect } from "./Login";
 import Loading from "../components/Loading/Loading";
 import authService from "../utils/authService";
 import { CLIENT_NAME } from "../utils/appInfo";
+import Analytics from "./Admin/Analytics";
 
 const ManageAccounts = React.lazy(() => import("./Admin/ManageAccounts"));
 const ManageDevices = React.lazy(() => import("./Admin/ManageDevices"));
@@ -32,6 +33,7 @@ const sideMenuStyle =
 
 const routes = [
   { to: "/dashboard/qr-scanner", label: "QR Scanner", icon: "qr_code_scanner" },
+  { to: "/dashboard/analytics", label: "Analytics", icon: "query_stats" },
   { to: "/dashboard/scan-logs", label: "Scan Records", icon: "history" },
   { to: "/dashboard/bulletin", label: "Bulletin Manager", icon: "feed" },
   { to: "/dashboard/accounts", label: "Accounts", icon: "manage_accounts" },
@@ -123,6 +125,7 @@ const Dashboard = () => {
                       <Route path={"/bulletin"} element={<ManageBulletin />} />
                       <Route path={"/qr-scanner"} element={<AdminScanner />} />
                       <Route path={"/scan-logs"} element={<ManageScanLogs />} />
+                      <Route path={"/analytics"} element={<Analytics />} />
                       <Route
                         path={"/rfid-devices"}
                         element={<ManageDevices />}

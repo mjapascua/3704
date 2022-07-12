@@ -8,9 +8,11 @@ const Loading = (props) => {
         props.className
       }
     >
-      <span>{props.text}</span>
+      <span className=" font-semibold text-xl animate-pulse text-sky-600">
+        {props.text}
+      </span>
       <br />
-      <span className=" animate-spin border-4 w-7 h-7 rounded-full border-gray-100  border-t-slate-300 border-r-slate-400 border-b-slate-400"></span>
+      <span className=" animate-spin border-8 w-8 h-8 rounded-full border-gray-100  border-t-sky-300 border-r-sky-400 border-b-sky-500"></span>
       &nbsp;
     </div>
   );

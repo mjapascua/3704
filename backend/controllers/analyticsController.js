@@ -26,9 +26,18 @@ const getAnalytics = asyncHandler(async (req, res) => {
   const residentCount = await User.countDocuments({ role: ROLES.BASIC }).lean();
   const guestCount = await Guest.countDocuments({ active: true }).lean();
   const tagCount = await RegisteredTag.countDocuments({}).lean();
-  const weekLogStat = await getPerDayScans(
+
+  const thisWeek = await getPerDayScans(
     new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6),
     today
+  );
+  const lastWeek = await getPerDayScans(
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() - 13),
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7)
+  );
+  const last2Week = await getPerDayScans(
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() - 20),
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() - 14)
   );
   await Promise.all(
     locations.map(async (loc) => {
@@ -62,7 +71,7 @@ const getAnalytics = asyncHandler(async (req, res) => {
     totalQR,
     totalRf,
     totalLogs: totalQR + totalRf,
-    weekLogStat,
+    weekLogStat: { last2Week, lastWeek, thisWeek },
     byLocCount,
     residentCount,
     guestCount,
@@ -83,7 +92,7 @@ const getPerDayScans = async (start, end) => {
       data.push(ndata);
     })
   );
-  return data.sort((el) => el.date);
+  return data.sort((a, b) => a.date - b.date);
 };
 const getDateData = async (date) => {
   return ScanLog.find({ createdAt: date })
@@ -93,13 +102,14 @@ const getDateData = async (date) => {
         return scan.g_id === null || scan.g_id === undefined || scan.g_id?.rf;
       }).length;
 
-      /*    const label = date.$gte.toLocaleDateString("en-US", {
+      /*  const label = date.$gte.toLocaleDateString("en-US", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
       }); */
       const data = {
+        //label,
         date: date.$gte,
         total: doc.length,
         rf: doc.filter((scan) => scan.type === "rf").length,

@@ -48,7 +48,7 @@ const ManageScanLogs = () => {
             className={
               "material-icons-outlined px-2 py-2 " +
               (row.original.type === accessTypes[0]
-                ? "text-cyan-600"
+                ? "text-teal-500"
                 : "text-blue-500")
             }
           >
@@ -100,9 +100,9 @@ const ManageScanLogs = () => {
         { Header: "Last name", accessor: "g_id.lname" },
       ],
     },
-    { 
-      Header: "Destination / Residence", 
-      accessor: "u_id.residence",      
+    {
+      Header: "Destination / Residence",
+      accessor: "u_id.residence",
       width: 340,
     },
     { Header: "Scanned by", accessor: "by.fname" },

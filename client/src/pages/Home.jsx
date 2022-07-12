@@ -5,11 +5,6 @@ import { apiClient } from "../utils/requests";
 
 function Home() {
   useEffect(() => {
-    apiClient.get("admin/data-vis").then((res) => {
-      console.log(res.data);
-    });
-  }, []);
-  useEffect(() => {
     document.title = CLIENT_NAME;
   }, []);
   return (
