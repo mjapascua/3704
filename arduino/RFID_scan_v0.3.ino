@@ -213,13 +213,13 @@ void checkDis(bool enter, bool pass){
   trigSensor();
   long duration = pulseIn(echoPin, HIGH);
   float lastDis = 0;
-  float distance = duration * 0.034 / 2;;
+  float distance = duration * 0.034 / 2;
   bool entered = enter;
   bool passed = pass;
 
   delay(500);
-  
-  while((distance > exitDistance || lastDis > exitDistance) && !entered){
+  while(distance > exitDistance || lastDis > exitDistance){
+    if(digitalRead(manualPin)) return;
     trigSensor();
     lastDis = distance;
     duration = pulseIn(echoPin, HIGH);
@@ -233,7 +233,8 @@ void checkDis(bool enter, bool pass){
   }
   delay(500);
 
-  while((distance < exitDistance || lastDis < exitDistance) && !passed){
+  while(distance < exitDistance || lastDis < exitDistance){
+    if(digitalRead(manualPin)) return;
     trigSensor();
     lastDis = distance;
     duration = pulseIn(echoPin, HIGH);
@@ -247,9 +248,9 @@ void checkDis(bool enter, bool pass){
   }
   delay(500);
 
-  if(entered && passed){
+  if((entered && passed)||digitalRead(manualPin)){
    return; 
-  } else checkDis(entered, passed);
+  } else checkDis(entered,passed);
 }
 
 int runRevolution(int startAt, int addDelay){
@@ -266,11 +267,20 @@ int runRevolution(int startAt, int addDelay){
     bool btnPress = digitalRead(manualPin);
     
     if(btnPress ==  HIGH){
-      displayLED(1,"P A S S");
+      if(startAt){
+        displayLED(1,"P A S S");
+      } else{
+        displayLED(0,"S T O P");
+      }
       checkDis(0,0);
+      
       digitalWrite(dirPin, !startAt);
-      displayLED(0,"S T O P");
-
+      if(!startAt){
+        displayLED(1,"P A S S");
+      } else{
+        displayLED(0,"S T O P");
+      }
+      
       for (int x = 0; x < i; x++) {
         digitalWrite(stepPin, HIGH);
         delayMicroseconds(2000);
