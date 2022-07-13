@@ -81,11 +81,7 @@ const getUsersByRole = asyncHandler(async (req, res) => {
 // @route   DELETE /api/admin/users/:id
 // @access  Private
 const deleteUser = asyncHandler(async (req, res) => {
-  const user = await User.findByIdAndDelete(req.params.id);
-  if (!user) {
-    res.status(404);
-    throw new Error("That user does not exist");
-  }
+  await User.findByIdAndDelete(req.params.id);
   res.json({
     message: "User was successfully deleted",
   });

@@ -190,14 +190,12 @@ const AccountPage = () => {
       showCancelButton: true,
     }).then(({ isConfirmed }) => {
       if (isConfirmed) {
-        apiClient
-          .delete("admin/account/" + param.id, authConfig)
-          .then((res) => {
-            if (res.status === 200) {
-              toast.success("Deleted");
-              navigate("/dashboard/accounts", { replace: true });
-            }
-          });
+        apiClient.delete("admin/user/" + param.id, authConfig).then((res) => {
+          if (res.status === 200) {
+            toast.success("Deleted");
+            navigate("/dashboard/accounts", { replace: true });
+          }
+        });
       }
     });
   };
