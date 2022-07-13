@@ -301,6 +301,6 @@ int runRevolution(int startAt, int addDelay){
 
 void displayLED(int at, String text){
   P.displayClear(!at);
-  P.displayZoneText(at,"S T O P",PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);
+  P.displayZoneText(at,text,PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);
   P.displayAnimate();
 }
