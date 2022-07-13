@@ -38,14 +38,12 @@ const int SS_PIN = 21; // Slave select pin
 const char* deviceKey = "124TEST";
 const char* ssid = "baconpancakes";
 const char* password =  "123456789";
-const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";\
+const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";
 
 // const char* deviceKey = "124TEST";
 // const char* ssid = "mike";
 // const char* password =  "12345678";
 // const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";
-
-
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance
 
@@ -102,14 +100,14 @@ void loop() {
   if(manualOpen){
     digitalWrite(passPin, HIGH);
     displayLED(1,"P A S S");
-    int isStopped = runRevolution(HIGH, 1000);
+    int isStopped = runRevolution(HIGH, 1000,0);
     Serial.print("Stopped : ");
     Serial.println(isStopped);
     
     if(!isStopped){   
       checkDis(0,0);
       delay(1000);
-      runRevolution(LOW,0);
+      runRevolution(LOW,0,0);
     }
     displayLED(0,"S T O P");
     digitalWrite(passPin, LOW);
@@ -132,8 +130,6 @@ void loop() {
       return;
     }
     checkRFID();
-    
-    http.end();
     mfrc522.PICC_HaltA(); // Halt PICC
     mfrc522.PCD_StopCrypto1();  // Stop encryption on PCD
     
@@ -176,14 +172,14 @@ void checkRFID(){
     digitalWrite(passPin, HIGH);
     displayLED(1,"P A S S");
     Serial.println("RFID scan recorded");
-    bool isStopped = runRevolution(HIGH,200);
+    bool isStopped = runRevolution(HIGH,200,0);
     digitalWrite(passPin, LOW);
 
     if(!isStopped){
       checkDis(0,0);
       delay(1000);
       if ( ! mfrc522.PICC_IsNewCardPresent() || ! mfrc522.PICC_ReadCardSerial()) {
-        runRevolution(LOW,0);
+        runRevolution(LOW,0, 0);
       } else {
         checkRFID();
       }
@@ -198,8 +194,7 @@ void checkRFID(){
     displayLED(0,"S T O P");
     digitalWrite(failPin,LOW);
   }
-
-  
+  http.end();
 }
 void trigSensor(){
   digitalWrite(trigPin, LOW);
@@ -253,9 +248,10 @@ void checkDis(bool enter, bool pass){
   } else checkDis(entered,passed);
 }
 
-int runRevolution(int startAt, int addDelay){
+int runRevolution(int startAt, int addDelay, int steps){
   digitalWrite(dirPin, startAt);
   delay(100+addDelay);
+  int useSteps = steps || stepsPerRevolution;
 
   if(startAt){
     displayLED(1,"P A S S");
@@ -263,7 +259,7 @@ int runRevolution(int startAt, int addDelay){
     displayLED(0,"S T O P");
   }
 
-  for (int i = 0; i < stepsPerRevolution; i++) {
+  for (int i = 0; i < useSteps; i++) {
     bool btnPress = digitalRead(manualPin);
     
     if(btnPress ==  HIGH){
@@ -272,7 +268,14 @@ int runRevolution(int startAt, int addDelay){
       } else{
         displayLED(0,"S T O P");
       }
-      checkDis(0,0);
+      trigSensor();
+      long duration = pulseIn(echoPin, HIGH);
+      float distance = duration * 0.034 / 2;      
+      while(distance < exitDistance){   
+        trigSensor();
+        duration = pulseIn(echoPin, HIGH);
+        distance = duration * 0.034 / 2;
+      };
       
       digitalWrite(dirPin, !startAt);
       if(!startAt){
@@ -281,13 +284,7 @@ int runRevolution(int startAt, int addDelay){
         displayLED(0,"S T O P");
       }
       
-      for (int x = 0; x < i; x++) {
-        digitalWrite(stepPin, HIGH);
-        delayMicroseconds(2000);
-        digitalWrite(stepPin, LOW);
-        delayMicroseconds(2000); 
-      }
-
+      runRevolution(!startAt, 100, i);
       return 1;
     };
     
@@ -299,7 +296,7 @@ int runRevolution(int startAt, int addDelay){
   return 0;
 }
 
-void displayLED(int at, String text){
+void displayLED(int at, const char* text){
   P.displayClear(!at);
   P.displayZoneText(at,text,PA_CENTER, 0, 0, PA_PRINT, PA_NO_EFFECT);
   P.displayAnimate();
