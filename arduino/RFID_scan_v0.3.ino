@@ -36,7 +36,7 @@ const int RST_PIN = 22; // Reset pin
 const int SS_PIN = 21; // Slave select pin
 
 const char* deviceKey = "124TEST";
-const char* ssid = "GlobeAtHome_DOE2B_2.4";
+const char* ssid = "GlobeAtHome_D0E2B_2.4";
 const char* password =  "GlobeFiberNav4";
 const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";
 
@@ -255,6 +255,7 @@ void checkDis(bool enter, bool pass){
 int runRevolution(int startAt, int addDelay, int steps){
   digitalWrite(dirPin, startAt);
   delay(100+addDelay);
+  int stoppedHIGH = startAt;
   int useSteps;
   if(steps){
     useSteps = steps;
@@ -270,27 +271,19 @@ int runRevolution(int startAt, int addDelay, int steps){
 
   for (int i = 0; i < useSteps; i++) {
     bool btnPress = digitalRead(manualPin);
-    
+
     if(btnPress ==  HIGH){
       if(startAt){
         displayLED(0,"S T O P");
+      } else{
+        displayLED(1,"P A S S");
+        delay(500);
         checkDis(0,0);
-      } else{
-        displayLED(1,"P A S S");
-      }
-
-      digitalWrite(dirPin, !startAt);
-      if(!startAt){
-        displayLED(1,"P A S S");
-      } else{
-        displayLED(0,"S T O P");
       }
       
-      runRevolution(!startAt, 100, i);
-      if(startAt){
-        return 1;
-      }
-      return 0;
+      digitalWrite(dirPin, !startAt);    
+      stoppedHIGH = runRevolution(!startAt, 100, i);
+      return stoppedHIGH;
     };
     
     digitalWrite(stepPin, HIGH);  
@@ -298,10 +291,7 @@ int runRevolution(int startAt, int addDelay, int steps){
     digitalWrite(stepPin, LOW);
     delayMicroseconds(2000); 
   }
-  if(startAt){
-    return 1;
-  }
-  return 0;
+  return stoppedHIGH;
 }
 
 void displayLED(int at, const char* text){
