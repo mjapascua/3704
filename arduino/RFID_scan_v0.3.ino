@@ -130,6 +130,7 @@ void loop() {
       return;
     }
     checkRFID();
+    
     mfrc522.PICC_HaltA(); // Halt PICC
     mfrc522.PCD_StopCrypto1();  // Stop encryption on PCD
     
@@ -251,7 +252,12 @@ void checkDis(bool enter, bool pass){
 int runRevolution(int startAt, int addDelay, int steps){
   digitalWrite(dirPin, startAt);
   delay(100+addDelay);
-  int useSteps = steps || stepsPerRevolution;
+  int useSteps;
+  if(steps){
+    useSteps = steps;
+  } else {
+    useSteps = stepsPerRevolution;
+  }
 
   if(startAt){
     displayLED(1,"P A S S");
