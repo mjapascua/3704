@@ -254,7 +254,7 @@ void checkDis(bool enter, bool pass){
 
 int runRevolution(int startAt, int addDelay, int steps){
   digitalWrite(dirPin, startAt);
-  delay(100+addDelay);
+  delay(100 + addDelay);
   int stoppedHIGH = startAt;
   int useSteps;
   if(steps){
@@ -271,19 +271,9 @@ int runRevolution(int startAt, int addDelay, int steps){
 
   for (int i = 0; i < useSteps; i++) {
     bool btnPress = digitalRead(manualPin);
-
     if(btnPress ==  HIGH){
-      if(startAt){
-        displayLED(0,"S T O P");
-      } else{
-        displayLED(1,"P A S S");
-        delay(500);
-        checkDis(0,0);
-      }
-      
-      digitalWrite(dirPin, !startAt);    
-      stoppedHIGH = runRevolution(!startAt, 100, i);
-      return stoppedHIGH;
+      delay(200)
+      return runRevolution(!startAt, 200, i);
     };
     
     digitalWrite(stepPin, HIGH);  
