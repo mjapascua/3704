@@ -36,8 +36,8 @@ const int RST_PIN = 22; // Reset pin
 const int SS_PIN = 21; // Slave select pin
 
 const char* deviceKey = "124TEST";
-const char* ssid = "baconpancakes";
-const char* password =  "123456789";
+const char* ssid = "GlobeAtHome_DOE2B_2.4";
+const char* password =  "GlobeFiberNav4";
 const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";
 
 // const char* deviceKey = "124TEST";
@@ -100,17 +100,17 @@ void loop() {
   if(manualOpen){
     digitalWrite(passPin, HIGH);
     displayLED(1,"P A S S");
-    int isStopped = runRevolution(HIGH, 1000,0);
+    int isStoppedHIGH = runRevolution(HIGH, 1000,0);
+    digitalWrite(passPin, LOW);
     Serial.print("Stopped : ");
-    Serial.println(isStopped);
+    Serial.println(isStoppedHIGH);
     
-    if(!isStopped){   
+    if(isStoppedHIGH){   
       checkDis(0,0);
       delay(1000);
       runRevolution(LOW,0,0);
     }
     displayLED(0,"S T O P");
-    digitalWrite(passPin, LOW);
   };
 
   if(!rfFunctional){
@@ -173,10 +173,10 @@ void checkRFID(){
     digitalWrite(passPin, HIGH);
     displayLED(1,"P A S S");
     Serial.println("RFID scan recorded");
-    bool isStopped = runRevolution(HIGH,200,0);
+    bool isStoppedHIGH = runRevolution(HIGH,200,0);
     digitalWrite(passPin, LOW);
 
-    if(!isStopped){
+    if(isStoppedHIGH){
       checkDis(0,0);
       delay(1000);
       if ( ! mfrc522.PICC_IsNewCardPresent() || ! mfrc522.PICC_ReadCardSerial()) {
@@ -186,7 +186,6 @@ void checkRFID(){
       }
     }
     displayLED(0,"S T O P");
-    digitalWrite(passPin, LOW);
   } else {
     Serial.println(httpResponseCode);
     digitalWrite(failPin,HIGH);
@@ -212,6 +211,7 @@ void checkDis(bool enter, bool pass){
   float distance = duration * 0.034 / 2;
   bool entered = enter;
   bool passed = pass;
+  if(digitalRead(manualPin)) return;
 
   delay(500);
   while(distance > exitDistance || lastDis > exitDistance){
@@ -224,6 +224,7 @@ void checkDis(bool enter, bool pass){
     Serial.println(distance);
     delay(1000);
   }
+  
   if(distance <= exitDistance && lastDis <= exitDistance){
     entered = true;
   }
@@ -239,12 +240,14 @@ void checkDis(bool enter, bool pass){
     Serial.println(distance);
     delay(1000);
   }
+
   if(distance >= exitDistance && lastDis >= exitDistance){
     passed = true;
   }
   delay(500);
+  if(digitalRead(manualPin)) return;
 
-  if((entered && passed)||digitalRead(manualPin)){
+  if((entered && passed)){
    return; 
   } else checkDis(entered,passed);
 }
@@ -270,19 +273,12 @@ int runRevolution(int startAt, int addDelay, int steps){
     
     if(btnPress ==  HIGH){
       if(startAt){
-        displayLED(1,"P A S S");
-      } else{
         displayLED(0,"S T O P");
+        checkDis(0,0);
+      } else{
+        displayLED(1,"P A S S");
       }
-      trigSensor();
-      long duration = pulseIn(echoPin, HIGH);
-      float distance = duration * 0.034 / 2;      
-      while(distance < exitDistance){   
-        trigSensor();
-        duration = pulseIn(echoPin, HIGH);
-        distance = duration * 0.034 / 2;
-      };
-      
+
       digitalWrite(dirPin, !startAt);
       if(!startAt){
         displayLED(1,"P A S S");
@@ -291,14 +287,20 @@ int runRevolution(int startAt, int addDelay, int steps){
       }
       
       runRevolution(!startAt, 100, i);
-      return 1;
+      if(startAt){
+        return 1;
+      }
+      return 0;
     };
     
     digitalWrite(stepPin, HIGH);  
     delayMicroseconds(2000);
     digitalWrite(stepPin, LOW);
     delayMicroseconds(2000); 
-  }   
+  }
+  if(startAt){
+    return 1;
+  }
   return 0;
 }
 
