@@ -77,7 +77,7 @@ const AccountPage = () => {
 
   const startCardRegistration = () => {
     apiClient
-      .post("admin/rfid/register/", { account: account._id })
+      .post("admin/rfid/register/", { user: account._id })
       .then((res) => {
         if (res.status === 201 || res.status === 200) {
           setQueue(res.data.id);
