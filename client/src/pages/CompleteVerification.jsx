@@ -162,7 +162,7 @@ function CompleteVerification() {
 
                 {progress === 3 && (
                   <div className=" animate-slideToR h-60 bg-white">
-                    <label className="md:mr-1 md:w-44">
+                    <label className="md:mr-1 md:w-44 relative">
                       Password
                       <span
                         onClick={() => setViewPass((prev) => !prev)}
@@ -183,7 +183,7 @@ function CompleteVerification() {
                       />
                     </label>
 
-                    <label className="md:ml-1 md:w-44">
+                    <label className="md:ml-1 md:w-44 relative">
                       Confirm password
                       <span
                         onClick={() => setViewPass((prev) => !prev)}
