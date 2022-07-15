@@ -260,14 +260,20 @@ int runRevolution(int startAt, int addDelay, int steps){
       displayLED(1,"P A S S");
     }
     if(startAt){
-      digitalWrite(stepPin, HIGH);  
+      lastDis = distance;
+      digitalWrite(stepPin, HIGH);
+      trigSensor();
+      duration = pulseIn(echoPin, HIGH, 10000);
+      distance = duration * 0.034 / 2;
+      Serial.print("distance: ");
+      Serial.println(distance);
+      digitalWrite(stepPin, LOW);
       trigSensor();
       lastDis = distance;
       duration = pulseIn(echoPin, HIGH, 10000);
       distance = duration * 0.034 / 2;
       Serial.print("distance: ");
       Serial.println(distance);
-      digitalWrite(stepPin, LOW);
       if(distance){
         if(!entered && distance <= exitDistance && lastDis <= exitDistance){
           entered = 1;
@@ -275,9 +281,9 @@ int runRevolution(int startAt, int addDelay, int steps){
         if(entered && distance >= exitDistance && lastDis >= exitDistance){
           passed = 1;
         } 
-        if(entered && passed){
-          return 1;
-        }
+      }
+      if(entered && passed){
+        return 1;
       }
     } else {
       digitalWrite(stepPin, HIGH);  
