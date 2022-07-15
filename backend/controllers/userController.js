@@ -218,8 +218,13 @@ const requestQRFormLink = asyncHandler(async (req, res) => {
     unique = tempLink.unique;
   } else unique = user.visitor_form_link.unique;
 
+  let host =
+    process.env.NODE_ENV === "production"
+      ? "https://hoasys.herokuapp.com/"
+      : "http://localhost:3000/";
+
   res.json({
-    link: "http://localhost:3000/visitor_form/" + user.id + "_" + unique,
+    link: host + "visitor_form/" + user.id + "_" + unique,
   });
 });
 
