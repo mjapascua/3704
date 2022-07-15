@@ -99,12 +99,11 @@ void loop() {
   
   if(manualOpen){
     digitalWrite(passPin, HIGH);
-    displayLED(1,"P A S S");
     int stoppedHIGH = runRevolution(HIGH, 1000,0);
     digitalWrite(passPin, LOW);
     Serial.print("Stopped : ");
     Serial.println(stoppedHIGH);
-      if(stoppedHIGH){
+    if(stoppedHIGH){
       delay(500);
       runRevolution(LOW,0,0);
     }
@@ -261,27 +260,33 @@ int runRevolution(int startAt, int addDelay, int steps){
       displayLED(1,"P A S S");
     }
     if(startAt){
+      digitalWrite(stepPin, HIGH);  
       trigSensor();
       lastDis = distance;
-      duration = pulseIn(echoPin, HIGH);
+      duration = pulseIn(echoPin, HIGH, 10000);
       distance = duration * 0.034 / 2;
       Serial.print("distance: ");
       Serial.println(distance);
-      if(!entered && distance <= exitDistance && lastDis <= exitDistance){
-        entered = 1;
+      digitalWrite(stepPin, LOW);
+      if(distance){
+        if(!entered && distance <= exitDistance && lastDis <= exitDistance){
+          entered = 1;
+        }
+        if(entered && distance >= exitDistance && lastDis >= exitDistance){
+          passed = 1;
+        } 
+        if(entered && passed){
+          return 1;
+        }
       }
-      if(entered && distance >= exitDistance && lastDis >= exitDistance){
-        passed = 1;
-      }
-      if(entered && passed){
-        return runRevolution(LOW, 100,i);
-      }
+    } else {
+      digitalWrite(stepPin, HIGH);  
+      delayMicroseconds(2000);
+      digitalWrite(stepPin, LOW);
+      delayMicroseconds(2000); 
     }
     
-    digitalWrite(stepPin, HIGH);  
-    delayMicroseconds(2000);
-    digitalWrite(stepPin, LOW);
-    delayMicroseconds(2000); 
+   
   }
   return stoppedHIGH;
 }
