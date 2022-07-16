@@ -211,11 +211,12 @@ void checkDis(bool enter, bool pass){
   while(!entered && !passed){
     if(digitalRead(manualPin)) return;
     trigSensor();
-    lastDis = distance;
-    duration = pulseIn(echoPin, HIGH);
     distance = duration * 0.034 / 2;
-    Serial.print("distance: ");
-    Serial.println(distance);
+    if(distance){
+      lastDis = distance;
+      Serial.print("distance: ");
+      Serial.println(distance);
+    }
     if(!entered && distance <= exitDistance && lastDis <= exitDistance){
       entered = 1;
     }
@@ -263,14 +264,14 @@ int runRevolution(int startAt, int addDelay, int steps){
       digitalWrite(stepPin, HIGH);
       delayMicroseconds(1000);
       digitalWrite(stepPin, LOW);
-      lastDis = distance;
       trigSensor();
       duration = pulseIn(echoPin, HIGH, 10000);
       distance = duration * 0.034 / 2;
-      Serial.print("distance: ");
-      Serial.println(distance);
-  
+
       if(distance){
+        lastDis = distance;
+        Serial.print("distance: ");
+        Serial.println(distance);
         if(!entered && distance <= exitDistance && lastDis <= exitDistance){
           entered = 1;
         }
