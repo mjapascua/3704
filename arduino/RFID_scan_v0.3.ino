@@ -263,13 +263,13 @@ int runRevolution(int startAt, int addDelay, int steps){
     useSteps = stepsPerRevolution;
   }
 
-  if(startAt){
-    displayLED(1,"P A S S");
-  } else{
-    displayLED(0,"S T O P");
-  }
+  displayLED(0,"S T O P");
+  
 
   for (int i = 0; i < useSteps; i++) {
+    if(startAt && i === ( stepsPerRevolution * 0.7 )){
+      displayLED(1,"P A S S");
+    }
     bool btnPress = digitalRead(manualPin);
     if(btnPress ==  HIGH){
       delay(200)

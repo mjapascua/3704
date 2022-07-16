@@ -218,8 +218,9 @@ void checkDis(bool enter, bool pass){
     if(digitalRead(manualPin)) return;
     trigSensor();
     distance = duration * 0.034 / 2;
+    lastDis = distance;
+
     if(distance){
-      lastDis = distance;
       Serial.print("distance: ");
       Serial.println(distance);
     }
@@ -266,7 +267,7 @@ int runRevolution(int startAt, int addDelay, int steps){
       delay(200);
       return runRevolution(!startAt, 200, i);
     };
-    if(startAt && useSteps == ( stepsPerRevolution * 0.8 )){
+    if(startAt && i == ( stepsPerRevolution * 0.7 )){
       displayLED(1,"P A S S");
     }
     if(startAt){
@@ -276,9 +277,9 @@ int runRevolution(int startAt, int addDelay, int steps){
       trigSensor();
       duration = pulseIn(echoPin, HIGH, 10000);
       distance = duration * 0.034 / 2;
+      lastDis = distance;
 
       if(distance){
-        lastDis = distance;
         Serial.print("distance: ");
         Serial.println(distance);
       
