@@ -103,8 +103,6 @@ void loop() {
       return;
     }
     if(shouldLower){
-      checkDis(0,0);
-      delay(500);
       runRevolution(LOW,0,0);
     }
     displayLED(0,"S T O P");
@@ -171,10 +169,10 @@ void checkRFID(){
     Serial.println("RFID scan recorded");
     int shouldLower = runRevolution(HIGH,200,0);
     digitalWrite(passPin, LOW);
-    delay(1000);
     if(!shouldLower){
       return;
     }
+    delay(1000);
     if ( ! mfrc522.PICC_IsNewCardPresent() || ! mfrc522.PICC_ReadCardSerial()) {
       runRevolution(LOW,0, 0);
     } else {
@@ -291,7 +289,10 @@ int runRevolution(int startAt, int addDelay, int steps){
     }
    
   }
-  return startAt;
+  if(startAt){
+    checkDis(0,0);
+    return 1;
+  } else return 0;
 }
 
 void displayLED(int at, const char* text){
