@@ -100,9 +100,11 @@ void loop() {
   if(manualOpen){
     int shouldLower = runRevolution(HIGH, 1000,0);
     if(!shouldLower){
+      Serial.println("AT BOTTOM");
       return;
     }
     if(shouldLower){
+      Serial.println("AT TOP");
       runRevolution(LOW,0,0);
     }
     displayLED(0,"S T O P");
@@ -169,7 +171,11 @@ void checkRFID(){
     Serial.println("RFID scan recorded");
     int shouldLower = runRevolution(HIGH,200,0);
     digitalWrite(passPin, LOW);
+    if(shouldLower){
+      Serial.println("AT TOP");
+    }
     if(!shouldLower){
+      Serial.println("AT BOTTOM");
       return;
     }
     delay(1000);
@@ -208,7 +214,7 @@ void checkDis(bool enter, bool pass){
   if(digitalRead(manualPin)) return;
 
   delay(500);
-  while(!entered && !passed){
+  while(!passed){
     if(digitalRead(manualPin)) return;
     trigSensor();
     distance = duration * 0.034 / 2;
@@ -223,12 +229,15 @@ void checkDis(bool enter, bool pass){
     if(entered && distance >= exitDistance && lastDis >= exitDistance){
       passed = 1;
     }
+    if(entered){
+      Serial.println("ENTERED");
+    }
     delay(100);
   }
-
   delay(500);
   if(digitalRead(manualPin)) return;
-  if((entered && passed)){
+  if(entered && passed){
+    Serial.println("PASSED");
    return; 
   } else checkDis(entered,passed);
 }
@@ -272,14 +281,20 @@ int runRevolution(int startAt, int addDelay, int steps){
         lastDis = distance;
         Serial.print("distance: ");
         Serial.println(distance);
+      
         if(!entered && distance <= exitDistance && lastDis <= exitDistance){
           entered = 1;
         }
         if(entered && distance >= exitDistance && lastDis >= exitDistance){
           passed = 1;
         } 
+
+        if(entered){
+          Serial.println("ENTERED");
+        }
       }
       if(entered && passed){
+        Serial.println("PASSED");
         return 1;
       }
     } else {
