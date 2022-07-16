@@ -98,12 +98,12 @@ void loop() {
   }  digitalWrite(statusPin,HIGH);
   
   if(manualOpen){
-    digitalWrite(passPin, HIGH);
-    int stoppedHIGH = runRevolution(HIGH, 1000,0);
-    digitalWrite(passPin, LOW);
-    Serial.print("Stopped : ");
-    Serial.println(stoppedHIGH);
-    if(stoppedHIGH){
+    int shouldLower = runRevolution(HIGH, 1000,0);
+    if(!shouldLower){
+      return;
+    }
+    if(shouldLower){
+      checkDis(0,0);
       delay(500);
       runRevolution(LOW,0,0);
     }
@@ -169,9 +169,12 @@ void checkRFID(){
   if (httpResponseCode == 200) {
     digitalWrite(passPin, HIGH);
     Serial.println("RFID scan recorded");
-    runRevolution(HIGH,200,0);
+    int shouldLower = runRevolution(HIGH,200,0);
     digitalWrite(passPin, LOW);
     delay(1000);
+    if(!shouldLower){
+      return;
+    }
     if ( ! mfrc522.PICC_IsNewCardPresent() || ! mfrc522.PICC_ReadCardSerial()) {
       runRevolution(LOW,0, 0);
     } else {
@@ -234,7 +237,6 @@ void checkDis(bool enter, bool pass){
 int runRevolution(int startAt, int addDelay, int steps){
   digitalWrite(dirPin, startAt);
   delay(100 + addDelay);
-  int stoppedHIGH = startAt;
   int useSteps;
   if(steps){
     useSteps = steps;
@@ -260,20 +262,16 @@ int runRevolution(int startAt, int addDelay, int steps){
       displayLED(1,"P A S S");
     }
     if(startAt){
-      lastDis = distance;
       digitalWrite(stepPin, HIGH);
-      trigSensor();
-      duration = pulseIn(echoPin, HIGH, 10000);
-      distance = duration * 0.034 / 2;
-      Serial.print("distance: ");
-      Serial.println(distance);
+      delayMicroseconds(1000);
       digitalWrite(stepPin, LOW);
-      trigSensor();
       lastDis = distance;
+      trigSensor();
       duration = pulseIn(echoPin, HIGH, 10000);
       distance = duration * 0.034 / 2;
       Serial.print("distance: ");
       Serial.println(distance);
+  
       if(distance){
         if(!entered && distance <= exitDistance && lastDis <= exitDistance){
           entered = 1;
@@ -287,14 +285,13 @@ int runRevolution(int startAt, int addDelay, int steps){
       }
     } else {
       digitalWrite(stepPin, HIGH);  
-      delayMicroseconds(2000);
+      delayMicroseconds(3000);
       digitalWrite(stepPin, LOW);
-      delayMicroseconds(2000); 
+      delayMicroseconds(3000); 
     }
-    
    
   }
-  return stoppedHIGH;
+  return startAt;
 }
 
 void displayLED(int at, const char* text){
