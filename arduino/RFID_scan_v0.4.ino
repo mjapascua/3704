@@ -40,6 +40,7 @@ const char* ssid = "GlobeAtHome_D0E2B_2.4";
 const char* password =  "GlobeFiberNav4";
 const char* requestPath = "https://hoasys.herokuapp.com/api/admin/rfid/scan/";
 
+int toTop = 1;
 // const char* deviceKey = "124TEST";
 // const char* ssid = "mike";
 // const char* password =  "12345678";
@@ -98,7 +99,7 @@ void loop() {
   }  digitalWrite(statusPin,HIGH);
   
   if(manualOpen){
-    int shouldLower = runRevolution(HIGH, 1000,0);
+    int shouldLower = runRevolution(toTop, 1000,0);
     if(!shouldLower){
       Serial.println("AT BOTTOM");
       return;
@@ -265,7 +266,8 @@ int runRevolution(int startAt, int addDelay, int steps){
     bool btnPress = digitalRead(manualPin);
     if(btnPress ==  HIGH){
       delay(200);
-      return runRevolution(!startAt, 200, i);
+      toTop = !startAt;
+      return runRevolution(toTop, 200, i);
     };
     if(startAt && i == ( stepsPerRevolution * 0.7 )){
       displayLED(1,"P A S S");
@@ -274,7 +276,7 @@ int runRevolution(int startAt, int addDelay, int steps){
       digitalWrite(stepPin, HIGH);
       delayMicroseconds(1000);
       digitalWrite(stepPin, LOW);
-      
+
       trigSensor();
       duration = pulseIn(echoPin, HIGH, 10000);
       lastDis = distance;

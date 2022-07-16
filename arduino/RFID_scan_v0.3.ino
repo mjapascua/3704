@@ -171,7 +171,6 @@ void checkRFID(){
 
   if (httpResponseCode == 200) {
     digitalWrite(passPin, HIGH);
-    displayLED(1,"P A S S");
     Serial.println("RFID scan recorded");
     bool isStoppedHIGH = runRevolution(HIGH,200,0);
     digitalWrite(passPin, LOW);
@@ -264,15 +263,14 @@ int runRevolution(int startAt, int addDelay, int steps){
   }
 
   displayLED(0,"S T O P");
-  
 
   for (int i = 0; i < useSteps; i++) {
-    if(startAt && i === ( stepsPerRevolution * 0.7 )){
+    if(startAt && i == ( stepsPerRevolution * 0.7 )){
       displayLED(1,"P A S S");
     }
     bool btnPress = digitalRead(manualPin);
     if(btnPress ==  HIGH){
-      delay(200)
+      delay(200);
       return runRevolution(!startAt, 200, i);
     };
     
