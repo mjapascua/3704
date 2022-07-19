@@ -189,7 +189,7 @@ function SignUp() {
                           onChange={handleChange}
                           value={credentials.residence}
                           className="form-input"
-                          placeholder="Enter your unit"
+                          placeholder="Enter your complete address"
                           required
                         />
                       </span>
