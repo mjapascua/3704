@@ -68,7 +68,7 @@ const Account = () => {
         </div>
       ) : (
         <div className="flex">
-          <span className=" w-16 md:w-80 md:pl-3 block bg-slate-50 h-full">
+          <span className=" w-16 md:w-80 md:pl-3 block bg-slate-50 h-scrn-9">
             {routes.map((route) => {
               return (
                 <NavLink
@@ -118,7 +118,7 @@ const Account = () => {
               </span>
             </span>
           </span>
-          <div className="bg-white w-full px-10 py-5">
+          <div className="bg-white w-full md:px-10 px-5 py-5">
             <Routes>
               <Route
                 path="/"
@@ -289,10 +289,10 @@ const UserAccount = ({ authConfig }) => {
                         return (
                           <span
                             key={index}
-                            className="flex items-center w-3/5 h-14 justify-between my-2 rounded bg-white shadow border px-3 py-2 "
+                            className="flex h-fit md:items-center lg:w-3/5 pt-2 md:h-14 flex-col md:flex-row md:justify-between my-2 pl-3 rounded bg-white shadow border md:px-3 md:py-2 "
                           >
                             {el.fname + " " + el.lname}
-                            <span>
+                            <span className="md:block flex p-1 justify-between">
                               <Button onClick={() => requestGuestQR(el.qr)}>
                                 show qr
                               </Button>
@@ -324,7 +324,7 @@ const UserAccount = ({ authConfig }) => {
                         return (
                           <span
                             key={index}
-                            className="flex items-center w-3/5 h-14 justify-between my-2 rounded bg-white shadow border px-3 py-3"
+                            className="flex items-center lg:w-3/5 h-14 justify-between my-2 rounded bg-white shadow border px-3 py-3"
                           >
                             {el.g_id?.fname || fname + " " + lname}
                           </span>
