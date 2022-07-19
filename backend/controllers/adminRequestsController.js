@@ -119,7 +119,7 @@ const verifyUser = asyncHandler(async (req, res) => {
   } */
   const link = `https://${req.get("host")}/verification/${account.id}`;
   const mailOptions = {
-    from: '"Community thesis app" <community4704@outlosok.com>', // sender address
+    from: '"Community thesis app" <community4704@outlook.com>', // sender address
     to: account.email, // list of receivers
     subject: "Account confirmation", // Subject line
     html: `<div> <b>Your account has been verified please click the button below to create your password</b> <button><a href=${link} rel='external' target='_blank'>Create password</a></button> </div>`, // html body
