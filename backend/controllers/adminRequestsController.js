@@ -119,42 +119,44 @@ const verifyUser = asyncHandler(async (req, res) => {
   } */
   const link = `https://${req.get("host")}/verification/${account.id}`;
   const mailOptions = {
-    from: '"Community thesis app" <community4704@outlook.com>', // sender address
+    from: '"Community thesis app" <community4704@outlosok.com>', // sender address
     to: account.email, // list of receivers
     subject: "Account confirmation", // Subject line
     html: `<div> <b>Your account has been verified please click the button below to create your password</b> <button><a href=${link} rel='external' target='_blank'>Create password</a></button> </div>`, // html body
   };
-  await mailer.outlookTransporter
-    .sendMail(mailOptions)
-    .then((stat) => {
-      if (stat.accepted.length > 0) {
-        account.role = req.body.role;
-        account.verified = true;
-        account.save();
 
-        res.json({ account, message: "Email sent via outlook" });
-      } else {
-        throw new Error();
-      }
-    })
-    .catch(() => {
-      mailOptions.from = '"Community thesis app" <community4704@gmail.com>';
-      mailer.gmailTransporter
-        .sendMail(mailOptions)
-        .then((stat) => {
+  try {
+    await mailer.outlookTransporter
+      .sendMail(mailOptions)
+      .then((stat) => {
+        if (stat.accepted.length > 0) {
+          account.role = req.body.role;
+          account.verified = true;
+          account.save();
+
+          res.json({ account, message: "Email sent via outlook" });
+        } else {
+          throw new Error();
+        }
+      })
+      .catch(() => {
+        mailOptions.from = '"Community thesis app" <community4704@gmail.com>';
+        mailer.gmailTransporter.sendMail(mailOptions).then((stat) => {
           if (stat.accepted.length > 0) {
             account.role = req.body.role;
             account.verified = true;
             account.save();
 
             res.json({ account, message: "Email sent via gmail" });
+          } else {
+            throw new Error();
           }
-        })
-        .catch(() => {
-          res.status(400);
-          throw new Error("Email not sent");
         });
-    });
+      });
+  } catch (error) {
+    res.status(400);
+    throw new Error("Email not sent");
+  }
 });
 
 // @desc    First declare an account and create a queue item for registration
