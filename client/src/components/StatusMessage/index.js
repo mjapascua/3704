@@ -1,5 +1,5 @@
 import React from "react";
-const defClass = " w-full flex items-center h-7 px-2 ";
+const defClass = " w-full flex items-center h-fit p-2 md:py-0 md:px-2 ";
 const StatusMessage = ({ text, status, className }) => {
   let style = className + defClass;
   if (status >= 200 && status <= 299) {

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Button } from "../components/Buttons/Main";
 import { toast } from "react-toastify";
@@ -153,9 +153,11 @@ function Login() {
                         className="ml-2"
                       />
                     </label>
-                    <span className="underline font-semibold text-teal-600">
-                      <a href="#">Forgot Password?</a>
-                    </span>
+                    <Link to="forgot_password">
+                      <span className="underline font-semibold text-teal-600">
+                        Forgot Password?
+                      </span>
+                    </Link>
                   </span>
                   <Button
                     disabled={!(credentials.email && credentials.password)}

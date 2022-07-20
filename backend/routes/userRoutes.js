@@ -9,6 +9,9 @@ const {
   deleteGuests,
   requestQRFormLink,
   updateUser,
+  requestNewUserPass,
+  updateUserPass,
+  userToChange,
 } = require("../controllers/userController");
 const {
   requestGuestQR,
@@ -23,6 +26,8 @@ const {
 
 router.post("/", regForVerification);
 router.route("/verify/:id").get(unverifiedDetails).post(confirmViaEmail);
+router.route("/newpass").post(requestNewUserPass);
+router.route("/newpass/:uniq/:id").get(userToChange).put(updateUserPass);
 
 router.post("/login", loginUser);
 

@@ -11,6 +11,7 @@ const UnverifiedAcc = require("../models/unverifiedAccModel");
 
 const { generateMd5Hash } = require("./qrController");
 const RegisteredTag = require("../models/registeredTagModel");
+const mailer = require("./mail");
 
 // @desc    Register new account
 // @route   POST /api/users
@@ -198,6 +199,99 @@ const updateUser = asyncHandler(async (req, res) => {
   } else return res.json({ fname: userToUpdate.fname });
 });
 
+// @desc    Update user data
+// @route   PUT /api/users/:uniq/:id
+// @access  Private
+const userToChange = asyncHandler(async (req, res) => {
+  const userToUpdate = await User.findById(req.params.id, "fname email").lean();
+  if (!userToUpdate) {
+    res.status(404);
+    throw new Error("No user found");
+  } else {
+    res.json({ fname: userToUpdate.fname, email: userToUpdate.email });
+  }
+});
+// @desc    Update user password
+// @route   POST /api/users/newpass
+// @access  Private
+const requestNewUserPass = asyncHandler(async (req, res) => {
+  const userToUpdate = await User.findOne({ email: req.body.email }).lean();
+  if (!userToUpdate) {
+    res.status(404);
+    throw new Error("No matching email found");
+  }
+  const linkUniq = generateRandomString("10");
+  const uniq = await TempLink.create({
+    unique: linkUniq,
+    user: userToUpdate._id,
+  });
+  if (!uniq) {
+    res.status(404);
+    throw new Error("Password change failed");
+  }
+
+  const link = `https://${req.get("host")}/password_update/${linkUniq}/${
+    userToUpdate._id
+  }`;
+  //const link = `http://localhost:3000/password_update/${linkUniq}/${userToUpdate._id}`;
+  const mailOptions = {
+    from: '"Community thesis app" <community4704@outlook.com>', // sender address
+    to: req.body.email, // list of receivers
+    subject: "Password change", // Subject line
+    html: `<div> <b>Your account has requested a change of password click on the button to proceed. If this is not you, you can ignore this message.</b> <button><a href=${link} rel='external' target='_blank'>Create password</a></button> </div>`, // html body
+  };
+  try {
+    await mailer.outlookTransporter
+      .sendMail(mailOptions)
+      .then((stat) => {
+        if (stat.accepted.length > 0) {
+          res.status(201).json({ message: "Email confirmation sent" });
+        } else {
+          throw new Error();
+        }
+      })
+      .catch(() => {
+        mailOptions.from = '"Community thesis app" <community4704@gmail.com>';
+        mailer.gmailTransporter.sendMail(mailOptions).then((stat) => {
+          if (stat.accepted.length > 0) {
+            res.status(201).json({ message: "Email confirmation sent" });
+          } else {
+            throw new Error();
+          }
+        });
+      });
+  } catch (error) {
+    res.status(400);
+    throw new Error("Email not sent");
+  }
+});
+
+// @desc    Update user password
+// @route   PUT /api/users/newpass/:uniq/:id
+// @access  Private
+const updateUserPass = asyncHandler(async (req, res) => {
+  const active = await TempLink.findOne({ unique: req.params.uniq }).lean();
+  if (!active) {
+    res.status(404);
+    throw new Error(
+      "This link is unavailable! It may have expired or does not exist."
+    );
+  }
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+  const userToUpdate = await User.findByIdAndUpdate(
+    req.params.id,
+    { password: hashedPassword },
+    { new: true }
+  ).lean();
+
+  if (!userToUpdate) {
+    res.status(404);
+    throw new Error("Password change failed");
+  } else return res.sendStatus(200);
+});
+
 const requestQRFormLink = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id).populate("visitor_form_link");
 
@@ -245,9 +339,12 @@ module.exports = {
   regForVerification,
   unverifiedDetails,
   updateUser,
+  updateUserPass,
+  requestNewUserPass,
   confirmViaEmail,
   loginUser,
   getMe,
   deleteGuests,
   requestQRFormLink,
+  userToChange,
 };

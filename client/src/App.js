@@ -20,6 +20,8 @@ import VisitorForm from "./pages/VistorForm";
 import CompleteVerification from "./pages/CompleteVerification";
 import Loading from "./components/Loading/Loading";
 import Article from "./pages/Article";
+import UpdatePassword from "./pages/UpdatePassword";
+import ForgotPass from "./pages/ForgotPass";
 
 function App() {
   return (
@@ -113,6 +115,22 @@ function App() {
           element={
             <>
               <CompleteVerification />
+            </>
+          }
+        />
+        <Route
+          path="login/forgot_password"
+          element={
+            <>
+              <ForgotPass />
+            </>
+          }
+        />
+        <Route
+          path="password_update/:uniq/:id"
+          element={
+            <>
+              <UpdatePassword />
             </>
           }
         />
